@@ -97,8 +97,19 @@ Written in Arduino or CircuitPython; the builder chooses. Arduino (with
 Adafruit NeoPixel) is the safer bet on the ESP32-C3, whose CircuitPython USB
 support is limited.
 
+**Knob gestures (Evan approved the idea; details are my call):**
+- **Tap** (press + release with no rotation) → send `BTN`. Fires on
+  **release**, about 100 ms later than firing on press.
+- **Hold + turn** → on-device master brightness. Handled entirely in firmware,
+  so it works without Talon. While adjusting, the ring shows a fill gauge;
+  on release it returns to the mode look.
+  - Any detent while held cancels the tap, so the mute never fires.
+  - Persist the level in flash.
+  - Master brightness multiplies the per-mode brightness.
+- **Turn** (not pressed) → `ROT ±1` to the host for scrolling.
+
 **Device → host**, one newline-terminated line per event:
-- `BTN` on knob press (debounced)
+- `BTN` on knob tap (debounced; see gestures)
 - `ROT +1` / `ROT -1` per detent
 - `HELLO talon-controller v1` on boot, and in reply to `PING`
 
