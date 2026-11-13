@@ -101,8 +101,22 @@ support is limited.
 - **Tap** (press + release with no rotation) → send `BTN`. Fires on
   **release**, about 100 ms later than firing on press.
 - **Hold + turn** → on-device master brightness. Handled entirely in firmware,
-  so it works without Talon. While adjusting, the ring shows a fill gauge;
-  on release it returns to the mode look.
+  so it works without Talon. On release the ring returns to the mode look.
+  - **Gauge (Evan's spec):** while held, the ring is solid WHITE and fills
+    clockwise from 12 o'clock. Fill fraction = brightness %, and those LEDs
+    shine at exactly that brightness, live. Example: 33% → white at 33%,
+    filling noon to 4 o'clock (4 of 12 LEDs).
+  - **Smooth fill (my call):** the leading LED is lit fractionally between
+    steps.
+  - **Step (my call):** 5% per detent, so one full turn of 20 detents covers
+    0–100%.
+  - **Floor (my call):** minimum 5%, so the ring is never fully dark. Dark
+    would read as "unplugged".
+  - **Perceived brightness (my call):** gamma-correct so the % matches what
+    the eye sees.
+  - **Orientation (my call):** firmware settings for which LED index is
+    12 o'clock and for direction, so the housing need not align the ring
+    exactly.
   - Any detent while held cancels the tap, so the mute never fires.
   - Persist the level in flash.
   - Master brightness multiplies the per-mode brightness.
