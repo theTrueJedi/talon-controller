@@ -1,6 +1,6 @@
 # Talon Controller — Design (MVP)
 
-Date: 2026-11-12 · Status: draft for approval
+Date: 2026-11-12 · Status: APPROVED by Evan 2026-11-13 (5% brightness floor confirmed)
 
 ## Intent
 
