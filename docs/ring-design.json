@@ -1,0 +1,71 @@
+{
+  "type": "ring-design",
+  "modes": [
+    {
+      "id": "mute",
+      "c1": "#ff1a1a",
+      "c2": "#b91818",
+      "pat": "solid",
+      "speed": 40,
+      "bri": 70
+    },
+    {
+      "id": "sleep",
+      "c1": "#ff9a1a",
+      "c2": "#3a1c00",
+      "pat": "breathe",
+      "speed": 12,
+      "bri": 25
+    },
+    {
+      "id": "command",
+      "c1": "#18ff6a",
+      "c2": "#109847",
+      "pat": "solid",
+      "speed": 15,
+      "bri": 71
+    },
+    {
+      "id": "dictation",
+      "c1": "#2f6bff",
+      "c2": "#9a3bff",
+      "pat": "gradspin",
+      "speed": 30,
+      "bri": 83
+    },
+    {
+      "id": "mixed",
+      "c1": "#14e0ff",
+      "c2": "#2f6bff",
+      "pat": "gradspin",
+      "speed": 35,
+      "bri": 83
+    },
+    {
+      "id": "disconnected",
+      "c1": "#ff1a1a",
+      "c2": "#202020",
+      "pat": "breathe",
+      "speed": 9,
+      "bri": 17
+    },
+    {
+      "id": "press",
+      "c1": "#18ff6a",
+      "c2": "#000000",
+      "pat": "pulse",
+      "speed": 91,
+      "bri": 36
+    },
+    {
+      "id": "turn",
+      "c1": "#c03bff",
+      "c2": "#000000",
+      "pat": "arc",
+      "speed": 61,
+      "bri": 75
+    }
+  ],
+  "diffuser": true,
+  "timestamp": 1794556728440
+}

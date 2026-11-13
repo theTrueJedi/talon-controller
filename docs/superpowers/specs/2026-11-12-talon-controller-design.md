@@ -181,6 +181,27 @@ support is limited.
 - Measure first: the ring's inner and outer diameter, and the cap and shaft
   dimensions.
 
+### Ring looks (Evan's playground design, 2026-11-12)
+
+Source of truth: `docs/ring-design.json`. Brightness and speed are 0–100
+playground units; calibrate on the real ring.
+
+| State | Look |
+|---|---|
+| Hard mute | solid red, 70 |
+| Sleep | amber breathe, slow (12), 25 |
+| Command | solid green, 71 |
+| Dictation | blue → purple gradient spin, 83 |
+| Mixed | cyan → blue gradient spin, 83 |
+| Disconnected | red breathe, very slow (9), dim (17) |
+| Knob press flourish | green heartbeat pulse, fast, 36 |
+| Knob turn flourish | purple half-ring, 75 |
+
+**Red now means "not listening"**: solid for mute, a dim slow breathe when
+Talon is down. Both mean "safe to talk". Telling them apart relies on solid
+vs. breathing, which may be hard to read across a room. Check this on the
+real ring.
+
 ### Pattern library (extensible by design)
 
 - Animations run on-device. The host sends look parameters (pattern, c1, c2,
