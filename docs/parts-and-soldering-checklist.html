@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Talon Controller: Parts &amp; Soldering Prep</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=Archivo+Narrow:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  @page { size: letter; margin: 0.45in; }
+  body { margin:0; font-family:"Archivo Narrow","Arial Narrow",sans-serif; font-size:11.5pt; line-height:1.32; color:#111; }
+  h1 { font-family:"Archivo",Arial,sans-serif; font-weight:800; font-size:20pt; margin:0; }
+  .meta { color:#555; font-size:10pt; margin:2px 0 10px; border-bottom:2px solid #111; padding-bottom:6px; }
+  h2 { font-size:10.5pt; text-transform:uppercase; letter-spacing:.08em; color:#005a63; margin:12px 0 5px; border-bottom:1px solid #bbb; padding-bottom:2px; }
+  .box { display:inline-block; width:12px; height:12px; border:1.5px solid #111; border-radius:2px; margin-right:7px; vertical-align:-2px; }
+  table { width:100%; border-collapse:collapse; }
+  td, th { text-align:left; vertical-align:top; padding:4px 6px; border-bottom:1px solid #ddd; }
+  th { font-size:9.5pt; color:#555; text-transform:uppercase; letter-spacing:.05em; }
+  .m { font-family:"IBM Plex Mono",monospace; font-size:9.5pt; background:#e6f3f4; padding:0 3px; border-radius:2px; }
+  .notes { border-bottom:1px solid #999; height:18px; min-width:140px; }
+  ul { margin:3px 0; padding-left:0; list-style:none; } li { margin:3px 0; }
+  .tip { background:#f3f5f7; border-left:3px solid #005a63; padding:6px 9px; margin:6px 0; font-size:10.5pt; }
+  ol { margin:3px 0 0 18px; padding:0; } ol li { list-style:decimal; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:0 22px; }
+</style></head><body>
+<h1>Talon Controller · Parts &amp; Soldering Prep</h1>
+<div class="meta">Do these before any code is written · Repo: github.com/theTrueJedi/talon (private) · Next session: start Claude in ~/git/talon</div>
+
+<h2>1 · Parts hunt: find it, check it, photograph both sides</h2>
+<table>
+  <tr><th style="width:3%"></th><th style="width:27%">Part</th><th style="width:42%">Check</th><th>Notes / label text</th></tr>
+  <tr><td><span class="box"></span></td><td><b>Seeed XIAO ESP32C3</b></td><td>Pins already attached on both edges ("Pre-Soldered")</td><td class="notes"></td></tr>
+  <tr><td><span class="box"></span></td><td><b>12-LED ring</b> (any 1 of 5)</td><td>Back pad labels: <span class="m">DI/DIN</span> <span class="m">5V/VCC</span> <span class="m">GND</span> <span class="m">DO/DOUT</span>, plus any model text</td><td class="notes"></td></tr>
+  <tr><td><span class="box"></span></td><td><b>KY-040 knob</b></td><td>5 pins attached: <span class="m">CLK DT SW + GND</span>. Pressing the shaft clicks</td><td class="notes"></td></tr>
+  <tr><td><span class="box"></span></td><td><b>Jumper wires, female–female</b></td><td>Socket on both ends. Needed for the knob (5 wires)</td><td class="notes"></td></tr>
+  <tr><td><span class="box"></span></td><td><b>HY2.0 → 2.54 mm cables</b></td><td>Small 4-pin plug on one end, separate sockets on the other</td><td class="notes"></td></tr>
+  <tr><td><span class="box"></span></td><td><b>USB-C cable</b></td><td>Must carry <b>data</b>, not charge-only. We'll confirm when testing</td><td class="notes"></td></tr>
+</table>
+<div class="tip"><b>Why the HY2.0 cables matter:</b> cut off the 4-pin plug and solder 3 loose ends to the ring. The socket ends then push straight onto the XIAO's pins, giving you a plug-in ring from parts you own. <b>No F–F jumpers?</b> A pack costs a few dollars and is likely the only purchase.</div>
+
+<div class="cols">
+<div>
+<h2>2 · Soldering kit check (ANBES 60 W)</h2>
+<ul>
+  <li><span class="box"></span>Iron, stand, tips (fine conical or small chisel)</li>
+  <li><span class="box"></span><b>Solder wire:</b> thin rosin-core, 0.6–0.8 mm, 63/37 or lead-free <i>(may not be in the kit)</i></li>
+  <li><span class="box"></span><b>Flux</b> pen or paste: makes small pads much easier</li>
+  <li><span class="box"></span>Wire strippers or a sharp blade</li>
+  <li><span class="box"></span>Tape or a clamp to hold the ring</li>
+  <li><span class="box"></span>Optional: multimeter, to check for shorts between pads</li>
+</ul>
+<h2>Shopping list (if missing)</h2>
+<ul>
+  <li><span class="box"></span>F–F jumper wires</li>
+  <li><span class="box"></span>Solder wire</li>
+  <li><span class="box"></span>Flux</li>
+  <li><span class="box"></span>Data USB-C cable</li>
+</ul>
+</div>
+<div>
+<h2>3 · Soldering setup &amp; practice</h2>
+<ul>
+  <li><span class="box"></span>Iron about <b>330 °C</b> (leaded) or <b>360 °C</b> (lead-free)</li>
+  <li><span class="box"></span>Ventilation (open window) and glasses</li>
+  <li><span class="box"></span><b>Practice on a spare ring</b> (you have 5). For each joint:</li>
+</ul>
+<ol>
+  <li>Put a little solder on the pad.</li>
+  <li>Put a little solder on the stripped wire end.</li>
+  <li>Touch them together with the iron for about 2 s.</li>
+</ol>
+<ul style="margin-top:6px">
+  <li><span class="box"></span>3 joints on the real ring: <span class="m">5V</span> <span class="m">GND</span> <span class="m">DIN</span> (the <i>input</i> side)</li>
+</ul>
+</div>
+</div>
+
+<h2>4 · Then, in order</h2>
+<ol>
+  <li>Start a new Claude session in <span class="m">~/git/talon</span> and send the photos/labels.<br><i>Pickup line:</i> "Pick up the Talon controller: here are my parts [photos/labels]."</li>
+  <li>Claude confirms the wiring for your exact parts. You order anything missing.</li>
+  <li>Claude writes the build plan. First code: test that Talon can use the USB library.</li>
+  <li>Firmware + Talon add-on. You solder the ring and print the housing + translucent cap.</li>
+  <li><b>Separate project, run alongside:</b> the headset mic fix (suspected Bluetooth low-quality mic mode).</li>
+</ol>
+</body></html>
