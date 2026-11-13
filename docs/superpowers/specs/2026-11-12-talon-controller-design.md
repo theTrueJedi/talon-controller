@@ -181,6 +181,17 @@ support is limited.
 - Measure first: the ring's inner and outer diameter, and the cap and shaft
   dimensions.
 
+### Pattern library (extensible by design)
+
+- Animations run on-device. The host sends look parameters (pattern, c1, c2,
+  speed, brightness), not frames, so a frozen Talon can never freeze an
+  animation mid-"listening".
+- Patterns are a firmware registry: one function per pattern. Adding one later
+  means a new entry plus a Talon setting value, with no protocol change.
+- The MVP ships with the patterns Evan picks in the ring playground. Evan will
+  supply more explicit pattern specs later. Prototype new ones in the
+  playground first, then port them to firmware.
+
 ## Risks
 
 | Risk | Severity | Mitigation |
