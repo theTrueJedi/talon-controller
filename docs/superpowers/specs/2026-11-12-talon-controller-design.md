@@ -2,13 +2,15 @@
 
 Date: 2026-11-12 · Status: APPROVED by Evan 2026-11-13 (5% brightness floor confirmed)
 · Amended 2026-11-16: work-laptop constraint, no pyserial, separate macro pad
-(see "Amendment 2026-11-16" at the end)
+(see "Amendment 2026-11-16" at the end); knob gestures remapped (option A,
+see "Knob gestures")
 
 ## Intent
 
 A small USB desk controller for Talon Voice. A 12-LED ring glows in Talon's
-current mode color, a knob sits in the center of the ring, pressing the knob
-hard-mutes Talon's microphone, and turning it scrolls.
+current mode color, and a knob sits in the center of the ring. Tapping the
+knob flips between command and dictation, double-tapping it sleeps or wakes
+Talon, holding it hard-mutes the microphone, and turning it scrolls.
 
 **Why:**
 - **(a) Instant off when someone walks in.** One press, with no reliance on
@@ -20,9 +22,12 @@ hard-mutes Talon's microphone, and turning it scrolls.
 
 ## Goals
 
-- Pressing the knob toggles a **hard mute**. Talon's microphone is set to
-  `None` and restored to the previous microphone on the next press. This is
-  not a proxy for sleep.
+- **Holding** the knob (~0.7 s) toggles a **hard mute**. Talon's microphone is
+  set to `None` and restored to the previous microphone on the next hold.
+  This is not a proxy for sleep.
+- **Tapping** flips command ⇄ dictation. Evan does this constantly (added
+  2026-11-16).
+- **Double-tapping** toggles sleep/wake (added 2026-11-16).
 - The ring shows Talon's state at a glance, with a distinct color for each
   state: mic muted, sleep, command, dictation, mixed.
 - Turning the knob scrolls the window under the mouse pointer.
@@ -100,9 +105,34 @@ Written in Arduino or CircuitPython; the builder chooses. Arduino (with
 Adafruit NeoPixel) is the safer bet on the ESP32-C3, whose CircuitPython USB
 support is limited.
 
-**Knob gestures (Evan approved the idea; details are my call):**
-- **Tap** (press + release with no rotation) → send `BTN`. Fires on
-  **release**, about 100 ms later than firing on press.
+**Knob gestures (remapped 2026-11-16, Evan chose option A; timings and edge
+cases are my calls):**
+
+| Gesture | Detection | Sends | Action |
+|---|---|---|---|
+| Tap | press + release under 0.7 s, no rotation, no second press within 250 ms | `TAP` | command ⇄ dictation |
+| Double-tap | two taps, second press within 250 ms of the first release | `DOUBLE` | sleep ⇄ wake |
+| Hold | held 0.7 s with no rotation; fires **at the threshold, while still held** | `HOLD` | toggle hard mute |
+| Hold + turn | a detent turned while held, **before** the threshold | (nothing) | on-device brightness (below) |
+| Turn | not pressed | `ROT ±1` | scroll |
+
+- **Why this mapping:** the most frequent action gets the easiest gesture. The
+  panic action ("someone walked in") becomes a deliberate press-and-hold that
+  is hard to fumble.
+- **Cost (accepted):** a tap waits about 250 ms for a possible second tap, and
+  mute takes about 0.7 s instead of about 0.3 s.
+- **Hold progress (my call):** while held with no rotation, the ring fills
+  clockwise as a 0.7 s progress bar. It fills red when the hold will mute and
+  in the mode color when it will unmute. This is rendered on the device, so
+  it has no host latency. Releasing early, or turning, cancels it.
+- **After `HOLD` fires (my call):** ignore rotation until release, so a hold
+  never drifts into a brightness change. Release sends nothing more.
+- **While the ring shows `mute` (my call):** `TAP` and `DOUBLE` are refused.
+  The device does a quick red double-blink, so the press is never silently
+  ignored. Only a hold unmutes, which keeps unmuting deliberate. The device
+  still sends the event; the host also refuses it.
+- **Timings (my call):** 250 ms double-tap window and 0.7 s hold threshold, as
+  firmware constants. Tune them on the real knob.
 - **Hold + turn** → on-device master brightness. Handled entirely in firmware,
   so it works without Talon. On release the ring returns to the mode look.
   - **Gauge (Evan's spec):** while held, the ring is solid WHITE and fills
@@ -120,13 +150,14 @@ support is limited.
   - **Orientation (my call):** firmware settings for which LED index is
     12 o'clock and for direction, so the housing need not align the ring
     exactly.
-  - Any detent while held cancels the tap, so the mute never fires.
+  - Any detent while held, before the hold threshold, cancels the tap and the
+    hold, so neither the mode flip nor the mute fires.
   - Persist the level in flash.
   - Master brightness multiplies the per-mode brightness.
 - **Turn** (not pressed) → `ROT ±1` to the host for scrolling.
 
 **Device → host**, one newline-terminated line per event:
-- `BTN` on knob tap (debounced; see gestures)
+- `TAP` / `DOUBLE` / `HOLD` (debounced; see gestures; replaces the earlier `BTN`)
 - `ROT +1` / `ROT -1` per detent
 - `HELLO talon-controller v1` on boot, and in reply to `PING`
 
@@ -158,7 +189,20 @@ support is limited.
   - `registry.register("update_contexts", ...)` for mode changes.
   - Poll `actions.sound.active_microphone()` for mute.
   - Push state on every change plus a heartbeat.
-- **On `BTN`:**
+- **On `TAP` (my calls on edge cases):**
+  - Command → dictation, and dictation → command.
+  - Mixed → command.
+  - Asleep → wake into the last of command/dictation.
+  - Ignored while hard-muted (see gestures).
+  - Then push the state.
+- **On `DOUBLE`:**
+  - Awake → sleep.
+  - Asleep → wake into the last of command/dictation.
+  - Ignored while hard-muted.
+  - Then push the state.
+  - The builder picks the Talon calls, mirroring community's
+    `talon sleep` / `talon wake` and mode commands.
+- **On `HOLD`:**
   - If the mic is not `None`: remember the current mic, then switch to `None`.
   - Otherwise: restore the remembered mic. Fall back to `System Default`.
   - Then push the state.
