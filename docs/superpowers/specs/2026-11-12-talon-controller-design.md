@@ -1,6 +1,8 @@
 # Talon Controller — Design (MVP)
 
 Date: 2026-11-12 · Status: APPROVED by Evan 2026-11-13 (5% brightness floor confirmed)
+· Amended 2026-11-16: work-laptop constraint, no pyserial, separate macro pad
+(see "Amendment 2026-11-16" at the end)
 
 ## Intent
 
@@ -33,7 +35,8 @@ hard-mutes Talon's microphone, and turning it scrolls.
   using Evan's existing WLED gear.
 - Fixing headset or microphone recognition (HFP Bluetooth suspicion). That is a
   separate project and is a prerequisite for comfortable use.
-- Macro keys beyond the knob.
+- Macro keys on this board. They come from a separate off-the-shelf pad
+  (see Amendment 2026-11-16).
 - Wireless operation away from the desk.
 
 ## Anti-goals
@@ -147,9 +150,10 @@ support is limited.
 
 - **Serial port:** find the device by USB VID/PID or the `HELLO` handshake.
   Reconnect automatically on unplug or replug.
-  - Uses `pyserial`, installed into Talon's bundled Python
-    (`~/.talon/bin/pip install pyserial`). Verify that this works on Talon 1.0
-    during planning.
+  - **No pyserial (amended 2026-11-16).** Open `/dev/cu.usbmodem*` with
+    Python's standard library (`os`, `termios`, `fcntl`, `select`). Verified:
+    Talon 1.0's bundled Python (3.14) imports all four, so nothing needs to be
+    installed.
 - **Mode tracking:** mirror the community `mode_indicator` logic.
   - `registry.register("update_contexts", ...)` for mode changes.
   - Poll `actions.sound.active_microphone()` for mute.
@@ -233,7 +237,7 @@ real ring.
 |---|---|---|
 | 3.3 V data into a 5 V WS2812B ring may flicker | Moderate | Short data wire, series resistor. The 74AHCT125 is the fallback, but needs more wiring. |
 | Ring visibility at 4–5 m in daylight | Moderate | Diffusing disc. The fancy WLED light is the real answer later. |
-| pyserial inside Talon's Python | Moderate (unverified) | Verify in the plan's first task. Fallback: a tiny companion process talking to Talon over its REPL socket. |
+| Serial from Talon's Python | FYI (was Moderate) | Standard-library serial, verified importable on Talon 1.0. Confirm a real open/read/write against the device in the plan's first task. |
 | Encoder bounce causes jittery scroll | FYI | Use a quadrature state-table decode in firmware. |
 
 ## Left to the builder
@@ -245,3 +249,75 @@ real ring.
 - Reconnect strategy details.
 - Repo layout. Firmware and add-on live in this repo; the add-on is symlinked
   into `~/.talon/user/`.
+
+## Amendment 2026-11-16 (approved by Evan)
+
+### New constraint: the work laptop
+
+Evan must use the controller **and** the macro pad on his work laptop, a
+company-managed Mac. Talon and accessibility peripherals are allowed there.
+Evan is wary of installing custom software, management tools, or dependencies.
+
+- **Strong preference, not a hard rule:** nothing installed on the work laptop
+  beyond Talon user files (`.talon`, `.py`). If something genuinely needs
+  installing, weigh cost against benefit and test it on the work laptop before
+  relying on it.
+- Consequence: drop pyserial (see the Talon add-on section).
+- **Delivery to the work laptop (open):** Evan has cloned the public community
+  repo there and created `.talon` files by hand. This repo is private, so
+  cloning it would mean signing in to a personal GitHub account on a corporate
+  device. Options:
+  1. A publicly cloneable home for the Talon user files: make this repo
+     public, or move `user/` into its own public repo. Recommended.
+  2. Manual copy.
+
+  Decide before the first deploy to the work laptop.
+
+### Macro keys: a separate off-the-shelf pad
+
+Evan wants 4–12 keys for daily macros, with knobs a bonus. Examples: start
+Antigravity voice/live, mute/unmute Google Meet. He expects the list to grow
+quickly. All macros run through Talon so they can be complex, e.g. find the
+Meet tab, focus it, press ⌘D, and return.
+
+| Approach | Trade-off | Outcome |
+|---|---|---|
+| Buttons on the custom board | Soldering per key; still Talon-only | Rejected |
+| DIY second board on a XIAO ESP32-S3 (native USB HID) | Cheap, but solder time for something buyable | Rejected for now |
+| **Off-the-shelf VIA/Vial macro pad, bound in Talon** | Costs money; no solder; real keycaps, knobs, often RGB | **Chosen** |
+
+**Design:**
+- The pad is a plain USB keyboard. Each key sends an unused code from
+  **F13–F19**, alone or with modifiers (e.g. `ctrl-shift-f13`). That gives
+  dozens of codes across keys and layers. F20 and up may not be recognized by
+  macOS (unverified).
+- **Configure the pad in VIA on the personal Mac only.** The settings are stored
+  on the pad. Chrome's device access (WebHID) may be blocked by policy on the
+  work laptop.
+- Talon binds the codes with `key(...)` rules in `.talon` files. **Verified
+  2026-11-16 on Talon 1.0:** `key(f13)` and `key(ctrl-shift-f19)` fire,
+  including while Talon is asleep, with no `mode:` header. Caveat: tested with
+  key events synthesized inside Talon, not a hardware press. Confirm on the
+  first real press.
+
+**Pad selection filter:**
+- **Required:** VIA or Vial, ideally auto-detected from VIA's list rather than
+  a seller-supplied JSON file. Avoid vendor-app-only pads.
+- **Wired** preferred.
+- **Bonus:** per-key RGB controllable in VIA, hot-swap sockets, 12–16 keys or
+  layers, VIA-configurable knobs.
+- **Tiebreaker:** public QMK source. That keeps open a later stretch goal:
+  Talon drives key colors, e.g. the Meet key glows red while muted.
+- **Budget:** under ~$50 preferred, up to ~$100 or more for real convenience.
+
+**Risks:**
+
+| Risk | Severity | Mitigation |
+|---|---|---|
+| Managed-Mac security tooling flags or blocks new USB keyboards | Moderate | Evan checks company peripheral policy before buying |
+| Meet mute needs the Meet tab focused | Moderate | Macro design: find and focus the tab, then press ⌘D, then return |
+
+**Open:**
+- Which pad.
+- The first macro set.
+- Work-laptop delivery (above).

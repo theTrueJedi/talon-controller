@@ -16,7 +16,7 @@ later.
     approved design.
   - `docs/ring-design.json`: Evan's per-mode ring looks.
 
-## Status (2026-11-13)
+## Status (2026-11-16)
 
 **Design approved.** Next step is hardware prep, before any code:
 1. Evan finds his parts.
@@ -27,7 +27,18 @@ later.
 **After that:**
 1. Confirm the wiring.
 2. Write the plan with superpowers:writing-plans.
-3. First plan task: verify that pyserial loads in Talon 1.0's Python.
+3. First plan task: confirm standard-library serial (no pyserial) can open,
+   read, and write the device from Talon 1.0.
+
+**Amended 2026-11-16** (see the spec's amendment section):
+- Work-laptop constraint: prefer no installs beyond Talon files.
+- Macro keys come from a separate off-the-shelf VIA pad bound in Talon
+  (`key(f13)` etc.; verified).
+- Open items:
+  - Evan sends pad listings.
+  - Evan checks his company's USB keyboard policy.
+  - Pick the first macro set.
+  - Decide how Talon files reach the work laptop.
 
 **Separate project:** the headset mic fix. Suspected cause: Bluetooth HFP
 low-quality mic mode.
