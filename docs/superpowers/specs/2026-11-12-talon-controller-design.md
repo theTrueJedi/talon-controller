@@ -51,9 +51,10 @@ Talon, holding it hard-mutes the microphone, and turning it scrolls.
   change to a "not connected" state. A reminder that lies is worse than none.
 - **Pressing the button must never fail silently.** If mute fails, the ring
   must not show muted.
-- No soldering beyond the 3 ring joints plus header pins on the board
-  (amended 2026-11-16, board swap). No parts that must be bought before
-  the MVP works, except jumper wires if Evan has none.
+- No soldering beyond the 3 ring joints plus wires soldered straight into
+  the C3-Zero's holes and onto the KY-040's clipped pin stubs (amended
+  2026-11-17: direct solder, no headers or jumpers). No parts that must be
+  bought before the MVP works.
 
 ## Constraints
 
@@ -64,8 +65,10 @@ Talon, holding it hard-mutes the microphone, and turning it scrolls.
 - KY-040 rotary encoder with push switch
 - Spare JST SM leads, 330 Ω resistors, capacitors, 74AHCT125
 
-**Soldering:** three joints (5V, GND, DIN) on the ring's pads, plus header
-pins on the C3-Zero's needed holes only (about 7–8). Evan has agreed to both.
+**Soldering:** three joints (5V, GND, DIN) on the ring's pads, plus wires
+soldered straight into the C3-Zero's needed holes (7; no header pins) and
+onto the KY-040's pins clipped to stubs. Evan has agreed to all three
+(amended 2026-11-17: direct solder).
 
 **Board limits:** the ESP32-C3 has **no native USB HID**, so it can't act as a
 keyboard or mouse. Its built-in USB Serial/JTAG gives a CDC serial port, so all
@@ -97,14 +100,16 @@ ring stays well under USB current limits.
 | Ring DIN | C3-Zero GPIO0 via the 330 Ω series resistor, if it can be inserted without solder; otherwise direct |
 | KY-040 CLK / DT / SW | C3-Zero GPIO3 / GPIO4 / GPIO5 |
 | KY-040 + | C3-Zero 3V3 |
-| KY-040 GND | C3-Zero GND, shared with the ring GND (one GND hole: a doubled jumper or a splice) |
+| KY-040 GND | C3-Zero GND, shared with the ring GND (one GND hole: twist both wires together and solder them in as one) |
 
 **Pins to avoid on the C3-Zero:** GPIO2, GPIO8, GPIO9 (boot strapping; GPIO9
 is the BOOT button), GPIO10 (onboard WS2812 status LED; free to use as a
 debug light), GPIO18/19 (USB). Confirm the pad layout against Waveshare's
 pinout image before soldering. (Pin map updated 2026-11-17 with the housing.)
 
-Use female–female jumpers between the header pins. Optionally put a 1000 µF
+Solder every wire straight into its hole (no header pins, no jumpers); the
+ring wires go through the housing's face slot before they are soldered to
+the C3-Zero. Optionally put a 1000 µF
 capacitor across the ring's power.
 
 ### Firmware (ESP32-C3-Zero)
@@ -378,10 +383,11 @@ Meet tab, focus it, press ⌘D, and return.
   uses the ESP32-C3's built-in USB Serial/JTAG, like the XIAO. Protocol,
   firmware logic and the Talon add-on are unchanged. Arduino needs
   "USB CDC On Boot: Enabled". Source: Waveshare wiki, ESP32-C3-Zero.
-- **Cost:** header pins must be soldered. Fit them only on the holes in use.
+- **Cost:** wires must be soldered straight into the holes in use
+  (amended 2026-11-17: direct solder, no header pins).
 - **Flashing:** Waveshare says to hold BOOT (GPIO9) while plugging in USB to
   flash. Expect this at least for the first upload.
 - **Antenna:** onboard ceramic. Irrelevant (no Wi-Fi), but don't cover it with
   metal in the housing.
 - **Open:** count the GND holes. With one GND, the ring and knob grounds must
-  share it (a doubled jumper or a splice). Measure the board for the housing.
+  share it (twisted together in the one hole). Measure the board for the housing.

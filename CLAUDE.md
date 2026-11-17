@@ -19,23 +19,17 @@ later.
 ## Status (2026-11-17)
 
 **Housing model built** in `print/` (branch `housing`): parametric OpenSCAD,
-tests via `bash print/tests/run.sh`, STLs in `print/stl/`. Next: Evan prints
-the fit and glow coupons, runs checkpoint (a)-(f) in `print/README.md`, and
-solders the ring. Housing spec:
+tests via `bash print/tests/run.sh`, STLs in `print/stl/`. Housing spec:
 `docs/superpowers/specs/2026-11-16-talon-housing-design.md`.
 
-**Design approved.** Next step is hardware prep, before any code:
-1. Evan finds his parts. Confirmed 2026-11-16: ring, HY2.0-4P cables, F–F jumpers, KY-040, C3-Zero.
-2. Confirm the models: ring pad labels, C3-Zero pinout, KY-040, F–F jumpers,
-   HY2.0→2.54 mm cables, data USB-C cable. Board is now the ESP32-C3-Zero
-   (spec amendment 2026-11-16b): count its GND holes, find header pins.
-3. Check soldering supplies: solder, flux.
+**Next:** Evan measures his USB-C plug (checkpoint g), prints the fit and
+glow coupons, runs checkpoint (a)-(g) in `print/README.md`, and solders the
+ring. Wiring is direct solder, no headers or jumpers; pin map in
+`print/README.md`.
 
-**After that:**
-1. Confirm the wiring.
-2. Write the plan with superpowers:writing-plans.
-3. First plan task: confirm standard-library serial (no pyserial) can open,
-   read, and write the device from Talon 1.0.
+**Later:** write the firmware and add-on plan with superpowers:writing-plans.
+Its first task: confirm standard-library serial (no pyserial) can open,
+read, and write the device from Talon 1.0.
 
 **Amended 2026-11-16** (see the spec's amendment section):
 - Work-laptop constraint: prefer no installs beyond Talon files.

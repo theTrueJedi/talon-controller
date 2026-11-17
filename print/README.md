@@ -49,6 +49,7 @@ Studio and do not rotate them. None of these should need supports.
 | `glow_test`    | translucent PETG   | 1   | standing on its legs, steps up         | none     |
 | `nut_driver`   | opaque PLA or PETG | 1   | handle down, socket up                 | none     |
 | `shell`        | opaque PLA or PETG | 1   | on its back wall, open bottom sideways | none     |
+| `c3_clip`      | opaque PLA or PETG | 1   | on its tongue end, legs standing up    | none     |
 | `hood`         | translucent PETG   | 1   | upside down: top face on the bed       | none     |
 | `cap`          | opaque PLA or PETG | 1   | upside down: top face on the bed       | none     |
 | `bottom`       | opaque PLA or PETG | 1   | outside face down, pockets up          | none     |
@@ -57,47 +58,100 @@ Studio and do not rotate them. None of these should need supports.
 
 "None" means the part was shaped to print without supports: the shell's
 inside front is a 45 degree ramp and its front screw posts are teardrops;
-the bottom plate's screw counterbores are short bridges. Still glance at
-Bambu Studio's overhang preview before printing the shell.
+the square frame under the face (it holds the knob's body) is only 1 mm
+deep; the bottom plate's screw counterbores are short bridges. Still glance
+at Bambu Studio's overhang preview before printing the shell.
 
 The hood is the only part the light shines through, so it is the only big
 part in translucent PETG. Everything else is opaque so light does not leak.
 
-The USB-C unplug pull is taken by the back wall's slot at the board's corners, so unplug by the plug body, not the cable.
+The C3-Zero's USB-C port sits 1 mm inside the back wall on purpose: the
+board's edge sits in a slot in the wall, and that slot holds the board. So
+the plug's plastic body has to fit INTO the wall's hole for the plug to
+seat (checkpoint g). The unplug pull is taken by that slot, so unplug by
+the plug body, not the cable.
 
 ## Bought parts for the box
 
 - **4x M3 x 10 socket-head screws** (from the M3 kit) and **4x M3 hex nuts**.
   The screws come up through the bottom plate into nuts held in the shell's
-  corner posts. The counterbores are sized for 10 mm: a 12 mm screw will not
-  fit (the model refuses it), and an 8 mm one needs `m3_screw_l = 8` and a
-  re-export.
+  corner posts. Their heads end up about 0.8 mm below the plate's underside
+  (recessed, not flush). The counterbores are sized for 10 mm: a 12 mm
+  screw will not fit (the model refuses it), and an 8 mm one needs
+  `m3_screw_l = 8` and a re-export.
 - **4x weights**, 19.65 x 22 x 5.8 mm with their sticky backing. The pockets
-  are exactly that size, no extra room.
+  are exactly that size, no extra room. The front pair sits partly under
+  the shell's inside front ramp; the ramp resting on them is intended.
+- **Thin double-sided tape** (or a hot-glue gun) for the ring.
+
+## Wiring (direct solder, no headers or jumpers)
+
+Every wire is soldered straight into its hole: no header pins on the
+C3-Zero, no jumper wires.
+
+- **KY-040 knob board:** clip its right-angle pins to short stubs and
+  solder a wire to each stub.
+- **Ring:** solder three wires to the ring's pads (5V, GND, DIN).
+- **C3-Zero:** solder the wire ends straight into the board's holes. All of
+  them go on one pin row (5V, GND, 3V3, GPIO0 to GPIO5):
+
+| Wire           | C3-Zero hole |
+|----------------|--------------|
+| Ring DIN       | GPIO0        |
+| Ring 5V        | 5V           |
+| Ring GND       | GND          |
+| KY-040 GND     | GND (the same hole: twist it with the ring GND first) |
+| KY-040 +       | 3V3          |
+| KY-040 CLK     | GPIO3        |
+| KY-040 DT      | GPIO4        |
+| KY-040 SW      | GPIO5        |
+
+The C3-Zero has a single GND hole, so twist the ring's and the knob's GND
+wires together and solder them into it as one. Check the hole labels
+against Waveshare's pinout image before soldering. Full design and pin
+notes: `docs/superpowers/specs/2026-11-12-talon-controller-design.md`,
+"Hardware wiring".
+
+The shell's cradle has grooves under both pin rows, so the solder tails
+on the board's underside do not lift it.
 
 ## Assembly order
 
-1. **Solder** header pins on the C3-Zero (only the holes in use) and the
-   ring's wires. Wire map: `docs/superpowers/specs/2026-11-12-talon-controller-design.md`,
-   "Hardware wiring".
-2. **Ring.** Feed the ring's wires down the slot in the face and lay the
-   ring flat on the face. It goes first: the hood covers it, and the nut in
-   step 3 clamps the hood down.
+Work with the shell upside down (open bottom up). The cap goes on last, so
+the box never rests on it.
+
+1. **Knob board wires.** Clip the KY-040's pins to stubs and solder its five
+   wires (see Wiring).
+2. **Ring.** Solder the ring's three wires to its pads. Thread their free
+   ends down through the slot in the face, then lay the ring flat on the
+   face. Turn the ring to its 12 o'clock position and fix it to the face
+   with two small pieces of thin double-sided tape (or a dab of hot glue):
+   the firmware's 12 o'clock LED assumes the ring never turns. The ring
+   goes before the hood: the hood covers it, and the nut in step 3 clamps
+   the hood down.
 3. **Hood and knob board.** Set the hood over the ring, its tabs in the
    lip's notches. From inside the shell, push the encoder's threaded collar
-   up through the face and the hood's well floor; the little pin on the
-   face's underside drops into the board's far mounting hole. Add the metal
-   washer and the nut inside the well and snug it with the nut driver. Do
-   not crank it.
-4. **C3-Zero.** Tilt the board, slide its USB end into the slot in the back
-   wall, and press the other end down past the two snap lips.
-5. **Wires.** Run the ring wires along the channel under the face and top
-   and down the back wall; plug the jumpers onto the C3-Zero.
-6. **Push the cap** onto the shaft (flat side matches).
+   up through the face and the hood's well floor; the encoder body's square
+   top drops into the square frame on the face's underside, which stops it
+   turning. Add the metal washer and the nut inside the well and snug it
+   with the nut driver. Do not crank it.
+4. **Route the ring wires** along the channel under the face and top and
+   down the back wall.
+5. **Solder the C3-Zero.** With the board outside the box, solder every
+   wire straight into its hole (see Wiring). The ring wires must already be
+   through the face slot (step 2): once they are soldered to the C3-Zero,
+   they cannot be threaded any more.
+6. **C3-Zero into the cradle.** Tilt the board, slide its USB end into the
+   slot in the back wall, and lay the other end down on the pedestal. Press
+   the small clip down over the two side rails at the board's inner end
+   until both legs click; its tongue holds the middle of the board's inner
+   edge. To remove: spread the clip's legs and lift it off.
 7. **Bottom plate.** Stick the weights in their pockets. Slide an M3 nut
    into each corner post's side slot until it clicks past the bumps. Set the
    plate on, then drive the four screws up from below. Snug, not tight.
 8. **Feet.** Glue a TPU foot into each round recess on the underside.
+9. **Cap, last.** Turn the box onto its feet and push the cap onto the
+   shaft (flat side matches).
 
 ## Test coupons (print these first)
 
@@ -110,9 +164,9 @@ face is split in two here so each half prints flat with no supports:
 1. **Lip ring**: the outer part of the face, with the raised seat lip and
    the key notches the hood locks into.
 2. **Face disc**: the centre of the face the knob comes through. It prints
-   upside down (the top face on the bed), so the little anti-rotation pin
-   points up. Flip it over to use it: the pin goes down into the knob
-   board's mounting hole.
+   upside down (the top face on the bed), so the small square frame points
+   up. Flip it over to use it: the encoder body's square top sits in the
+   frame.
 3. **Floor washer**: a flat ring the same thickness as the hood's well
    floor. In the real build, the hood floor sits on the face and the nut
    clamps both. This washer stands in for it.
@@ -129,7 +183,8 @@ the ring flat on the desk and put the strip over it.
 ## CHECKPOINT: what to check, and what to change if it fails
 
 Write what you find in `docs/housing-measurements.md`. Then change the
-listed number in `lib/params.scad`.
+listed number in `lib/params.scad`. Each fit has its own number, so
+changing one never moves another.
 
 **(a) The encoder's threaded collar goes through the face disc and the floor
 washer.** Push the encoder up from underside through the disc, then the
@@ -148,18 +203,17 @@ and have a little thread showing above it.
 
 **(c) The hood key holds.** Drop the hood segment's tab into a notch in
 the lip ring's lip. Twist and wiggle it.
-- Tab will not go in: raise `fit` (now 0.2) to 0.3. This widens the notch
-  and gap around the hood wall.
-- Sloppy, twists noticeably: lower `fit` to 0.1, or raise `key_tab_w`
+- Tab will not go in: raise `key_fit` (now 0.2) to 0.3. This widens the
+  notch and the gap around the hood wall.
+- Sloppy, twists noticeably: lower `key_fit` to 0.1, or raise `key_tab_w`
   (now 2).
 - Snapped off easily: raise `key_tab_w` to 3.
 
 **(d) The bore plug slides onto the knob shaft's flat (D) end without slop
 or forcing.**
-- Will not go on, or needs force: raise `fit` by 0.1, or raise
-  `shaft_flat` by 0.1 if only the flat side binds.
-- Wobbles or turns on the shaft: lower `fit` by 0.1. Note `fit` also sets
-  the hood fits in (c); change them together, and re-check (c) if you move it.
+- Will not go on, or needs force: raise `bore_fit` (now 0.2) by 0.1, or
+  raise `shaft_flat` by 0.1 if only the flat side binds.
+- Wobbles or turns on the shaft: lower `bore_fit` by 0.1.
 
 **(e) Pick the glow gap that hides the LED dots.** Light the ring, lay the
 glow strip over it, and look straight down at each step. Pick the lowest
@@ -170,10 +224,27 @@ step where you see one even glow instead of separate dots.
   Tell Claude, and we will raise the knob cap (`cap_over_shaft`) or slim
   the cap float to make room.
 
-**(f) The pin drops into the knob board's hole.** With the face disc on
-the collar (pin side down), the pin drops into the far mounting hole of the
-KY-040 board (the hole farther from the knob) and the disc sits flat.
-- Pin misses the hole: adjust `ky_hole_x_from_header` (now 4.5 and 21.5;
-  your caliper read 4.5 to 4.8 for the far hole, so try 4.7 first).
+**(f) The encoder body sits in the frame.** With the face disc on the
+collar (frame side down), the encoder body's square top drops into the
+frame with no wobble, and the disc sits flat on the body.
+- Will not go in, or the disc rocks: raise `body_fit` (now 0.2) by 0.1.
+- Goes in but the body turns or wobbles: lower `body_fit` by 0.1.
 
-Once a-f pass, re-run `bash print/tests/run.sh` and print the real parts.
+**(g) Measure your USB-C plug.** With calipers, measure your USB-C cable's
+plug body (the plastic overmold behind the metal tip): width x height. Set
+`usb_plug_hole` to that plus 0.5 each way (now 12.5 x 7.5) before printing
+the shell. The port sits 1 mm inside the back wall, so the overmold has to
+fit into the hole for the plug to seat.
+
+**Other fits** (no coupon; change only if the real part fails):
+
+| Number       | What it sets (all now 0.2)                         |
+|--------------|----------------------------------------------------|
+| `c3_fit`     | C3-Zero slot: board play to the front stop, width, height |
+| `m3_nut_fit` | M3 nut slots in the corner posts                   |
+| `plate_fit`  | bottom plate's gap inside the shell outline        |
+| `foot_fit`   | TPU foot recesses                                  |
+| `socket_fit` | nut driver's hex socket                            |
+| `halo_fit`   | halo sleeve over the well wall (`halo_block` only) |
+
+Once a-g pass, re-run `bash print/tests/run.sh` and print the real parts.

@@ -250,3 +250,22 @@ written.
 | Box skids when pressed | Moderate | 2 oz weights, TPU feet at the front, 30° face |
 | Tight fit at the 30° slope (supports, overhangs) | FYI | Builder picks orientations; fit coupons first |
 | PCB corners 0.9 mm inside the ring ID | FYI | Irrelevant: the PCB sits below the face |
+
+## Amendment 2026-11-17 (final review)
+
+- **Anti-rotation:** the pin is gone. Hanging from the face, it pointed
+  down with the shell printed on its back wall, so it could not print. A
+  square frame (1 mm tall, 1.2 mm wall) under the face now holds the
+  encoder body's square top instead. The fit coupon carries it; checkpoint
+  (f) checks it via `body_fit`.
+- **C3-Zero cradle:** wires solder straight into the board's holes, so the
+  pedestal has grooves under both pin rows for the solder tails. The corner
+  snap lips sat on the GPIO5/GPIO6 pads. A lip on the shell over the middle
+  of the inner short edge would hang in mid-air in the print orientation,
+  so the hold-down is now a small separate clip (`c3_clip`) that snaps
+  onto the side rails, with its tongue on the middle of that edge.
+- **Fits:** one clearance number per feature (`bore_fit`, `key_fit`,
+  `body_fit`, `c3_fit`, `m3_nut_fit`, `plate_fit`, `foot_fit`,
+  `socket_fit`, `halo_fit`) instead of one shared `fit`.
+- **USB-C plug:** checkpoint (g) measures the plug's overmold before the
+  shell prints.
