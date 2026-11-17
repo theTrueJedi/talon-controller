@@ -49,6 +49,9 @@ pass checks-bbox
 expect_fail checks-fail-glow "glow_gap too large" -D glow_gap=12
 expect_fail checks-fail-cap  "cap covers LEDs"    -D cap_d=34
 expect_fail checks-fail-tab  "key tab on wire slot" -D 'key_tab_angles=[350]'
+expect_fail checks-fail-float "cap_float gap" -D cap_float=0.4
+expect_fail checks-fail-cbore "collar counterbore gap" -D collar_clr_h=-0.1
+expect_fail checks-fail-stem  "stem-to-nut gap" -D press_travel=1.1
 
 expect_ok   hood-render -D 'part="hood"'
 # ECHO: hood_top_z = 13.1, hood_od = 55.2, key_tab_len = 1.6

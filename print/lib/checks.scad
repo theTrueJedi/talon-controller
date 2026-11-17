@@ -42,3 +42,12 @@ assert(cap_roof >= cap_roof_min, str("cap roof over bore too thin: ", cap_roof))
 assert(stem_bot_z >= nut_top_z + 0.5, "cap stem hits the nut");
 assert(driver_od <= well_id - 1, "nut driver too wide for well");
 assert((nut_af + fit) / cos(30) <= driver_od - 2, "driver socket wall too thin");
+
+// Knob press: every Z gap between the cap and a fixed part must exceed the
+// switch travel, or the cap bottoms out before the switch clicks.
+assert(cap_float > press_travel,
+       str("cap_float gap (cap underside to hood top) <= press_travel: ", cap_float));
+assert(cap_cbore_top_z - collar_top_z > press_travel,
+       str("collar counterbore gap <= press_travel: ", cap_cbore_top_z - collar_top_z));
+assert(stem_bot_z - nut_top_z > press_travel,
+       str("stem-to-nut gap <= press_travel: ", stem_bot_z - nut_top_z));

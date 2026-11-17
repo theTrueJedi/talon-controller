@@ -9,9 +9,10 @@ module cap() {
                 else chamfered_disc();
             translate([0, 0, stem_bot_z]) cylinder(d = stem_od, h = cap_under_z - stem_bot_z + eps);
         }
-        // Collar counterbore: the stem bottom sits below the collar top.
+        // Collar counterbore: the stem bottom sits below the collar top; the
+        // ceiling clears the collar even at full knob press.
         translate([0, 0, stem_bot_z - eps])
-            cylinder(d = collar_d + shaft_clr, h = collar_top_z + collar_clr_h - stem_bot_z + eps);
+            cylinder(d = collar_d + shaft_clr, h = cap_cbore_top_z - stem_bot_z + eps);
         // Round clearance over the shaft's round section.
         translate([0, 0, stem_bot_z - eps])
             cylinder(d = shaft_d + shaft_clr, h = shaft_dsec_z - stem_bot_z + 2 * eps);

@@ -76,7 +76,8 @@ cap_over_shaft = 1.5;
 stem_od = 15;
 cap_chamfer = 0.8;                      // disc top and bottom edge chamfer
 shaft_clr = 0.6;                        // diametral clearance on the round shaft
-collar_clr_h = 0.5;                     // collar counterbore height above collar top
+press_travel = 0.5;                     // measured shaft->collar gap = switch travel
+collar_clr_h = 0.5;                     // counterbore margin above collar top + press_travel
 cap_roof_min = 1.2;                     // material over the blind bore
 knurl_n = 36;                           // flutes round a knurled grip
 knurl_flute_d = 1.2;                    // flute cutter diameter
@@ -123,6 +124,7 @@ nut_top_z    = floor_t + washer_t + nut_t;      // well floor, washer, nut on fa
 nut_corner   = nut_af / cos(30);
 stem_bot_z   = nut_top_z + 1;                   // cap stem bottom, 1 above the nut
 shaft_dsec_z = shaft_top_z - shaft_d_h;         // bottom of the shaft's D section
+cap_cbore_top_z = collar_top_z + press_travel + collar_clr_h;  // collar counterbore ceiling
 cap_bore_top_z = shaft_top_z + fit;             // blind end of the cap bore
 cap_roof     = cap_top_z - cap_bore_top_z;
 cap_h        = cap_top_z - stem_bot_z;
