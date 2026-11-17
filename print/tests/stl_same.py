@@ -31,6 +31,7 @@ def fingerprint(path):
 
 
 a, b = fingerprint(sys.argv[2]), fingerprint(sys.argv[3])
-# 1e-4 relative on volume/area; 0.001 mm on box and centroid.
-tol = [abs(a[0]) * 1e-4, abs(a[1]) * 1e-4] + [0.001] * 9
+# 1e-6 relative on volume/area (catches a 0.03 mm fit change on the shell;
+# triangulation noise is ~1e-8); 0.001 mm on box and centroid.
+tol = [abs(a[0]) * 1e-6, abs(a[1]) * 1e-6] + [0.001] * 9
 print("same" if all(abs(x - y) <= t for x, y, t in zip(a, b, tol)) else "diff")
