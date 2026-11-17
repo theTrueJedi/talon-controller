@@ -110,7 +110,7 @@ glow_tile_gap = 4;                      // bed spacing between glow tiles
 // encoder body's square top seats inside it, so the body can't turn.
 body_frame_h = 1.0;                     // frame height below the face underside
 body_frame_wall = 1.2;                  // frame wall thickness
-body_fit = 0.1;                         // frame inner side = body side + body_fit
+body_fit = 0.07;                        // frame inner side = body side + body_fit
 
 // ---- Fits ----
 // Printed-fit clearances, one per feature, so a checkpoint failure names the

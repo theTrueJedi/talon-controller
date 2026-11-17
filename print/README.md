@@ -250,7 +250,7 @@ and print the hood on that plate.
 **(f) The encoder body sits in the frame.** With the face disc on the
 collar (frame side down), the encoder body's square top drops into the
 frame with no wobble, and the disc sits flat on the body.
-- Will not go in, or the disc rocks: raise `body_fit` (now 0.1) by 0.1.
+- Will not go in, or the disc rocks: raise `body_fit` (now 0.07) by 0.1.
 - Goes in but the body turns or wobbles: lower `body_fit` by 0.1.
 
 **(g) Measure your USB-C plug.** With calipers, measure your USB-C cable's
