@@ -94,8 +94,8 @@ encoder body. There are no screw posts for the KY-040.
   rocking.
 - Anti-rotation: one printed pin hangs from the face underside into the
   KY-040 hole **farther from the shaft**. The nearer hole sits about 1 mm
-  from the encoder body's corner, too tight for a pin. Plus the
-  encoder-top lug, if present (open question).
+  from the encoder body's corner, too tight for a pin. The encoder top has
+  no lug (Evan, 2026-11-16): the collar rises straight from a flat square.
 
 **Stack along the shaft:**
 
@@ -170,7 +170,9 @@ than about 3.5 mm. The collar budget is face + floor + washer + nut = 5.5 of
 - 4 × M3 screws into the shell's nut traps. Countersunk or counterbored, so
   the heads sit flush.
 - **Weight pockets**, parameter count, default 4 (≈ 2 oz). Each is a
-  19.65 × 22 × 5.8 pocket plus 0.2 clearance, on the inside face.
+  19.65 × 22 × 5.8 pocket on the inside face. The weights' own 3M adhesive
+  backing holds them; the pocket size already allows for it (Evan's proven
+  cutout). No cover.
 - 4 shallow recesses for **TPU feet** (printed discs, parameter Ø/thickness).
   Prefer the front edge, where the press load lands.
 
@@ -216,12 +218,9 @@ written.
 - **USB-C cable plug body** width × height (the back-wall hole). The default
   is 12.5 × 7.5.
 - **Collar outer diameter** (M7 assumed).
-- **Lug on the encoder top?** A small tab beside the collar would need a
-  notch in the face underside. It could also replace the anti-rotation pin.
 - **Mounting hole positions along the board:** distance from the header-edge
   to each hole center. The photo estimate is about 4.5 and 21.5.
-- **How the weights stay put:** sealed in by a print pause, or a cover? This
-  sets the bottom plate's thickness.
+
 
 ## Risks
 
