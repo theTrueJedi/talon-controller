@@ -3,9 +3,9 @@
 // meets the shell's open rim at z = 0.
 // Expects lib/params.scad included first.
 
-// Shell footprint (plan corners rounded fillet_r), inset `fit`.
+// Shell footprint (plan corners rounded fillet_r), inset `plate_fit`.
 module plate_outline() {
-    offset(delta = -fit) offset(r = fillet_r) offset(delta = -fillet_r)
+    offset(delta = -plate_fit) offset(r = fillet_r) offset(delta = -fillet_r)
         translate([-box_w / 2, 0]) square(box_footprint);
 }
 

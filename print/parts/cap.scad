@@ -18,7 +18,7 @@ module cap() {
             cylinder(d = shaft_d + shaft_clr, h = shaft_dsec_z - stem_bot_z + 2 * eps);
         // Blind D bore over the D section; flat faces +Y.
         translate([0, 0, shaft_dsec_z])
-            linear_extrude(cap_bore_top_z - shaft_dsec_z) d_profile(shaft_d + fit, shaft_flat + fit);
+            linear_extrude(cap_bore_top_z - shaft_dsec_z) d_profile(shaft_d + bore_fit, shaft_flat + bore_fit);
     }
 }
 

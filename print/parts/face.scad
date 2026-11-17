@@ -39,7 +39,7 @@ module face_center_cuts() {
     // Key notches through the seat lip for the hood's tabs. Start inside the
     // hood-to-lip gap: the lip's faceted inner wall dips below lip_ir.
     for (a = key_tab_angles)
-        radial_box(a, hood_od / 2, [key_tab_w + 2 * fit, lip_or - hood_od / 2 + eps, lip_h + 2 * eps], -eps);
+        radial_box(a, hood_od / 2, [key_tab_w + 2 * key_fit, lip_or - hood_od / 2 + eps, lip_h + 2 * eps], -eps);
     // Ring wire slot, through the face under the ring band.
     radial_box(wire_slot_angle, wire_slot_r - wire_slot[1] / 2,
                [wire_slot[0], wire_slot[1], face_t + 2 * eps], -face_t - eps);
@@ -47,6 +47,6 @@ module face_center_cuts() {
     if (hood_screws)
         for (a = hood_screw_angles) rotate([0, 0, a]) translate([0, hood_screw_r, 0]) {
             translate([0, 0, -face_t - eps]) cylinder(d = m2_clear_d, h = face_t + 2 * eps);
-            translate([0, 0, -eps]) cylinder(d = m2_boss_d + 2 * fit, h = lip_h + 2 * eps);
+            translate([0, 0, -eps]) cylinder(d = m2_boss_d + 2 * key_fit, h = lip_h + 2 * eps);
         }
 }

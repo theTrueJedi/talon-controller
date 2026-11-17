@@ -20,7 +20,7 @@ ky_hole_from_long_edge = 2.5;           // hole centres in from the hole edge
 body = [12, 12, 6.5];                   // square body, centred on the shaft
 collar_d = 7;
 collar_h = 7;
-shaft_gap = 0.5;
+shaft_gap = 0.5;                        // measured shaft step to collar top = switch travel
 shaft_round_h = 5;
 shaft_d_h = 7;
 shaft_d = 6;
@@ -78,7 +78,7 @@ cap_over_shaft = 1.5;
 stem_od = 15;
 cap_chamfer = 0.8;                      // disc top and bottom edge chamfer
 shaft_clr = 0.6;                        // diametral clearance on the round shaft
-press_travel = 0.5;                     // measured shaft->collar gap = switch travel
+press_travel = shaft_gap;               // switch travel: the measured shaft gap
 collar_clr_h = 0.5;                     // counterbore margin above collar top + press_travel
 cap_roof_min = 1.2;                     // material over the blind bore
 knurl_n = 36;                           // flutes round a knurled grip
@@ -112,8 +112,17 @@ body_frame_wall = 1.2;                  // frame wall thickness
 body_fit = 0.2;                         // frame inner side = body side + body_fit
 
 // ---- Fits ----
-clr = 1;
-fit = 0.2;
+// Printed-fit clearances, one per feature, so a checkpoint failure names the
+// one number to change.
+clr = 1;                                // least inside clearance around bought parts
+bore_fit = 0.2;                         // cap D-bore over the shaft (and bore plug)
+key_fit = 0.2;                          // hood in its seat lip, key tab in its notch
+halo_fit = 0.2;                         // halo sleeve over the well wall (radial)
+c3_fit = 0.2;                           // C3-Zero slot: length (stop gap), width, height
+m3_nut_fit = 0.2;                       // M3 nut slot across flats
+plate_fit = 0.2;                        // bottom plate inset from the shell outline
+foot_fit = 0.2;                         // TPU foot recess (radial)
+socket_fit = 0.2;                       // nut driver hex socket across flats
 
 // ---- Box ----
 slope = 30;
@@ -136,6 +145,7 @@ boss_roof = 1.2;                        // boss material over the nut (screw-tip
 m3_detent = 0.25;                       // bumps narrowing the nut slot at the hex pocket mouth
 // C3-Zero cradle: pedestal, front stop, two flexing snap rails.
 c3_wall_slot = 1;                       // board's port edge sinks this far into the back wall
+c3_stop_gap_max = 0.3;                  // most board play between the wall slot and front stop
 c3_stop_t = 2;                          // front stop thickness (Y)
 c3_rail_t = 1.2;                        // snap rail thickness (X)
 c3_rail_gap = 0.6;                      // rail to pedestal gap, lets the rail flex
@@ -187,7 +197,7 @@ nut_corner   = nut_af / cos(30);
 stem_bot_z   = nut_top_z + 1;                   // cap stem bottom, 1 above the nut
 shaft_dsec_z = shaft_top_z - shaft_d_h;         // bottom of the shaft's D section
 cap_cbore_top_z = collar_top_z + press_travel + collar_clr_h;  // collar counterbore ceiling
-cap_bore_top_z = shaft_top_z + fit;             // blind end of the cap bore
+cap_bore_top_z = shaft_top_z + bore_fit;             // blind end of the cap bore
 cap_roof     = cap_top_z - cap_bore_top_z;
 cap_h        = cap_top_z - stem_bot_z;
 // Driver open end rests on the washer; shaft runs from there to the handle.
@@ -202,11 +212,11 @@ body_frame_bot_z = body_top_z - body_frame_h;   // frame bottom edge
 // ================= Derived (face and hood radii) =================
 hood_od = hood_id + 2 * hood_wall;
 hood_screw_r = ring_od / 2 + m2_boss_ring_clr + m2_boss_d / 2;  // M2 circle
-lip_ir = hood_od / 2 + fit;                     // lip inner radius
+lip_ir = hood_od / 2 + key_fit;                     // lip inner radius
 lip_or = lip_ir + lip_w;
 wire_slot_r = (ring_id + ring_od) / 4;          // centre of the ring band
 well_wall_or = well_id / 2 + well_wall;
-halo_ir = well_wall_or + fit;
+halo_ir = well_wall_or + halo_fit;
 
 // ================= Derived (test coupons) =================
 coupon_face_r = hood_od / 2 + coupon_face_margin;
@@ -256,7 +266,8 @@ ky_z_range = [ky_pcb_top_z - ky_pcb[2], body_top_z];
 front_h_ky = -((ky_y_range[0] - clr) * sin(slope) + (ky_z_range[0] - clr) * cos(slope))
            - face_half * sin(slope);
 boss_c = wall + boss_d / 2;                     // boss centre inset from the outer faces
-m3_nut_r = (m3_nut_af + fit) / 2 / cos(30);     // nut slot hex circumradius
+m3_slot_w = m3_nut_af + m3_nut_fit;            // nut slot across flats
+m3_nut_r = m3_slot_w / 2 / cos(30);            // nut slot hex circumradius
 boss_stack_h = boss_floor + m3_trap_h + boss_roof;
 front_h_boss = boss_stack_h + face_t / cos(slope) - (boss_c - m3_nut_r) * tan(slope);
 front_h = max(front_h_ky, front_h_boss);
@@ -271,7 +282,7 @@ ky_low_z = face_to_box([0, ky_y_range[0], ky_z_range[0]])[2];
 c3_z0 = wall + usb_plug_hole[1] / 2 - c3[2] - usb_port[1] / 2;
 c3_port_z = c3_z0 + c3[2] + usb_port[1] / 2;    // port (and plug hole) centre
 c3_top_z = c3_z0 + c3[2] + usb_port[1];
-c3_reach = (wall - c3_wall_slot) + c3[0] + fit + c3_stop_t;  // back outer face to stop front
+c3_reach = (wall - c3_wall_slot) + c3[0] + c3_fit + c3_stop_t;  // back outer face to stop front
 // Rear depth: the least flat top that keeps the cradle's front clr under the slope.
 rear_d_c3 = (c3_top_z + clr - front_h + face_t / cos(slope)) / tan(slope)
           + c3_reach - face_run;
@@ -279,11 +290,11 @@ rear_d = max(rear_d_c3, top_flat_min);
 box_d = face_run + rear_d;
 box_footprint = [box_w, box_d];                 // outer, plan corners rounded fillet_r
 c3_edge_y = box_d - wall + c3_wall_slot;        // board port edge, seated in the wall slot
-c3_slot_len = c3[0] + fit;
+c3_slot_len = c3[0] + c3_fit;
 c3_stop_y = c3_edge_y - c3_slot_len;            // front stop face
 c3_stop_gap = (c3_edge_y - c3[0]) - c3_stop_y;  // board inner edge to stop face
-c3_lip_z = c3_z0 + c3[2] + fit;                 // snap lip underside
-c3_slot_hw = (c3[1] + fit) / 2;                 // board slot half width (rail inner face)
+c3_lip_z = c3_z0 + c3[2] + c3_fit;                 // snap lip underside
+c3_slot_hw = (c3[1] + c3_fit) / 2;                 // board slot half width (rail inner face)
 c3_ped_hw = c3_slot_hw - c3_rail_gap;
 c3_cradle_hw = c3_slot_hw + c3_rail_t;          // rail outer face
 c3_cradle_y0 = c3_stop_y - c3_stop_t;           // front stop's front face
@@ -296,9 +307,9 @@ cable_ch_y0 = face_to_box([cable_ch_x, wire_slot_r * cos(wire_slot_angle), -face
 cable_ch_z0 = c3_port_z + usb_plug_hole[1] / 2 + wall;
 
 // ================= Derived (bottom plate, box frame) =================
-// The plate spans z = -plate_t .. 0, footprint inset `fit` from the shell's.
+// The plate spans z = -plate_t .. 0, footprint inset `plate_fit` from the shell's.
 plate_t = bottom_t + weight[2];
-bottom_footprint = [box_w - 2 * fit, box_d - 2 * fit, plate_t];
+bottom_footprint = [box_w - 2 * plate_fit, box_d - 2 * plate_fit, plate_t];
 m3_tip_z = boss_floor + m3_nut_t + m3_tip_over_nut;       // screw tip, above the plate top
 m3_cbore_h = plate_t - (m3_screw_l - m3_tip_z);           // counterbore depth from below
 m3_cbore_d = m3_head[0] + m3_cbore_clr;
@@ -310,7 +321,7 @@ function weight_row_x(r) = r == 0 ? weight_gap / 2 : c3_cradle_hw + clr;
 function weight_xy(i) = let(r = floor(i / 2), s = i % 2 == 0 ? -1 : 1, xi = weight_row_x(r))
     [s > 0 ? xi : -xi - weight[0], weight_y0 + r * (weight[1] + weight_gap)];
 // Feet: on the screw rows, just inboard of the counterbores.
-foot_recess_r = foot_d / 2 + fit;
-foot_y = fit + foot_edge + foot_recess_r;
+foot_recess_r = foot_d / 2 + foot_fit;
+foot_y = plate_fit + foot_edge + foot_recess_r;
 foot_x = boss_x - m3_cbore_d / 2 - clr - foot_recess_r;
 foot_xy = [[-foot_x, foot_y], [foot_x, foot_y], [-foot_x, box_d - foot_y], [foot_x, box_d - foot_y]];

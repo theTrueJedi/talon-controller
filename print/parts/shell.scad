@@ -91,11 +91,11 @@ module boss_cuts() {
         translate([0, 0, boss_floor]) difference() {
             union() {
                 rotate([0, 0, 90]) cylinder(r = m3_nut_r, h = m3_trap_h, $fn = 6);
-                translate([-(m3_nut_af + fit) / 2, s > 0 ? 0 : -(boss_d + 1), 0])
-                    cube([m3_nut_af + fit, boss_d + 1, m3_trap_h]);
+                translate([-m3_slot_w / 2, s > 0 ? 0 : -(boss_d + 1), 0])
+                    cube([m3_slot_w, boss_d + 1, m3_trap_h]);
             }
             for (x = [-1, 1])
-                translate([x * (m3_nut_af + fit) / 2, s * (m3_nut_r / 2 + m3_detent), -eps])
+                translate([x * m3_slot_w / 2, s * (m3_nut_r / 2 + m3_detent), -eps])
                     cylinder(r = m3_detent, h = m3_trap_h + 2 * eps, $fn = 16);
         }
     }
@@ -131,7 +131,7 @@ module c3_cradle() {
 module c3_cuts() {
     // Board edge slot into the back wall.
     translate([-c3_slot_hw, box_d - wall - eps, c3_z0])
-        cube([2 * c3_slot_hw, c3_edge_y - (box_d - wall) + eps, c3[2] + fit]);
+        cube([2 * c3_slot_hw, c3_edge_y - (box_d - wall) + eps, c3[2] + c3_fit]);
     // USB plug hole, rounded, centred on the port.
     translate([0, box_d + eps, c3_port_z]) rotate([90, 0, 0])
         linear_extrude(wall + 2 * eps)

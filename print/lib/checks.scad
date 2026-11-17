@@ -43,7 +43,7 @@ assert(halo_ir + halo_t <= ring_id / 2 - 1, "halo sleeve reaches the LEDs");
 assert(cap_roof >= cap_roof_min, str("cap roof over bore too thin: ", cap_roof));
 assert(stem_bot_z >= nut_top_z + 0.5, "cap stem hits the nut");
 assert(driver_od <= well_id - 1, "nut driver too wide for well");
-assert((nut_af + fit) / cos(30) <= driver_od - 2, "driver socket wall too thin");
+assert((nut_af + socket_fit) / cos(30) <= driver_od - 2, "driver socket wall too thin");
 
 // Knob press: every Z gap between the cap and a fixed part must exceed the
 // switch travel, or the cap bottoms out before the switch clicks.
@@ -68,10 +68,14 @@ assert(glow_digit_depth > 0, "glow digits must be embossed, not cut");
 assert(fillet_r > wall, "fillet_r must exceed wall (inside corners round at fillet_r - wall)");
 assert(face_half - fillet_r >= lip_or, "face_len too short: hood seat lip runs into the edge fillet");
 assert(c3_wall_slot < wall, "C3 wall slot cuts through the back wall: nothing stops a cable pull");
-assert(c3_stop_gap <= 0.3, str("C3 front stop too far from the board: ", c3_stop_gap));
+// The front stop must leave the board room to seat, and catch it before a
+// plug push slides its port edge out of the back-wall slot.
+assert(c3_stop_gap > 0 && c3_stop_gap <= c3_stop_gap_max && c3_stop_gap < c3_wall_slot,
+       str("C3 front stop gap ", c3_stop_gap, " (set by c3_fit) must be > 0, <= ", c3_stop_gap_max,
+           " and < c3_wall_slot ", c3_wall_slot));
 assert(ky_low_z >= c3_top_z + clr, str("KY-040 hangs onto the C3-Zero: ", ky_low_z));
 assert(top_flat_min > 0, "top_flat_min must be > 0 (flat-topped rear)");
-assert(m3_detent > 0 && m3_detent < (m3_nut_af + fit) / 4, str("nut detent must be > 0 and small: ", m3_detent));
+assert(m3_detent > 0 && m3_detent < m3_slot_w / 4, str("nut detent must be > 0 and small: ", m3_detent));
 
 // Bottom plate.
 assert(m3_cbore_h >= m3_head[1],
@@ -79,6 +83,7 @@ assert(m3_cbore_h >= m3_head[1],
 assert(plate_t - m3_cbore_h >= bottom_t,
        str("too little plate under the M3 head: screw too short (m3_screw_l ", m3_screw_l, ")"));
 assert(m3_tip_z <= boss_stack_h, "M3 screw tip hits the boss roof");
+assert(m3_nut_t < m3_trap_h, str("M3 nut thicker than its slot: m3_nut_t ", m3_nut_t, " >= m3_trap_h ", m3_trap_h));
 assert(bottom_t - foot_recess >= 1, "foot recess too close to the weight pocket floor");
 // Plan distance from a rectangle [[x0, y0], [x1, y1]] to a point.
 function rect_pt_dist(r, p) = norm([max(r[0][0] - p[0], 0, p[0] - r[1][0]),
@@ -88,16 +93,16 @@ function rects_gap(a, b) = max(a[0][0] - b[1][0], b[0][0] - a[1][0],
 c3_cradle_rect = [[-c3_cradle_hw, c3_cradle_y0], [c3_cradle_hw, box_d]];
 for (i = [0 : weight_count - 1]) {
     w = [weight_xy(i), weight_xy(i) + [weight[0], weight[1]]];
-    assert(w[0][0] >= -box_w / 2 + fit + wall && w[1][0] <= box_w / 2 - fit - wall &&
-           w[0][1] >= fit + wall && w[1][1] <= box_d - fit - wall,
+    assert(w[0][0] >= -box_w / 2 + plate_fit + wall && w[1][0] <= box_w / 2 - plate_fit - wall &&
+           w[0][1] >= plate_fit + wall && w[1][1] <= box_d - plate_fit - wall,
            str("weight pocket ", i, " too near the plate edge"));
     assert(rects_gap(w, c3_cradle_rect) >= clr, str("weight pocket ", i, " under the C3-Zero cradle"));
     for (p = boss_xy) assert(rect_pt_dist(w, p) >= m3_cbore_d / 2 + clr,
                              str("weight pocket ", i, " cuts an M3 counterbore"));
 }
 for (f = foot_xy) {
-    assert(abs(f[0]) + foot_recess_r + foot_edge <= box_w / 2 - fit &&
-           f[1] - foot_recess_r - foot_edge >= fit - 1e-6 && f[1] + foot_recess_r + foot_edge <= box_d - fit + 1e-6,
+    assert(abs(f[0]) + foot_recess_r + foot_edge <= box_w / 2 - plate_fit &&
+           f[1] - foot_recess_r - foot_edge >= plate_fit - 1e-6 && f[1] + foot_recess_r + foot_edge <= box_d - plate_fit + 1e-6,
            "foot recess too near the plate edge");
     for (p = boss_xy) assert(norm(f - p) >= foot_recess_r + m3_cbore_d / 2 + clr - 1e-6,
                              "foot recess cuts an M3 counterbore");

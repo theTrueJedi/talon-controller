@@ -11,9 +11,9 @@ module nut_driver() {
             translate([0, 0, driver_shaft_l])
                 knurled(hd, hh) cylinder(d = hd, h = hh);
         }
-        // Hex socket, nut_af + fit across flats.
+        // Hex socket, nut_af + socket_fit across flats.
         translate([0, 0, -eps])
-            cylinder(d = (nut_af + fit) / cos(30), h = socket_depth + eps, $fn = 6);
+            cylinder(d = (nut_af + socket_fit) / cos(30), h = socket_depth + eps, $fn = 6);
         // Through-bore slides over the collar and shaft.
         translate([0, 0, -eps])
             cylinder(d = collar_d + shaft_clr, h = driver_shaft_l + hh + 2 * eps);
@@ -49,11 +49,11 @@ module fit_coupon() {
 
 // The cap's blind D bore inside a short cylinder; own frame, roof at z = 0.
 module bore_plug() {
-    depth = shaft_d_h + fit;
+    depth = shaft_d_h + bore_fit;
     difference() {
         cylinder(d = coupon_plug_d, h = coupon_plug_h);
         translate([0, 0, coupon_plug_h - depth])
-            linear_extrude(depth + eps) d_profile(shaft_d + fit, shaft_flat + fit);
+            linear_extrude(depth + eps) d_profile(shaft_d + bore_fit, shaft_flat + bore_fit);
     }
 }
 
