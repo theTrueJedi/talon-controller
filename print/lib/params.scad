@@ -1,0 +1,98 @@
+// Talon controller housing parameters. All dims in mm, angles in degrees.
+//
+// FACE FRAME: origin on the shaft axis at the face top plane; +Z along the
+// shaft, out of the box; +Y up-slope toward the back; +X right, seen from front.
+
+// ---- Ring (LED ring PCB) ----
+ring_od = 50;
+ring_id = 37;
+ring_t  = 3.1;
+
+// ---- KY-040 board ----
+ky_pcb = [26, 19, 1.5];                 // [along header axis, across, thick]
+ky_shaft_from_header_edge = 14.5;
+ky_shaft_from_hole_edge   = 9;
+ky_hole_d = 3;
+ky_hole_x_from_header = [4.5, 21.5];    // hole centres from the header edge
+ky_hole_from_long_edge = 2.5;           // hole centres in from the hole edge
+
+// ---- Encoder ----
+body = [12, 12, 6.5];                   // square body, centred on the shaft
+collar_d = 7;
+collar_h = 7;
+shaft_gap = 0.5;
+shaft_round_h = 5;
+shaft_d_h = 7;
+shaft_d = 6;
+shaft_flat = 4.5;
+
+// ---- Nut and washer ----
+nut_af = 10;
+nut_t = 2;
+washer_od = 11.5;
+washer_t = 0.5;
+
+// ---- ESP32-C3-Zero ----
+c3 = [24, 18.05, 1.0];
+usb_port = [8.85, 3.15];
+usb_plug_hole = [12.5, 7.5];
+
+// ---- Weights ----
+weight = [19.65, 22, 5.8];
+weight_count = 4;
+
+// ---- Face and hood ----
+face_t = 1.5;
+floor_t = 1.5;
+hood_id = 52;
+hood_wall = 1.6;
+hood_top_t = 2;
+glow_gap = 8;
+well_id = 16;
+collar_hole_d = 7.4;
+
+// ---- Cap ----
+cap_d = 28;
+cap_float = 1.5;
+cap_over_shaft = 1.5;
+stem_od = 15;
+
+// ---- Fits and pins ----
+pin_d = 2.6;
+clr = 1;
+fit = 0.2;
+
+// ---- Box ----
+slope = 30;
+face_len = 72;
+wall = 2;
+
+// ---- Options ----
+hood_screws = false;
+halo_block = false;
+key_tab_angles = [90, 270];             // about +Z; 0 = +Y
+wire_slot_angle = 0;                    // about +Z; 0 = +Y
+
+// ================= Derived (face frame Z) =================
+body_top_z   = -face_t;                         // encoder body top meets face underside
+collar_top_z = body_top_z + collar_h;
+shaft_top_z  = collar_top_z + shaft_gap + shaft_round_h + shaft_d_h;
+ring_top_z   = ring_t;                          // ring sits on face top
+hood_under_z = ring_top_z + glow_gap;
+hood_top_z   = hood_under_z + hood_top_t;
+cap_under_z  = hood_top_z + cap_float;
+cap_top_z    = shaft_top_z + cap_over_shaft;
+nut_top_z    = floor_t + washer_t + nut_t;      // well floor, washer, nut on face top
+nut_corner   = nut_af / cos(30);
+// glow_gap at which hood_top_z == cap_top_z - 3.5 - cap_float
+max_glow_gap = cap_top_z - 3.5 - cap_float - ring_top_z - hood_top_t;
+
+// ================= Derived (face frame XY) =================
+// KY-040 orientation: header edge toward +Y, hole (long) edge toward +X.
+// Board-local u runs from the header edge; the shaft is at u = 14.5.
+// Far hole (u = 4.5) sits 10 toward +Y; holes sit 9 - 2.5 = 6.5 toward +X.
+ky_hole_x = ky_shaft_from_hole_edge - ky_hole_from_long_edge;
+ky_far_hole_xy  = [ky_hole_x, ky_shaft_from_header_edge - ky_hole_x_from_header[0]];
+ky_near_hole_xy = [ky_hole_x, ky_shaft_from_header_edge - ky_hole_x_from_header[1]];
+// Encoder body corner nearest the far hole (body centred on shaft).
+ky_far_body_corner_xy = [body[0] / 2, body[1] / 2];
