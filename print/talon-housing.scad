@@ -10,6 +10,18 @@ include <parts/bottom.scad>
 include <parts/assembly.scad>
 
 part = "checks";
+probe = "";                       // part="shell_probe" only: which box (tests)
+
+// Test-only: boxes the shell must miss, [[x0, y0, z0], [x1, y1, z1]] in the box frame.
+function shell_probe_box(name) =
+    // Rim strips inside the back-wall cuts: the plate comes off downward.
+    name == "c3_notch" ? [[c3_x - usb_plug_hole[0] / 2 + 0.1, box_d - wall + 0.05, 0],
+                          [c3_x + usb_plug_hole[0] / 2 - 0.1, box_d - 0.05, 0.5]] :
+    name == "c3_slot"  ? [[c3_hdr_recess_x[0] + 0.1, box_d - wall + 0.05, 0],
+                          [c3_x + c3_slot_hw - 0.1, c3_edge_y - 0.05, 0.5]] :
+    // The cradle's whole volume: it belongs to the plate.
+    name == "c3_cradle" ? [[c3_x - c3_cradle_hw, c3_cradle_y0, 0], [c3_x + c3_cradle_hw, c3_cradle_y1, c3_top_h]] :
+    assert(false, str("unknown probe: ", name));
 
 if (part == "checks") cube(1);   // checks ran above; emit something exportable
 else if (part == "hood") {
@@ -66,6 +78,8 @@ else if (part == "c3_clip") {
     // Print on its front face: bar and legs on the bed, the tongue rising from them.
     translate([0, 0, -c3_clip_y0]) rotate([90, 0, 0]) c3_clip();
 }
+else if (part == "shell_probe")                         // must render empty
+    let(b = shell_probe_box(probe)) intersection() { shell(); translate(b[0]) cube(b[1] - b[0]); }
 else if (part == "foot") foot();                       // print flat; TPU, x4
 else if (part == "assembly") assembly();               // preview, box frame
 else if (part == "interference") interference();       // must render empty

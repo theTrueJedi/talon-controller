@@ -86,6 +86,8 @@ assert(c3_clip_barb_z > c3_fit, "C3 clip notch runs off the rail bottom");
 assert(c3_clip_w < 2 * (c3[1] / 2 - c3_groove[0]),
        "C3 clip tongue reaches the pin rows (keep it inside the groove-free middle)");
 assert(c3_clip_top_z <= c3_top_z, "C3 clip stands taller than the USB port (the box height ignores it)");
+assert(c3_hdr_y0 + c3_hdr_n * hdr_pitch <= c3[0], str("C3 header longer than the board: ", c3_hdr_n, " pins"));
+assert(ky_hdr_n * hdr_pitch <= ky_pcb[1], str("KY-040 header wider than the board: ", ky_hdr_n, " pins"));
 assert(ky_low_z >= c3_top_z + clr, str("KY-040 hangs onto the C3-Zero: ", ky_low_z));
 assert(top_flat_min > 0, "top_flat_min must be > 0 (flat-topped rear)");
 assert(m3_detent > 0 && m3_detent < m3_slot_w / 4, str("nut detent must be > 0 and small: ", m3_detent));

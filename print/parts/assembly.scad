@@ -29,6 +29,14 @@ module c3_ghost() {                                                       // C3 
     translate([-usb_port[0] / 2, 0, c3[2]]) cube([usb_port[0], c3_port_len, usb_port[1]]);
 }
 
+// Header plastic on the board top along the wired pin row, plus one envelope
+// for the mated plugs and their wire room, out past the board's edge.
+module c3_hdr_ghost() {                                                   // C3 frame
+    l = c3_hdr_n * hdr_pitch;
+    translate([c3_hdr_x - hdr_pitch / 2, c3_hdr_y0, c3[2]]) cube([hdr_pitch, l, hdr_body_h]);
+    translate([c3[1] / 2, c3_hdr_y0, c3_hdr_env_z[0]]) cube([plug_env_len, l, plug[1]]);
+}
+
 module washer_ghost() tube(collar_d / 2, washer_od / 2, floor_t, floor_t + washer_t);   // face frame
 
 module nut_ghost() {                                                      // face frame
@@ -57,8 +65,8 @@ module feet_placed() {                                                    // box
 
 // ---- Items, placed in the box frame ----
 // 0 shell, 1 bottom, 2 hood, 3 cap, 4 feet, 5 ring, 6 KY-040, 7 C3-Zero,
-// 8 washer, 9 nut, 10 screws, 11 weights, 12 C3 clip.
-item_n = 13;
+// 8 washer, 9 nut, 10 screws, 11 weights, 12 C3 clip, 13 C3 header and plugs.
+item_n = 14;
 module item(i) {
     if (i == 0) shell();
     else if (i == 1) bottom();
@@ -73,6 +81,7 @@ module item(i) {
     else if (i == 10) screws_ghost();
     else if (i == 11) weights_ghost();
     else if (i == 12) translate([c3_x, 0, 0]) c3_clip();
+    else if (i == 13) c3_pose() c3_hdr_ghost();
 }
 
 module assembly() {
@@ -87,6 +96,7 @@ module assembly() {
     color("silver") { item(8); item(9); item(10); }
     color("gold") item(11);
     color("dimgray") item(12);
+    color("orange") item(13);
 }
 
 // ---- Interference ----
@@ -102,6 +112,7 @@ interference_contacts = [
     [1, 7, [0, 0, eps]],                // C3-Zero on the plate cradle's pedestal
     [1, 10, [0, 0, -eps]],              // screw head against its counterbore ceiling
     [1, 12, [0, eps, eps]],             // C3 clip bar on the rail/stop tops, tongue against the stop face
+    [7, 13, [0, 0, eps]],               // C3 header plastic on the board top
     [2, 8, face_n * eps],               // washer on the well floor
     [8, 9, face_n * eps],               // nut on the washer
 ];

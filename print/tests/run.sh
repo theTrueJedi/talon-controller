@@ -66,6 +66,23 @@ expect_fail() {
     pass "$name"
 }
 
+# expect_empty <name> [args...]: renders clean (no ERROR/WARNING) to nothing.
+expect_empty() {
+    local name="$1"; shift
+    render "$name" "$@"
+    case "$err" in *ERROR*|*WARNING*) fail "$name" "render aborted or warned";; esac
+    case "$err" in *"top level object is empty"*) ;; *) fail "$name" "not empty (rc $rc)";; esac
+    pass "$name"
+}
+# expect_solid <name> [args...]: renders clean to something (a caught break).
+expect_solid() {
+    local name="$1"; shift
+    render "$name" "$@"
+    case "$err" in *ERROR*|*WARNING*|*"top level object is empty"*) fail "$name" "break not caught";; esac
+    [ "$rc" -eq 0 ] || fail "$name" "exit $rc"
+    pass "$name"
+}
+
 expect_ok   checks-pass -D 'part="checks"'
 bbox="$(python3 "$here/stl_bbox.py" "$out/checks-pass.stl")"
 [ "$bbox" = "1.00 1.00 1.00" ] || fail checks-bbox "got '$bbox'"
@@ -223,14 +240,19 @@ gap="$(echo "$err" | sed -n 's/^ECHO: c3_stop_gap = \([-0-9.e]*\)$/\1/p' | head 
 [ -n "$gap" ] || fail c3-stop "no c3_stop_gap echo"
 python3 -c "import sys; g = float(sys.argv[1]); assert 0 <= g <= 0.3" "$gap" || fail c3-stop "gap $gap"
 pass c3-stop
-# Plate removal path: the back-wall board slot and USB notch open down to the rim.
-z0="$(echo "$err" | sed -n 's/^ECHO: c3_back_cuts_z0 = \([-0-9.e]*\)$/\1/p' | head -1)"
-[ -n "$z0" ] || fail c3-notch-open "no c3_back_cuts_z0 echo"
-python3 -c "import sys; assert float(sys.argv[1]) <= 0" "$z0" || fail c3-notch-open "z0 $z0"
-pass c3-notch-open
-# The C3 cradle lives on the bottom plate: the shell stays one body wherever the
-# board sits (the default render is shell-layout above). Centred, the BR weight
-# pocket moves off the TL one's row overlap.
+# Plate removal path: the back-wall board slot (with the header plug recess)
+# and the USB notch open down to the rim. A thin box at the rim inside each cut
+# must miss the shell; closing the cuts above the rim must make it hit.
+for pr in c3_notch c3_slot; do
+    expect_empty "shell-probe-$pr" -D 'part="shell_probe"' -D "probe=\"$pr\""
+    expect_solid "shell-probe-$pr-detects" -D 'part="shell_probe"' -D "probe=\"$pr\"" -D c3_back_cuts_z0=1
+done
+# The C3 cradle lives on the bottom plate: nothing of the shell over its plan
+# area, and the shell stays one body wherever the board sits (the default
+# render is shell-layout above). Centred, the BR weight pocket moves off the
+# TL one's row overlap.
+expect_empty shell-no-cradle-probe -D 'part="shell_probe"' -D 'probe="c3_cradle"'
+expect_solid shell-no-cradle-probe-detects -D 'part="shell_probe"' -D 'probe="c3_cradle"' -D 'c3_cradle_y1=72.3'
 expect_ok   shell-no-cradle -D 'part="shell"' -D c3_x=0 -D 'weight_pockets=[[-22.85,3,0],[3.2,3,0],[-22.85,46,0],[3.2,46,0]]'
 stl_check "$out/shell-no-cradle.stl" 1 $(echo "$fp" | cut -d' ' -f1) $(echo "$hw" | cut -d' ' -f1) $(echo "$fp" | cut -d' ' -f2) \
     || fail shell-no-cradle "c3_x=0: not one body"
@@ -285,12 +307,17 @@ case "$err" in *"top level object is empty"*) pass interference-empty;;
     *) fail interference-empty "parts or ghosts collide (rc $rc)";; esac
 # Deliberate breaks: collar (7) through a 6.5 face/hood hole; cap bore tighter
 # than the shaft; body frame smaller than the encoder body; C3 clip legs
-# moved into the rails.
-for brk in collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10; do
-    render "interference-detects-$brk" -D 'part="interference"' -D "$brk"
-    case "$err" in *ERROR*|*"top level object is empty"*) fail "interference-detects-$brk" "collision not caught";; esac
-    [ "$rc" -eq 0 ] || fail "interference-detects-$brk" "exit $rc"
-    pass "interference-detects-$brk"
+# moved into the rails; C3 header plug wires too long (they reach the -X side
+# wall); C3 centred (its plugs reach the rear-left boss and wall).
+nocradle_w='weight_pockets=[[-22.85,3,0],[3.2,3,0],[-22.85,46,0],[3.2,46,0]]'
+for brk in collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10 plug_wire_room=40 "c3_x=0;$nocradle_w"; do
+    name="interference-detects-${brk%%;*}"
+    render "$name" -D 'part="interference"' -D "$brk"
+    case "$err" in *ERROR*|*"top level object is empty"*) fail "$name" "collision not caught";; esac
+    [ "$rc" -eq 0 ] || fail "$name" "exit $rc"
+    pass "$name"
 done
+expect_fail checks-fail-c3-hdr "C3 header longer than the board" -D c3_hdr_n=10
+expect_fail checks-fail-ky-hdr "KY-040 header wider than the board" -D ky_hdr_n=8
 # 12 sits flush in the 10 mm plate; 16 sticks out.
 expect_fail checks-fail-screw "M3 head" -D m3_screw_l=16

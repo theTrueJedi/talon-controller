@@ -159,13 +159,21 @@ module c3_clip() {
     translate([-c3_clip_w / 2, c3_stop_y - eps, c3_lip_z]) cube([c3_clip_w, c3_lip_len + eps, c3_clip_top_z - c3_lip_z]);
 }
 
-// Back-wall cuts for the board, at c3_x. Both open below the rim (z
+// Back-wall cuts for the board, at c3_x. All open below the rim (z
 // c3_back_cuts_z0) so the board on the plate slides straight up into them.
-c3_back_cuts_z0 = -eps;
-module c3_cuts() translate([c3_x, 0, 0]) {
+module c3_cuts() {
+    slot_y = box_d - wall - eps;
+    slot_d = c3_edge_y - (box_d - wall) + eps;
+    // Header plug recess: the slot widened toward -X over the header and its
+    // plugs' X span, up to the plugs' top, same depth.
+    translate([c3_hdr_recess_x[0], slot_y, c3_back_cuts_z0])
+        cube([c3_hdr_recess_x[1] - c3_hdr_recess_x[0], slot_d, c3_hdr_recess_z1 - c3_back_cuts_z0]);
+    translate([c3_x, 0, 0]) c3_board_cuts(slot_y, slot_d);
+}
+module c3_board_cuts(slot_y, slot_d) {
     // Board edge slot into the back wall.
-    translate([-c3_slot_hw, box_d - wall - eps, c3_back_cuts_z0])
-        cube([2 * c3_slot_hw, c3_edge_y - (box_d - wall) + eps, c3_z0 + c3[2] + c3_fit - c3_back_cuts_z0]);
+    translate([-c3_slot_hw, slot_y, c3_back_cuts_z0])
+        cube([2 * c3_slot_hw, slot_d, c3_z0 + c3[2] + c3_fit - c3_back_cuts_z0]);
     // USB plug notch: rounded top corners, centred on the port, open at the rim.
     translate([0, box_d + eps, 0]) rotate([90, 0, 0])
         linear_extrude(wall + 2 * eps) {

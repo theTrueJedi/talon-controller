@@ -38,6 +38,20 @@ usb_port = [8.85, 3.15];
 usb_plug_hole = [12.5, 7.5];
 c3_port_len = 7.35;                     // USB-C receptacle depth (assembly ghost only)
 
+// ---- Header pins and jumper plugs (C3-Zero and KY-040) ----
+// Right-angle headers with F jumper plugs on them; typical values until Evan
+// measures (spec, "Open"). Each side's mated plugs plus wire room are one
+// envelope box in the assembly's interference check.
+hdr_pitch = 2.54;
+hdr_body_h = 2.5;                       // plastic height on the board
+hdr_leg_z = 2.5;                        // right-angle leg height above the board top
+hdr_leg_out = 6;                        // leg past the plastic
+plug = [2.54, 2.54, 14];                // F jumper housing [w, h, length]
+plug_wire_room = 5;                     // wire past the housing before it bends
+c3_hdr_n = 9;
+ky_hdr_n = 5;
+plug_env_len = hdr_leg_out + plug[2] + plug_wire_room;    // plug envelope length past the board / PCB edge
+
 // ---- Weights ----
 weight = [19.65, 22, 5.8];
 weight_gap = 2;                         // least gap between weight pockets
@@ -316,7 +330,10 @@ c3_slot_hw = (c3[1] + c3_fit) / 2;                 // board slot half width (rai
 c3_ped_hw = c3_slot_hw - c3_rail_gap;
 c3_cradle_hw = c3_slot_hw + c3_rail_t;          // rail outer face
 c3_cradle_y0 = c3_stop_y - c3_stop_t;           // front stop's front face
-c3_cradle_y1 = box_d - wall - c3_fit;           // cradle back end: c3_fit off the back wall (separate parts)
+// Cradle back end: c3_fit off the back wall (separate parts). The board's last
+// ~1.2 mm (the c3_fit gap plus the open-bottom wall slot) is unsupported on
+// purpose: the slot is open at the rim so the plate can come off. Do not "fix" it.
+c3_cradle_y1 = box_d - wall - c3_fit;
 c3_top_h = c3_lip_z + c3_lip_h;                 // rail and stop top; the clip bar rests on it
 // C3 clip (box frame): a bar across the rail tops over the stop, legs down the
 // rails' outer faces with barbs into rail notches, tongue over the board.
@@ -329,6 +346,18 @@ c3_clip_bar_y1 = c3_stop_y;                     // bar and legs end at the stop 
 // Inner-end corner holes (GPIO5 / GPIO6), plan [x, y] in the box frame.
 c3_corner_holes = [for (s = [-1, 1]) [s * (c3[1] / 2 - c3_hole_edge), c3_edge_y - c3[0] + c3_hole_end]];
 c3_clip_top_z = c3_top_h + c3_clip_t;
+// Back-wall cuts (board slot, plug recess, USB notch) start below the rim, so
+// the board on the plate slides straight up into them.
+c3_back_cuts_z0 = -eps;
+// Header plugs. C3 frame: wired pin row on +X (box -X as installed), pin i at
+// y = c3_hole_end + i * hdr_pitch; the plugs run out past the board's edge.
+c3_hdr_x = c3[1] / 2 - c3_hole_edge;                      // pin row, C3 frame x
+c3_hdr_y0 = c3_hole_end - hdr_pitch / 2;                  // header (and envelope) start, C3 frame y
+c3_hdr_env_z = [c3[2] + hdr_leg_z - plug[1] / 2, c3[2] + hdr_leg_z + plug[1] / 2];  // plug envelope, C3 frame z
+// The 5V plug and the header end overhang the port edge into the back wall;
+// a recess c3_wall_slot deep, open at the rim, clears them (box frame x, top z).
+c3_hdr_recess_x = [c3_x - c3[1] / 2 - plug_env_len - c3_fit, c3_x - (c3_hdr_x - hdr_pitch / 2) + c3_fit];
+c3_hdr_recess_z1 = c3_z0 + c3_hdr_env_z[1] + c3_fit;
 c3_clip_size = [2 * c3_clip_hw, c3_clip_y1 - c3_clip_y0, c3_clip_top_z - c3_clip_barb_z];
 boss_x = box_w / 2 - boss_c;
 boss_xy = [[-boss_x, boss_c], [boss_x, boss_c],
