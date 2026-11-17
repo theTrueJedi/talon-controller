@@ -16,7 +16,13 @@ later.
     approved design.
   - `docs/ring-design.json`: Evan's per-mode ring looks.
 
-## Status (2026-11-16)
+## Status (2026-11-17)
+
+**Housing model built** in `print/` (branch `housing`): parametric OpenSCAD,
+tests via `bash print/tests/run.sh`, STLs in `print/stl/`. Next: Evan prints
+the fit and glow coupons, runs checkpoint (a)-(f) in `print/README.md`, and
+solders the ring. Housing spec:
+`docs/superpowers/specs/2026-11-16-talon-housing-design.md`.
 
 **Design approved.** Next step is hardware prep, before any code:
 1. Evan finds his parts. Confirmed 2026-11-16: ring, HY2.0-4P cables, F–F jumpers, KY-040, C3-Zero.

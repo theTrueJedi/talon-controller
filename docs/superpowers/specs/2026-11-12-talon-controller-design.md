@@ -94,14 +94,15 @@ ring stays well under USB current limits.
 | From | To |
 |---|---|
 | Ring 5V / GND | C3-Zero 5V / GND |
-| Ring DIN | C3-Zero GPIO7 via the 330 Ω series resistor, if it can be inserted without solder; otherwise direct |
-| KY-040 CLK / DT / SW | C3-Zero GPIO4 / GPIO5 / GPIO6 |
-| KY-040 + / GND | C3-Zero 3V3 / GND |
+| Ring DIN | C3-Zero GPIO0 via the 330 Ω series resistor, if it can be inserted without solder; otherwise direct |
+| KY-040 CLK / DT / SW | C3-Zero GPIO3 / GPIO4 / GPIO5 |
+| KY-040 + | C3-Zero 3V3 |
+| KY-040 GND | C3-Zero GND, shared with the ring GND (one GND hole: a doubled jumper or a splice) |
 
-**Pins to avoid on the C3-Zero:** GPIO10 (onboard WS2812 status LED; free to
-use as a debug light), GPIO9 (BOOT button), GPIO2 and GPIO8 (ESP32-C3 boot
-strapping), GPIO18/19 (USB). Confirm the pad layout against Waveshare's
-pinout image before soldering.
+**Pins to avoid on the C3-Zero:** GPIO2, GPIO8, GPIO9 (boot strapping; GPIO9
+is the BOOT button), GPIO10 (onboard WS2812 status LED; free to use as a
+debug light), GPIO18/19 (USB). Confirm the pad layout against Waveshare's
+pinout image before soldering. (Pin map updated 2026-11-17 with the housing.)
 
 Use female–female jumpers between the header pins. Optionally put a 1000 µF
 capacitor across the ring's power.
@@ -242,13 +243,9 @@ cases are my calls):**
 
 ### Housing (Evan, 3D-printed, Bambu)
 
-- Knob shaft through the center of the ring.
-- A custom cap: a narrow stem through the ring opening, widening to a graspable
-  disc above it.
-- Print the disc in translucent PETG so it acts as the diffuser. Use an opaque
-  rim so light exits the top and sides.
-- Measure first: the ring's inner and outer diameter, and the cap and shaft
-  dimensions.
+Superseded by the housing design:
+`docs/superpowers/specs/2026-11-16-talon-housing-design.md`. The parametric
+model and print notes live in `print/` (see `print/README.md`).
 
 ### Ring looks (Evan's playground design, 2026-11-12)
 

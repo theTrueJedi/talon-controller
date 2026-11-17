@@ -12,7 +12,7 @@ render (and says why) if a change would make parts collide or stop fitting.
 | `lib/params.scad`      | Every dimension, with a comment saying what it is    |
 | `lib/checks.scad`      | Fit and collision checks that stop a bad render      |
 | `parts/*.scad`         | The parts themselves                                 |
-| `stl/`                 | Ready-to-slice STLs (test coupons and nut driver)    |
+| `stl/`                 | Ready-to-slice STLs, one per part (binary STL)       |
 | `tests/run.sh`         | Renders everything and checks the results            |
 
 ## How to render
@@ -28,26 +28,76 @@ Render one part to an STL:
 Swap `fit_test` for any part name below. Add more `-D` options to try a
 change without editing the file, e.g. `-D glow_gap=9`.
 
+Re-export every STL in `stl/` after changing a number:
+
+    bash print/tests/run.sh export
+
+Two more `part=` values are for checking, not printing: `assembly` shows
+every part in place with stand-ins for the bought parts (ring, knob board,
+C3-Zero, nut, washer, screws, weights), and `interference` shows any
+place two of them overlap. `interference` must come out empty; the test
+run checks that.
+
 ## Parts, material, and how each lies on the bed
 
 The STLs already come out in the orientation listed. Import into Bambu
 Studio and do not rotate them. None of these should need supports.
 
-| Part (`part=`) | Material                 | Orientation on the bed                        |
-|----------------|--------------------------|-----------------------------------------------|
-| `fit_test`     | opaque PLA or PETG       | five pieces side by side, see below           |
-| `glow_test`    | translucent PETG         | standing on its legs, steps up                |
-| `nut_driver`   | opaque PLA or PETG       | handle down, socket up                        |
-| `hood`         | translucent PETG         | upside down: top face on the bed              |
-| `cap`          | opaque PLA or PETG       | upside down: top face on the bed              |
-| `halo`         | opaque PLA or PETG       | either end down (only with `halo_block=true`) |
-| shell, bottom  | opaque PLA or PETG       | (later task)                                  |
-| feet           | TPU                      | (later task)                                  |
+| Part (`part=`) | Material           | Qty | Orientation on the bed                 | Supports |
+|----------------|--------------------|-----|----------------------------------------|----------|
+| `fit_test`     | opaque PLA or PETG | 1   | five pieces side by side, see below    | none     |
+| `glow_test`    | translucent PETG   | 1   | standing on its legs, steps up         | none     |
+| `nut_driver`   | opaque PLA or PETG | 1   | handle down, socket up                 | none     |
+| `shell`        | opaque PLA or PETG | 1   | on its back wall, open bottom sideways | none     |
+| `hood`         | translucent PETG   | 1   | upside down: top face on the bed       | none     |
+| `cap`          | opaque PLA or PETG | 1   | upside down: top face on the bed       | none     |
+| `bottom`       | opaque PLA or PETG | 1   | outside face down, pockets up          | none     |
+| `foot`         | TPU                | 4   | flat                                   | none     |
+| `halo`         | opaque PLA or PETG | 1   | either end down (only with `halo_block=true`) | none |
+
+"None" means the part was shaped to print without supports: the shell's
+inside front is a 45 degree ramp and its front screw posts are teardrops;
+the bottom plate's screw counterbores are short bridges. Still glance at
+Bambu Studio's overhang preview before printing the shell.
 
 The hood is the only part the light shines through, so it is the only big
 part in translucent PETG. Everything else is opaque so light does not leak.
 
 The USB-C unplug pull is taken by the back wall's slot at the board's corners, so unplug by the plug body, not the cable.
+
+## Bought parts for the box
+
+- **4x M3 x 10 socket-head screws** (from the M3 kit) and **4x M3 hex nuts**.
+  The screws come up through the bottom plate into nuts held in the shell's
+  corner posts. The counterbores are sized for 10 mm: a 12 mm screw will not
+  fit (the model refuses it), and an 8 mm one needs `m3_screw_l = 8` and a
+  re-export.
+- **4x weights**, 19.65 x 22 x 5.8 mm with their sticky backing. The pockets
+  are exactly that size, no extra room.
+
+## Assembly order
+
+1. **Solder** header pins on the C3-Zero (only the holes in use) and the
+   ring's wires. Wire map: `docs/superpowers/specs/2026-11-12-talon-controller-design.md`,
+   "Hardware wiring".
+2. **Ring.** Feed the ring's wires down the slot in the face and lay the
+   ring flat on the face. It goes first: the hood covers it, and the nut in
+   step 3 clamps the hood down.
+3. **Hood and knob board.** Set the hood over the ring, its tabs in the
+   lip's notches. From inside the shell, push the encoder's threaded collar
+   up through the face and the hood's well floor; the little pin on the
+   face's underside drops into the board's far mounting hole. Add the metal
+   washer and the nut inside the well and snug it with the nut driver. Do
+   not crank it.
+4. **C3-Zero.** Tilt the board, slide its USB end into the slot in the back
+   wall, and press the other end down past the two snap lips.
+5. **Wires.** Run the ring wires along the channel under the face and top
+   and down the back wall; plug the jumpers onto the C3-Zero.
+6. **Push the cap** onto the shaft (flat side matches).
+7. **Bottom plate.** Stick the weights in their pockets. Slide an M3 nut
+   into each corner post's side slot until it clicks past the bumps. Set the
+   plate on, then drive the four screws up from below. Snug, not tight.
+8. **Feet.** Glue a TPU foot into each round recess on the underside.
 
 ## Test coupons (print these first)
 
