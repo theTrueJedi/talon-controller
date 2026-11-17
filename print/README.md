@@ -12,7 +12,7 @@ render (and says why) if a change would make parts collide or stop fitting.
 | `lib/params.scad`      | Every dimension, with a comment saying what it is    |
 | `lib/checks.scad`      | Fit and collision checks that stop a bad render      |
 | `parts/*.scad`         | The parts themselves                                 |
-| `stl/`                 | Ready-to-slice STLs, one per part (binary STL)       |
+| `stl/`                 | Ready-to-slice STLs, `<part>_vN.stl`; print the highest N |
 | `tests/run.sh`         | Renders everything and checks the results            |
 
 ## How to render
@@ -31,6 +31,10 @@ change without editing the file, e.g. `-D glow_gap=9`.
 Re-export every STL in `stl/` after changing a number:
 
     bash print/tests/run.sh export
+
+Each part is saved as `stl/<part>_vN.stl`. A part gets a new number only
+when its shape changed; old versions stay, so you can tell which file a
+print came from. Always print the highest number.
 
 Two more `part=` values are for checking, not printing: `assembly` shows
 every part in place with stand-ins for the bought parts (ring, knob board,
@@ -161,7 +165,7 @@ the box never rests on it.
 Two small, cheap prints that test the fits that are hard to get right on
 paper, before you spend hours on the full housing.
 
-**Fit coupon** (`stl/fit_test.stl`, opaque), five pieces in a row. The real
+**Fit coupon** (`stl/fit_test_vN.stl`, opaque), five pieces in a row. The real
 face is split in two here so each half prints flat with no supports:
 
 1. **Lip ring**: the outer part of the face, with the raised seat lip and
@@ -178,7 +182,7 @@ face is split in two here so each half prints flat with no supports:
 5. **Hood segment**: a 40-degree slice of the hood wall with one key tab,
    printed upside down like the real hood.
 
-**Glow coupon** (`stl/glow_test.stl`, translucent PETG): four small tiles.
+**Glow coupon** (`stl/glow_test_vN.stl`, translucent PETG): four small tiles.
 Each tile is a face with two legs and holds its face 5, 8, 10 or 12 mm
 above the ring's LEDs (the number is on a leg). They print face down, like
 the hood, so the face you look at gets the same bed finish the hood will.

@@ -1,2 +1,4 @@
 .superpowers/
 .DS_Store
+*.3mf
+__pycache__/

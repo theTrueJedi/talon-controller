@@ -59,7 +59,7 @@ lip_w = 1.6;
 // in notches cut through the seat lip.
 key_tab_w = 2;                          // tangential
 key_tab_len = lip_w;                    // radial; stays inside the lip OD
-wire_slot = [8, 3];                     // [tangential, radial], under the ring band
+wire_slot = [11, 5.5];                  // [tangential, radial], under the ring band: fits 4 pads, joints and wire bends
 // M2 fallback (hood_screws): clearance through the face, pilot in a boss
 // grown outward from the hood outer wall (notched through the seat lip).
 m2_clear_d = 2.4;

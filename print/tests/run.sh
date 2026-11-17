@@ -12,14 +12,27 @@ else
     OPENSCAD=/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD
 fi
 
-# `run.sh export`: write every part to print/stl/<part>.stl (binary STL) and stop.
+# `run.sh export`: render every part; save it as print/stl/<part>_v<N+1>.stl only
+# when its geometry differs from the newest <part>_v<N>.stl. Old revisions stay.
 if [ "${1:-}" = export ]; then
+    stl="$here/../stl"
     for p in shell hood cap bottom foot nut_driver fit_test glow_test halo c3_clip; do
         extra=(); [ "$p" = halo ] && extra=(-D halo_block=true)
-        "$OPENSCAD" --backend=manifold --export-format binstl -o "$here/../stl/$p.stl" \
+        "$OPENSCAD" --backend=manifold --export-format binstl -o "$out/$p.stl" \
             -D "part=\"$p\"" ${extra[@]+"${extra[@]}"} "$src" >/dev/null 2>"$out/export.err" \
             || { echo "FAIL export $p"; tail -5 "$out/export.err"; exit 1; }
-        echo "EXPORT $p -> stl/$p.stl ($(wc -c < "$here/../stl/$p.stl" | tr -d ' ') bytes)"
+        n=0
+        for f in "$stl/${p}"_v*.stl; do
+            [ -e "$f" ] || continue
+            v="${f##*_v}"; v="${v%.stl}"
+            [ "$v" -gt "$n" ] && n="$v"
+        done
+        if [ "$n" -gt 0 ] && [ "$(PYTHONDONTWRITEBYTECODE=1 python3 "$here/stl_same.py" "$here" "$out/$p.stl" "$stl/${p}_v$n.stl")" = same ]; then
+            echo "SAME   $p (stl/${p}_v$n.stl)"
+        else
+            cp "$out/$p.stl" "$stl/${p}_v$((n + 1)).stl"
+            echo "NEW    $p -> stl/${p}_v$((n + 1)).stl"
+        fi
     done
     exit 0
 fi
