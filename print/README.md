@@ -62,6 +62,9 @@ Studio and do not rotate them. None of these should need supports.
 | `foot`         | TPU                | 4   | flat                                   | none     |
 | `halo`         | opaque PLA or PETG | 1   | either end down (only with `halo_block=true`) | none |
 
+`stl/cap_v3b.stl` is a shorter knob to compare: 10 mm disc instead of 14
+(exported by hand with `-D cap_disc_t=10`; same 29 mm knurl and bore).
+
 "None" means the part was shaped to print without supports: the shell's
 inside front is a 45 degree ramp and its front screw posts are teardrops;
 the square frame under the face (it holds the knob's body) is only 1 mm
