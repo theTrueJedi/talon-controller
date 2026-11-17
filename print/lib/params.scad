@@ -36,10 +36,12 @@ washer_t = 0.5;
 c3 = [24, 18.05, 1.0];
 usb_port = [8.85, 3.15];
 usb_plug_hole = [12.5, 7.5];
+c3_port_len = 7.35;                     // USB-C receptacle depth (assembly ghost only)
 
 // ---- Weights ----
 weight = [19.65, 22, 5.8];
 weight_count = 4;
+weight_gap = 2;                         // between weight pockets
 
 // ---- Face and hood ----
 face_t = 1.5;
@@ -137,6 +139,22 @@ c3_lip_h = 0.8;                         // lip height; its top is the lead-in ra
 c3_lip_len = 1;                         // lip length (Y) from the board's inner edge
 usb_hole_r = 1.5;                       // USB plug hole corner radius
 cable_rib = [1.2, 3];                   // [thickness, height] of the cable channel ribs
+
+// ---- Bottom plate and feet ----
+bottom_t = 3;                           // plate thickness under the weight pockets
+// M3 socket-head screws from the kit (6/8/10/12/16/20/25 long), up through
+// the plate into the shell's boss nuts. The counterbore depth follows the
+// length so the tip always lands m3_tip_over_nut past the nut.
+m3_screw_l = 10;                        // under-head length
+m3_d = 3;                               // thread OD (assembly ghost)
+m3_head = [5.5, 3];                     // socket head [diameter, height]
+m3_cbore_clr = 0.6;                     // counterbore diametral clearance on the head
+m3_nut_t = 2.4;                         // M3 hex nut thickness
+m3_tip_over_nut = 0.6;                  // screw tip past the nut top
+foot_d = 12;                            // TPU foot disc
+foot_h = 3;
+foot_recess = 1;                        // recess depth on the plate's outside
+foot_edge = 1.5;                        // least plate rim outside a foot recess
 
 // ---- Facets ----
 $fa = 2;
@@ -261,6 +279,10 @@ c3_slot_len = c3[0] + fit;
 c3_stop_y = c3_edge_y - c3_slot_len;            // front stop face
 c3_stop_gap = (c3_edge_y - c3[0]) - c3_stop_y;  // board inner edge to stop face
 c3_lip_z = c3_z0 + c3[2] + fit;                 // snap lip underside
+c3_slot_hw = (c3[1] + fit) / 2;                 // board slot half width (rail inner face)
+c3_ped_hw = c3_slot_hw - c3_rail_gap;
+c3_cradle_hw = c3_slot_hw + c3_rail_t;          // rail outer face
+c3_cradle_y0 = c3_stop_y - c3_stop_t;           // front stop's front face
 boss_x = box_w / 2 - boss_c;
 boss_xy = [[-boss_x, boss_c], [boss_x, boss_c],
            [-boss_x, box_d - boss_c], [boss_x, box_d - boss_c]];
@@ -268,3 +290,23 @@ boss_xy = [[-boss_x, boss_c], [boss_x, boss_c],
 cable_ch_x = -wire_slot_r * sin(wire_slot_angle);
 cable_ch_y0 = face_to_box([cable_ch_x, wire_slot_r * cos(wire_slot_angle), -face_t])[1];
 cable_ch_z0 = c3_port_z + usb_plug_hole[1] / 2 + wall;
+
+// ================= Derived (bottom plate, box frame) =================
+// The plate spans z = -plate_t .. 0, footprint inset `fit` from the shell's.
+plate_t = bottom_t + weight[2];
+bottom_footprint = [box_w - 2 * fit, box_d - 2 * fit, plate_t];
+m3_tip_z = boss_floor + m3_nut_t + m3_tip_over_nut;       // screw tip, above the plate top
+m3_cbore_h = plate_t - (m3_screw_l - m3_tip_z);           // counterbore depth from below
+m3_cbore_d = m3_head[0] + m3_cbore_clr;
+// Weight pockets, rows of two from the front (front-biased: the knob press
+// lands at the front). Row 0 hugs the centreline; later rows step outboard
+// of the C3-Zero cradle. weight_xy(i) = pocket's min corner [x, y].
+weight_y0 = wall + clr;
+function weight_row_x(r) = r == 0 ? weight_gap / 2 : c3_cradle_hw + clr;
+function weight_xy(i) = let(r = floor(i / 2), s = i % 2 == 0 ? -1 : 1, xi = weight_row_x(r))
+    [s > 0 ? xi : -xi - weight[0], weight_y0 + r * (weight[1] + weight_gap)];
+// Feet: on the screw rows, just inboard of the counterbores.
+foot_recess_r = foot_d / 2 + fit;
+foot_y = fit + foot_edge + foot_recess_r;
+foot_x = boss_x - m3_cbore_d / 2 - clr - foot_recess_r;
+foot_xy = [[-foot_x, foot_y], [foot_x, foot_y], [-foot_x, box_d - foot_y], [foot_x, box_d - foot_y]];

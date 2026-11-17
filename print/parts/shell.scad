@@ -109,19 +109,17 @@ module boss_cuts() {
 // which takes the cable's pull. Fit: tilt the board, slide the port edge into
 // the wall slot, press the inner end down past the lips. Remove: spread the
 // rails, lift the inner end.
-c3_slot_hw = (c3[1] + fit) / 2;                 // board slot half width (rail inner face)
-c3_ped_hw = c3_slot_hw - c3_rail_gap;
 c3_top_h = c3_lip_z + c3_lip_h;                 // rail and stop top
 
 module c3_cradle() {
     back = box_d - wall + eps;
     // Pedestal and front stop.
     translate([-c3_ped_hw, c3_stop_y, 0]) cube([2 * c3_ped_hw, back - c3_stop_y, c3_z0]);
-    translate([-c3_ped_hw, c3_stop_y - c3_stop_t, 0]) cube([2 * c3_ped_hw, c3_stop_t, c3_top_h]);
+    translate([-c3_ped_hw, c3_cradle_y0, 0]) cube([2 * c3_ped_hw, c3_stop_t, c3_top_h]);
     for (s = [-1, 1]) {
         // Rail.
-        translate([s > 0 ? c3_slot_hw : -c3_slot_hw - c3_rail_t, c3_stop_y - c3_stop_t, 0])
-            cube([c3_rail_t, back - (c3_stop_y - c3_stop_t), c3_top_h]);
+        translate([s > 0 ? c3_slot_hw : -c3_slot_hw - c3_rail_t, c3_cradle_y0, 0])
+            cube([c3_rail_t, back - c3_cradle_y0, c3_top_h]);
         // Lip: flat underside over the board, sloped top as the lead-in.
         translate([0, c3_stop_y + c3_lip_len, 0]) rotate([90, 0, 0])
             linear_extrude(c3_lip_len)

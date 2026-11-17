@@ -12,6 +12,18 @@ else
     OPENSCAD=/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD
 fi
 
+# `run.sh export`: write every part to print/stl/<part>.stl (binary STL) and stop.
+if [ "${1:-}" = export ]; then
+    for p in shell hood cap bottom foot nut_driver fit_test glow_test halo; do
+        extra=(); [ "$p" = halo ] && extra=(-D halo_block=true)
+        "$OPENSCAD" --backend=manifold --export-format binstl -o "$here/../stl/$p.stl" \
+            -D "part=\"$p\"" ${extra[@]+"${extra[@]}"} "$src" >/dev/null 2>"$out/export.err" \
+            || { echo "FAIL export $p"; tail -5 "$out/export.err"; exit 1; }
+        echo "EXPORT $p -> stl/$p.stl ($(wc -c < "$here/../stl/$p.stl" | tr -d ' ') bytes)"
+    done
+    exit 0
+fi
+
 # render <name> [openscad -D args...]: sets $rc, $err; STL at $out/<name>.stl
 render() {
     local name="$1"; shift
@@ -180,3 +192,35 @@ expect_fail c3-wall-slot "C3 wall slot" -D 'part="shell"' -D c3_wall_slot=2
 # Fix round 1: the pin must reach through the KY-040 PCB; nut slots need a detent.
 expect_fail checks-fail-pin    "pin stops short of the KY-040 PCB bottom" -D pin_through=0
 expect_fail checks-fail-detent "nut detent" -D m3_detent=0
+
+# ---- Bottom plate, feet, assembly, interference (Task 6) ----
+for p in shell hood cap bottom foot nut_driver fit_test glow_test; do
+    render "all-$p" -D "part=\"$p\""
+    [ "$rc" -eq 0 ] || fail all-parts-render "$p: exit $rc"
+done
+pass all-parts-render
+
+expect_ok   bottom-render -D 'part="bottom"'
+# ECHO: bottom_footprint = [w, d, t]
+dims="$(echo "$err" | sed -n 's/^ECHO: bottom_footprint = \[\(.*\), \(.*\), \(.*\)\]$/\1 \2 \3/p' | head -1)"
+[ -n "$dims" ] || fail bottom-layout "no bottom_footprint echo"
+stl_check "$out/bottom-render.stl" 1 $dims || fail bottom-layout "dims=$dims"
+pass bottom-layout
+
+expect_ok   assembly-render -D 'part="assembly"'
+
+# Interference: every pair that must not touch, intersected and unioned.
+# Empty at defaults; a deliberately broken clearance must show up.
+# An aborted render (failed assert) also says "empty", so rule out ERROR first.
+render interference-empty -D 'part="interference"'
+case "$err" in *ERROR*) fail interference-empty "render aborted";; esac
+case "$err" in *"top level object is empty"*) pass interference-empty;;
+    *) fail interference-empty "parts or ghosts collide (rc $rc)";; esac
+# Deliberate breaks: collar (7) through a 6.5 face/hood hole; cap bore tighter than the shaft.
+for brk in collar_hole_d=6.5 shaft_clr=-0.2; do
+    render "interference-detects-$brk" -D 'part="interference"' -D "$brk"
+    case "$err" in *ERROR*|*"top level object is empty"*) fail "interference-detects-$brk" "collision not caught";; esac
+    [ "$rc" -eq 0 ] || fail "interference-detects-$brk" "exit $rc"
+    pass "interference-detects-$brk"
+done
+expect_fail checks-fail-screw "M3 head" -D m3_screw_l=12

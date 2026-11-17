@@ -6,6 +6,8 @@ include <parts/hood.scad>
 include <parts/cap.scad>
 include <parts/tools.scad>
 include <parts/shell.scad>
+include <parts/bottom.scad>
+include <parts/assembly.scad>
 
 part = "checks";
 
@@ -45,5 +47,14 @@ else if (part == "shell") {
     // Print on its back wall: back outer face on the bed, open bottom to the side.
     translate([0, 0, box_d]) rotate([-90, 0, 0]) shell();
 }
+else if (part == "bottom") {
+    echo(bottom_footprint = bottom_footprint);
+    echo(m3_screw_l = m3_screw_l, m3_cbore_h = m3_cbore_h, m3_tip_z = m3_tip_z);
+    // Print outside face down: pockets open upward, recesses and counterbores on the bed.
+    translate([0, 0, plate_t]) bottom();
+}
+else if (part == "foot") foot();                       // print flat; TPU, x4
+else if (part == "assembly") assembly();               // preview, box frame
+else if (part == "interference") interference();       // must render empty
 else if (part == "face") face_center(lip_or + wall);   // face-center preview
 else assert(false, str("unknown part: ", part));
