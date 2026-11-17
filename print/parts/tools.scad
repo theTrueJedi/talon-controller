@@ -31,12 +31,12 @@ module fit_coupon() {
         face_center(coupon_face_r);
         tube(coupon_split_r, coupon_face_r + 1, -face_t - eps, lip_h + eps);
     }
-    // Centre disc, face top on the bed: anti-rotation pin points up. Collar
-    // hole, pin and clamp stack are tested on this piece.
+    // Centre disc, face top on the bed: body frame points up. Collar hole,
+    // body frame and clamp stack are tested on this piece.
     translate([coupon_disc_x, 0, 0]) rotate([180, 0, 0]) intersection() {
         face_center(coupon_face_r);
-        translate([0, 0, pin_bot_z - eps])
-            cylinder(r = coupon_split_r, h = face_t + pin_len + eps);
+        translate([0, 0, body_frame_bot_z - eps])
+            cylinder(r = coupon_split_r, h = face_t + body_frame_h + eps);
     }
     // Well-floor washer: stands in for the hood floor in the clamp stack.
     translate([coupon_washer_x, 0, 0]) tube(collar_hole_d / 2, floor_washer_od / 2, 0, floor_t);

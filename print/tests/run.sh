@@ -189,8 +189,8 @@ gap="$(echo "$err" | sed -n 's/^ECHO: c3_stop_gap = \([-0-9.e]*\)$/\1/p' | head 
 python3 -c "import sys; g = float(sys.argv[1]); assert 0 <= g <= 0.3" "$gap" || fail c3-stop "gap $gap"
 pass c3-stop
 expect_fail c3-wall-slot "C3 wall slot" -D 'part="shell"' -D c3_wall_slot=2
-# Fix round 1: the pin must reach through the KY-040 PCB; nut slots need a detent.
-expect_fail checks-fail-pin    "pin stops short of the KY-040 PCB bottom" -D pin_through=0
+# The encoder body's square top locates in a frame under the face; nut slots need a detent.
+expect_fail checks-fail-frame  "body frame reaches the KY-040 PCB" -D body_frame_h=7
 expect_fail checks-fail-detent "nut detent" -D m3_detent=0
 
 # ---- Bottom plate, feet, assembly, interference (Task 6) ----
@@ -216,8 +216,9 @@ render interference-empty -D 'part="interference"'
 case "$err" in *ERROR*) fail interference-empty "render aborted";; esac
 case "$err" in *"top level object is empty"*) pass interference-empty;;
     *) fail interference-empty "parts or ghosts collide (rc $rc)";; esac
-# Deliberate breaks: collar (7) through a 6.5 face/hood hole; cap bore tighter than the shaft.
-for brk in collar_hole_d=6.5 shaft_clr=-0.2; do
+# Deliberate breaks: collar (7) through a 6.5 face/hood hole; cap bore tighter
+# than the shaft; body frame smaller than the encoder body.
+for brk in collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2; do
     render "interference-detects-$brk" -D 'part="interference"' -D "$brk"
     case "$err" in *ERROR*|*"top level object is empty"*) fail "interference-detects-$brk" "collision not caught";; esac
     [ "$rc" -eq 0 ] || fail "interference-detects-$brk" "exit $rc"

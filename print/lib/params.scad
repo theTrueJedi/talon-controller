@@ -104,9 +104,14 @@ glow_leg_w = hood_wall;                 // side legs, straddling the ring band
 glow_digit_size = 5;                    // embossed label text size
 glow_digit_depth = 0.6;                 // label emboss height, out of the leg
 
-// ---- Fits and pins ----
-pin_d = 2.6;
-pin_through = 0.5;                      // pin tip past the KY-040 PCB underside
+// ---- Encoder body locating frame ----
+// A square frame hanging from the face underside, centred on the shaft. The
+// encoder body's square top seats inside it, so the body can't turn.
+body_frame_h = 1.0;                     // frame height below the face underside
+body_frame_wall = 1.2;                  // frame wall thickness
+body_fit = 0.2;                         // frame inner side = body side + body_fit
+
+// ---- Fits ----
 clr = 1;
 fit = 0.2;
 
@@ -190,8 +195,9 @@ driver_shaft_l = hood_top_z + driver_handle_clear - (nut_top_z - nut_t);
 // glow_gap at which hood_top_z == cap_top_z - 3.5 - cap_float
 max_glow_gap = cap_top_z - 3.5 - cap_float - ring_top_z - hood_top_t;
 ky_pcb_bottom_z = body_top_z - body[2] - ky_pcb[2];
-pin_bot_z    = ky_pcb_bottom_z - pin_through;   // anti-rotation pin tip
-pin_len      = -face_t - pin_bot_z;             // pin, from the face underside
+body_frame_in = [body[0] + body_fit, body[1] + body_fit];  // frame inner sides
+body_frame_out = body_frame_in + 2 * [body_frame_wall, body_frame_wall];
+body_frame_bot_z = body_top_z - body_frame_h;   // frame bottom edge
 
 // ================= Derived (face and hood radii) =================
 hood_od = hood_id + 2 * hood_wall;
@@ -218,7 +224,7 @@ coupon_plug_x = coupon_washer_x + floor_washer_od / 2 + coupon_gap + coupon_plug
 coupon_seg_x = coupon_plug_x + coupon_plug_d / 2 + coupon_gap + coupon_seg_half_w;
 fit_footprint = [coupon_seg_x + coupon_seg_half_w + coupon_face_r,
                  2 * coupon_face_r,
-                 max(face_t + lip_h, face_t + pin_len, hood_top_z, coupon_plug_h)];
+                 max(face_t + lip_h, face_t + body_frame_h, hood_top_z, coupon_plug_h)];
 glow_step_l = glow_strip[0] / len(glow_steps);
 glow_footprint = [glow_strip[0], glow_strip[1] + glow_digit_depth,
                   ring_t + max(glow_steps) + hood_top_t];
@@ -230,8 +236,6 @@ glow_footprint = [glow_strip[0], glow_strip[1] + glow_digit_depth,
 ky_hole_x = ky_shaft_from_hole_edge - ky_hole_from_long_edge;
 ky_far_hole_xy  = [ky_hole_x, ky_shaft_from_header_edge - ky_hole_x_from_header[0]];
 ky_near_hole_xy = [ky_hole_x, ky_shaft_from_header_edge - ky_hole_x_from_header[1]];
-// Encoder body corner nearest the far hole (body centred on shaft).
-ky_far_body_corner_xy = [body[0] / 2, body[1] / 2];
 
 // ================= Derived (box frame) =================
 // BOX FRAME: x = 0 on the shaft axis (box is symmetric in X), +X right;

@@ -20,10 +20,12 @@ function ang_dist(a, b) = let(d = ((a - b) % 360 + 360) % 360) min(d, 360 - d);
 for (a = key_tab_angles)
     assert(ang_dist(a, wire_slot_angle) >= 30, "key tab on wire slot");
 
-// Anti-rotation pin in the far KY-040 hole must clear the encoder body corner.
-ky_pin_corner_dist = norm(ky_far_hole_xy - ky_far_body_corner_xy);
-assert(ky_pin_corner_dist >= pin_d / 2 + 0.5,
-       str("anti-rotation pin hits encoder body corner: ", ky_pin_corner_dist));
+// Encoder body locating frame: positive size, and shorter than the body, so it
+// grips the body's top and stays off the KY-040 PCB.
+assert(body_frame_h > 0 && body_frame_wall > 0, "body frame needs a positive height and wall");
+assert(body_frame_h < body[2], str("body frame reaches the KY-040 PCB: body_frame_h ", body_frame_h,
+                                   " >= body height ", body[2]));
+assert(body_frame_in[0] / 2 > collar_hole_d / 2, "body frame inside the collar hole");
 
 // Hood keying, wire slot and fallback options.
 assert(hood_od / 2 + key_tab_len <= lip_or, "key tab sticks out past the seat lip");
@@ -53,7 +55,7 @@ assert(stem_bot_z - nut_top_z > press_travel,
        str("stem-to-nut gap <= press_travel: ", stem_bot_z - nut_top_z));
 
 // Test coupons.
-assert(norm(ky_far_hole_xy) + pin_d / 2 < coupon_split_r, "fit coupon split cuts the anti-rotation pin");
+assert(norm(body_frame_out / 2) < coupon_split_r, "fit coupon split cuts the body frame");
 assert(coupon_split_r < lip_ir - 1, "fit coupon split cuts the seat lip");
 glow_band_need = (ring_od - ring_id) / 2
                + ring_od / 2 - sqrt(pow(ring_od / 2, 2) - pow(glow_step_l / 2, 2));
@@ -69,7 +71,6 @@ assert(c3_wall_slot < wall, "C3 wall slot cuts through the back wall: nothing st
 assert(c3_stop_gap <= 0.3, str("C3 front stop too far from the board: ", c3_stop_gap));
 assert(ky_low_z >= c3_top_z + clr, str("KY-040 hangs onto the C3-Zero: ", ky_low_z));
 assert(top_flat_min > 0, "top_flat_min must be > 0 (flat-topped rear)");
-assert(pin_bot_z < ky_pcb_bottom_z, str("anti-rotation pin stops short of the KY-040 PCB bottom: ", pin_bot_z));
 assert(m3_detent > 0 && m3_detent < (m3_nut_af + fit) / 4, str("nut detent must be > 0 and small: ", m3_detent));
 
 // Bottom plate.

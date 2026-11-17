@@ -15,7 +15,7 @@ module face_center(r) {
     }
 }
 
-// Solids only: disc, seat lip, anti-rotation pin. The shell unions this into
+// Solids only: disc, seat lip, body frame. The shell unions this into
 // its own face plate, then subtracts face_center_cuts().
 module face_center_solid(r) {
     translate([0, 0, -face_t]) cylinder(r = r, h = face_t);
@@ -24,9 +24,12 @@ module face_center_solid(r) {
         cylinder(r = lip_or, h = lip_h);
         translate([0, 0, -eps]) cylinder(r = lip_ir, h = lip_h + 2 * eps);
     }
-    // Anti-rotation pin through the far KY-040 hole, tip pin_through past the PCB.
-    translate([ky_far_hole_xy[0], ky_far_hole_xy[1], pin_bot_z])
-        cylinder(d = pin_d, h = pin_len + eps);
+    // Encoder body locating frame under the face: the body's square top seats
+    // inside it, so the body can't turn.
+    translate([0, 0, body_frame_bot_z]) linear_extrude(body_frame_h + eps) difference() {
+        square(body_frame_out, center = true);
+        square(body_frame_in, center = true);
+    }
 }
 
 // Holes and notches through the face center.
