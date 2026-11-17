@@ -269,3 +269,74 @@ written.
   `socket_fit`, `halo_fit`) instead of one shared `fit`.
 - **USB-C plug:** checkpoint (g) measures the plug's overmold before the
   shell prints.
+
+## Amendment 2026-11-17 (first test prints)
+
+**Why:** the full-shell test print showed the C3-Zero is hard to reach: its
+shelf juts from the inside of the back wall with the board facing away from
+the open bottom. The shelf's 1.2 mm side rails snapped while Evan removed
+supports. Evan also wants more room to work inside, connectors so every part
+can be unplugged for troubleshooting, and a bigger, heavier knob.
+
+**Approaches for the C3-Zero (Evan picked B):**
+
+| Option | Trade-off | Outcome |
+|---|---|---|
+| A. Flip the board face-down on the shelf; BOOT pinhole in the plate | Still fragile fins off the back wall; the port hole moves; plugs may cover the buttons | Rejected |
+| B. Cradle on the bottom plate, board face-up; the back-wall port hole is a notch open at the bottom edge | Unscrew the plate and the board comes out face-up. Buttons reachable only with the plate off | **Chosen** |
+
+**Decisions (Evan's):**
+- **C3-Zero mount:** the cradle (pedestal, solder-tail grooves, side rails,
+  front stop) and its clip move from the shell to the bottom plate's top
+  face. The board's port edge still sits in a back-wall slot, now open
+  at the bottom edge so it slides down out. The USB plug hole becomes a
+  notch open at the bottom edge too. The shell keeps no C3 parts.
+- **Buttons:** no access hole. The C3's USB Serial/JTAG enters flashing
+  mode by itself. BOOT is only for recovering firmware that broke USB:
+  remove the plate for that.
+- **Wiring (supersedes "direct solder, no headers"):** one 9-pin 2.54 mm
+  right-angle header on the C3's wired pin row, long legs lying flat over the
+  board (inward). If the strips arrive bent at 45°, bend the legs to 90°
+  before soldering. Female-female jumpers plug onto it. The knob board keeps
+  its stock right-angle header and gets F-F jumpers, so it needs no solder.
+  The ring gets jumpers cut in half, cut ends soldered to its pads.
+- **Base height:** the straight lower part of the box is 5 mm taller
+  (new parameter `base_extra = 5`). The box and the face rise 5 mm; the
+  slope angle is unchanged.
+- **Knob:** 29 mm across, solid, a **14 mm thick disc** above the hood (was
+  4.9). A **diamond knurl** (small pyramids, like Evan's reference
+  `knob_regular_knurl.stl`) round the side replaces the optional straight
+  flutes. No weight insert. Print at 100% infill.
+
+**Claude's calls (Evan can override):**
+- The plate's cradle prints as upright ribs on the plate (the plate prints
+  outside face down), so it needs no supports. Weight pockets stay clear
+  of it, as now.
+- The disc is set by a new `cap_disc_t = 14` instead of `cap_over_shaft`.
+  The glow-gap limit rises with it.
+- Knurl: about 40 pyramids round, ~0.7 mm deep, as parameters.
+- New assembly stand-ins: the C3 header with plugs lying over the board,
+  and the knob board's header with plugs. The interference check covers
+  them both, against the ceiling and the slope.
+- The wire slot in the face stays 11 × 5.5 mm. A jumper's cut end is just
+  wire, so it threads through.
+- Every changed part gets a new `_vN` STL. Old ones stay.
+
+**Open, measured when the headers arrive (2026-11-18):**
+- **Which end of the C3's wired row is at the USB socket.** The flat plugs
+  are ~2.5 mm tall over the board, and the USB socket stands 3.15 mm. A
+  used pin near the USB end would put its plug on top of the socket. If
+  that happens, raise the plugs over the socket (box ~2 mm deeper), or
+  turn that row's legs outward and shift the board off-centre. The model
+  takes the order as a parameter.
+- The jumper housing length (usually 14 mm) and the knob board header's
+  height, for the stand-ins.
+
+**Risks:**
+
+| Risk | Severity | Mitigation |
+|---|---|---|
+| Plugs over the USB socket | Moderate | Pin-order check above; fallback layouts |
+| Knob board's plugs hit the slope | Moderate | +5 mm base; the interference check shows it before printing |
+| Jumpers work loose | FYI | A dab of hot glue or tape over mated pairs |
+| Jumpers too short to lift the plate away | FYI | Leave slack; unplug before lifting fully |
