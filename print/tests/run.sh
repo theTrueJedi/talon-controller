@@ -16,7 +16,7 @@ fi
 # when its geometry differs from the newest <part>_v<N>.stl. Old revisions stay.
 if [ "${1:-}" = export ]; then
     stl="$here/../stl"
-    for p in shell hood cap bottom foot nut_driver fit_test glow_test halo c3_clip; do
+    for p in shell hood cap bottom foot nut_driver fit_test frame_test glow_test halo c3_clip; do
         extra=(); [ "$p" = halo ] && extra=(-D halo_block=true)
         "$OPENSCAD" --backend=manifold --export-format binstl -o "$out/$p.stl" \
             -D "part=\"$p\"" ${extra[@]+"${extra[@]}"} "$src" >/dev/null 2>"$out/export.err" \
@@ -170,6 +170,13 @@ dims="$(echo "$err" | sed -n 's/^ECHO: fit_footprint = \[\(.*\), \(.*\), \(.*\)\
 # Lip ring, face disc (pin up), well-floor washer, bore plug, hood segment.
 stl_check "$out/fit-renders.stl" 5 $dims || fail fit-layout "dims=$dims"
 pass fit-layout
+
+# Frame test: the fit coupon's centre disc alone (collar hole + body frame).
+expect_ok   frame-renders -D 'part="frame_test"'
+dims="$(echo "$err" | sed -n 's/^ECHO: frame_footprint = \[\(.*\), \(.*\), \(.*\)\]$/\1 \2 \3/p' | head -1)"
+[ -n "$dims" ] || fail frame-layout "no frame_footprint echo"
+stl_check "$out/frame-renders.stl" 1 $dims || fail frame-layout "dims=$dims"
+pass frame-layout
 
 expect_ok   glow-renders -D 'part="glow_test"'
 expect_big  glow-renders

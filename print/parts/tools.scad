@@ -33,11 +33,7 @@ module fit_coupon() {
     }
     // Centre disc, face top on the bed: body frame points up. Collar hole,
     // body frame and clamp stack are tested on this piece.
-    translate([coupon_disc_x, 0, 0]) rotate([180, 0, 0]) intersection() {
-        face_center(coupon_face_r);
-        translate([0, 0, body_frame_bot_z - eps])
-            cylinder(r = coupon_split_r, h = face_t + body_frame_h + eps);
-    }
+    translate([coupon_disc_x, 0, 0]) coupon_disc();
     // Well-floor washer: stands in for the hood floor in the clamp stack.
     translate([coupon_washer_x, 0, 0]) tube(collar_hole_d / 2, floor_washer_od / 2, 0, floor_t);
     // Cap-bore plug, roof on the bed, bore open upward.
@@ -45,6 +41,16 @@ module fit_coupon() {
     // Hood segment, top-down like the real hood; key tab toward -Y.
     translate([coupon_seg_x, (coupon_seg_or + coupon_seg_y0) / 2, hood_top_z])
         rotate([180, 0, 0]) hood_segment(key_tab_angles[0]);
+}
+
+// Fit coupon centre disc, face top on the bed, body frame up. Also printed
+// alone as part frame_test.
+module coupon_disc() {
+    rotate([180, 0, 0]) intersection() {
+        face_center(coupon_face_r);
+        translate([0, 0, body_frame_bot_z - eps])
+            cylinder(r = coupon_split_r, h = face_t + body_frame_h + eps);
+    }
 }
 
 // The cap's blind D bore inside a short cylinder; own frame, roof at z = 0.

@@ -34,6 +34,10 @@ else if (part == "fit_test") {
     echo(fit_footprint = fit_footprint);
     fit_coupon();
 }
+else if (part == "frame_test") {
+    echo(frame_footprint = [2 * coupon_split_r, 2 * coupon_split_r, face_t + body_frame_h]);
+    coupon_disc();     // face disc alone: collar hole and body frame, frame up
+}
 else if (part == "glow_test") {
     echo(glow_footprint = glow_footprint);
     glow_coupon();     // four tiles, face down on the bed, legs up
