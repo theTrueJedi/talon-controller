@@ -18,14 +18,17 @@ later.
 
 ## Status (2026-11-17)
 
-**Housing model built** in `print/` (branch `housing`): parametric OpenSCAD,
-tests via `bash print/tests/run.sh`, STLs in `print/stl/`. Housing spec:
-`docs/superpowers/specs/2026-11-16-talon-housing-design.md`.
+**Housing model built** in `print/` (branch `housing-c3-plate`):
+parametric OpenSCAD, tests via `bash print/tests/run.sh`, STLs in
+`print/stl/`. Spec: `docs/superpowers/specs/2026-11-16-talon-housing-design.md`.
+Amended 2026-11-17 after the first test prints: the C3-Zero sits on a cradle
+on the bottom plate, the base is 5 mm taller, four weights are sealed in the
+plate (print pause), and the knob is 29 mm, 14 mm thick, diamond-knurled.
+Wiring: one right-angle header on the C3; jumpers plug in only there.
 
-**Next:** Evan measures his USB-C plug (checkpoint g), prints the fit and
-glow coupons, runs checkpoint (a)-(g) in `print/README.md`, and solders the
-ring. Wiring is direct solder, no headers or jumpers; pin map in
-`print/README.md`.
+**Next:** Evan measures the header and jumpers when they arrive (checkpoint
+(h) in `print/README.md`) and his USB-C plug (checkpoint g), then prints
+`bottom`, `shell` and `cap`.
 
 **Later:** write the firmware and add-on plan with superpowers:writing-plans.
 Its first task: confirm standard-library serial (no pyserial) can open,

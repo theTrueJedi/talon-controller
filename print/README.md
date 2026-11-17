@@ -56,22 +56,39 @@ Studio and do not rotate them. None of these should need supports.
 | `shell`        | opaque PLA or PETG | 1   | on its back wall, open bottom sideways | none     |
 | `c3_clip`      | **PETG** (PLA may crack at the snap) | 1 | on its front face | none |
 | `hood`         | translucent PETG   | 1   | upside down: top face on the bed       | none     |
-| `cap`          | opaque PLA or PETG | 1   | upside down: top face on the bed       | none     |
-| `bottom`       | opaque PLA or PETG | 1   | outside face down, pockets up          | none     |
+| `cap`          | opaque PLA or PETG, **100% infill** | 1 | upside down: top face on the bed | none |
+| `bottom`       | opaque PLA or PETG | 1   | outside face down, C3 cradle on top; **pause for the weights** (below) | none |
 | `foot`         | TPU                | 4   | flat                                   | none     |
 | `halo`         | opaque PLA or PETG | 1   | either end down (only with `halo_block=true`) | none |
 
 "None" means the part was shaped to print without supports: the shell's
 inside front is a 45 degree ramp and its front screw posts are teardrops;
 the square frame under the face (it holds the knob's body) is only 1 mm
-deep; the bottom plate's screw counterbores are short bridges. Still glance
-at Bambu Studio's overhang preview before printing the shell.
+deep; the bottom plate's screw counterbores and its weight-pocket roofs are short
+bridges, and the C3 cradle is upright ribs. Still glance at Bambu Studio's
+overhang preview before printing the shell.
+
+**Bottom plate: pause for the weights.** The four weights are sealed inside
+the plate. Render `part="bottom"` and note the `weight_pause_z` echo (now
+8.8 mm): that is the height of the pocket tops. In Bambu Studio, open the
+layer slider in the preview, find the first layer above 8.8 mm (9.0 mm at
+0.2 mm layers), right-click it and add a pause. Print. When the printer
+pauses, drop one weight into each corner pocket, check none sticks up past
+the pocket top, then resume. Leave their sticky backing on: the 5.8 mm
+was measured with it. The printer seals over
+them.
+
+**Knob cap: 100% infill.** It is a solid 29 mm knob; full infill gives it
+its weight.
 
 The hood is the only part the light shines through, so it is the only big
 part in translucent PETG. Everything else is opaque so light does not leak.
 
-The C3-Zero's USB-C port sits 1 mm inside the back wall on purpose: the
-board's edge sits in a slot in the wall, and that slot holds the board. So
+The C3-Zero sits face-up in a cradle on the bottom plate, 11.5 mm off
+centre (`c3_x`), away from its wired row. Its USB-C port sits 1 mm inside
+the back wall on purpose: the board's edge sits in a slot in the wall, and
+the slot, the USB hole and the header recess beside it are all open at the
+bottom edge, so the board lifts out with the plate. So
 the plug's plastic body has to fit INTO the wall's hole for the plug to
 seat (checkpoint g). The unplug pull is taken by that slot, so unplug by
 the plug body, not the cable.
@@ -79,64 +96,81 @@ the plug body, not the cable.
 ## Bought parts for the box
 
 - **4x M3 x 10 socket-head screws** (from the M3 kit) and **4x M3 hex nuts**.
-  The screws come up through the bottom plate into nuts held in the shell's
-  corner posts. Their heads end up about 0.8 mm below the plate's underside
-  (recessed, not flush). The counterbores are sized for 10 mm: a 12 mm
-  screw will not fit (the model refuses it), and an 8 mm one needs
-  `m3_screw_l = 8` and a re-export.
-- **4x weights**, 19.65 x 22 x 5.8 mm with their sticky backing. The pockets
-  are exactly that size, no extra room. The front pair sits partly under
-  the shell's inside front ramp; the ramp resting on them is intended.
+  The screws come up through the 10 mm bottom plate into nuts held in the
+  shell's corner posts. The counterbores are 5 mm deep, so the heads end up
+  2 mm below the plate's underside (recessed, not flush). The plate is
+  sized for 10 mm screws. A 12 mm or 8 mm screw also fits, but set
+  `m3_screw_l` to match and re-export first: 12 sits flush, 8 sits 4 mm deep.
+  The model refuses 6 mm (too little plate under the head) and 14 mm (the
+  head sticks out).
+- **4x ½ oz weights**, 19.65 x 22 x 5.8 mm, one per corner, sealed inside
+  the plate while it prints (see the pause above). The pockets are exactly
+  that size, no extra room.
+- **One 9-pin 2.54 mm right-angle header** for the C3-Zero, and **female
+  jumper wires** (F-F, some cut in half).
 - **Thin double-sided tape** (or a hot-glue gun) for the ring.
 
-## Wiring (direct solder, no headers or jumpers)
+## Wiring (one header on the C3, jumpers plug in there)
 
-Every wire is soldered straight into its hole: no header pins on the
-C3-Zero, no jumper wires.
+The C3-Zero is the only place anything plugs in. Unplug its jumpers and the
+plate (with the board on it) comes away from the shell; nothing else needs
+desoldering.
 
-- **KY-040 knob board:** clip its right-angle pins to short stubs and
-  solder a wire to each stub.
-- **Ring:** solder three wires to the ring's pads (5V, GND, DIN).
-- **C3-Zero:** solder the wire ends straight into the board's holes. All of
-  them go on one pin row (5V, GND, 3V3, GPIO0 to GPIO5):
+- **C3-Zero:** solder one 9-pin 2.54 mm right-angle header onto its wired
+  row (5V, GND, 3V3, GPIO0 to GPIO5, from the USB end). Fit it so the legs
+  point **sideways off the board, toward the middle of the box** (away from
+  the board's other row), not up and not over the board. If the strip's
+  legs are bent at 45 degrees, bend them to 90 degrees first.
+- **KY-040 knob board:** clip its right-angle pins to short stubs. Cut five
+  female jumpers in half and solder each cut end to a stub. The female ends
+  plug onto the C3's header.
+- **Ring:** cut three female jumpers in half and solder each cut end to one
+  of the ring's pads (5V, GND, DIN).
 
-| Wire           | C3-Zero hole |
-|----------------|--------------|
-| Ring DIN       | GPIO0        |
-| Ring 5V        | 5V           |
-| Ring GND       | GND          |
-| KY-040 GND     | GND (the same hole: twist it with the ring GND first) |
-| KY-040 +       | 3V3          |
-| KY-040 CLK     | GPIO3        |
-| KY-040 DT      | GPIO4        |
-| KY-040 SW      | GPIO5        |
+| Wire           | C3-Zero pin |
+|----------------|-------------|
+| Ring DIN       | GPIO0       |
+| Ring 5V        | 5V          |
+| Ring GND       | GND         |
+| KY-040 GND     | GND (the same pin: see below) |
+| KY-040 +       | 3V3         |
+| KY-040 CLK     | GPIO3       |
+| KY-040 DT      | GPIO4       |
+| KY-040 SW      | GPIO5       |
+
+The C3-Zero has a single GND pin, and only one plug fits on it. So the
+ring's GND and the knob's GND share one plug: solder the knob's GND stub to
+a short bare-ended wire, strip about 5 mm from the middle of the ring's GND
+jumper, wrap the knob wire round it, solder, and cover it with tape or heat
+shrink. Only the ring's GND plug goes onto the GND pin.
 
 Optional: a 330 Ω resistor soldered inline in the ring's DIN wire protects
 the first LED; with a short DIN wire it can be skipped.
 
-The C3-Zero has a single GND hole, so twist the ring's and the knob's GND
-wires together and solder them into it as one. Check the hole labels
-against Waveshare's pinout image before soldering. Full design and pin
-notes: `docs/superpowers/specs/2026-11-12-talon-controller-design.md`,
-"Hardware wiring".
+Check the pin labels against Waveshare's pinout image before soldering.
+Full design and pin notes:
+`docs/superpowers/specs/2026-11-12-talon-controller-design.md`, "Hardware
+wiring", and the housing spec's "Amendment 2026-11-17 (first test prints)".
 
-The shell's cradle has grooves under both pin rows, so the solder tails
-on the board's underside do not lift it.
+The plate's cradle has grooves under both pin rows, so the header's solder
+tails on the board's underside do not lift it. If the jumpers work loose, a
+dab of hot glue or a strip of tape over each plug holds it.
 
 ## Assembly order
 
 Work with the shell upside down (open bottom up). The cap goes on last, so
 the box never rests on it.
 
-1. **Knob board wires.** Clip the KY-040's pins to stubs and solder its five
-   wires (see Wiring).
-2. **Ring.** Solder the ring's three wires to its pads. Thread their free
-   ends down through the slot in the face, then lay the ring flat on the
-   face. Turn the ring to its 12 o'clock position and fix it to the face
-   with two small pieces of thin double-sided tape (or a dab of hot glue):
-   the firmware's 12 o'clock LED assumes the ring never turns. The ring
-   goes before the hood: the hood covers it, and the nut in step 3 clamps
-   the hood down.
+1. **Solder everything first** (see Wiring): the header on the C3-Zero, the
+   half jumpers on the knob board's stubs and on the ring's pads, and the
+   GND splice.
+2. **Ring.** Thread the ring jumpers' plug ends down through the slot in the
+   face (a plug is 2.54 mm square and passes the 11 x 5.5 mm slot), then lay
+   the ring flat on the face. Turn the ring to its 12 o'clock position and
+   fix it to the face with two small pieces of thin double-sided tape (or a
+   dab of hot glue): the firmware's 12 o'clock LED assumes the ring never
+   turns. The ring goes before the hood: the hood covers it, and the nut in
+   step 3 clamps the hood down.
 3. **Hood and knob board.** Set the hood over the ring, its tabs in the
    lip's notches. From inside the shell, push the encoder's threaded collar
    up through the face and the hood's well floor; the encoder body's square
@@ -145,21 +179,28 @@ the box never rests on it.
    with the nut driver. Do not crank it.
 4. **Route the ring wires** along the channel under the face and top and
    down the back wall.
-5. **Solder the C3-Zero.** With the board outside the box, solder every
-   wire straight into its hole (see Wiring). The ring wires must already be
-   through the face slot (step 2): once they are soldered to the C3-Zero,
-   they cannot be threaded any more.
-6. **C3-Zero into the cradle.** Tilt the board, slide its USB end into the
-   slot in the back wall, and lay the other end down on the pedestal. Press
-   the small clip down over the two side rails at the board's inner end
-   until both legs click; only its narrow tongue reaches over the board, at
-   the middle of the inner edge, clear of the corner holes. To remove: spread the clip's legs and lift it off.
-7. **Bottom plate.** Stick the weights in their pockets. Slide an M3 nut
-   into each corner post's side slot until it clicks past the bumps. Set the
-   plate on, then drive the four screws up from below. Snug, not tight.
+5. **C3-Zero onto the plate.** The weights are already sealed in the plate
+   (see the print pause). Set the board face-up in the plate's cradle, its
+   USB end toward the plate's back edge and its header toward the middle.
+   Press the small clip down over the two side rails at the board's inner
+   end until both legs click; only its narrow tongue reaches over the board,
+   at the middle of the inner edge, clear of the corner holes. To remove:
+   spread the clip's legs and lift it off.
+6. **Plug in the jumpers.** Hold the plate next to the open shell and plug
+   each jumper onto its C3 pin (see the table). Leave enough slack that
+   the plate can be lifted away from the box with the plugs still on.
+7. **Bottom plate, last of the box.** Slide an M3 nut into each corner
+   post's side slot until it clicks past the bumps. Lower the plate on: the
+   board's USB end slides into the back wall's slot and notch, and the
+   header and its plugs into the recess beside them. Tuck the wires in so
+   none is pinched under the plate's edge, then drive the four screws up
+   from below. Snug, not tight.
 8. **Feet.** Glue a TPU foot into each round recess on the underside.
-9. **Cap, last.** Turn the box onto its feet and push the cap onto the
-   shaft (flat side matches).
+9. **Cap.** Turn the box onto its feet and push the cap onto the shaft
+   (flat side matches).
+
+To get at the board later (or reach its BOOT button): unscrew the plate,
+lift it away, and unplug the jumpers.
 
 ## Test coupons (print these first)
 
@@ -247,10 +288,7 @@ step where you see one even glow instead of separate dots. If you printed
 tiles on more than one plate, also note which finish hides the dots best
 and print the hood on that plate.
 - Set `glow_gap` to that number (now 8).
-- The cap above limits how tall the hood can be. Right now the maximum is
-  9.4. If you pick 10 or 12, the render will stop with "glow_gap too large".
-  Tell Claude, and we will raise the knob cap (`cap_over_shaft`) or slim
-  the cap float to make room.
+- Any step from 5 to 12 fits: the knob cap sits high enough for all of them.
 
 **(f) The encoder body sits in the frame.** With the face disc on the
 collar (frame side down), the encoder body's square top drops into the
@@ -275,4 +313,13 @@ fit into the hole for the plug to seat.
 | `socket_fit` | nut driver's hex socket                            |
 | `halo_fit`   | halo sleeve over the well wall (`halo_block` only) |
 
-Once a-g pass, re-run `bash print/tests/run.sh` and print the real parts.
+**(h) When the header arrives: measure its bent legs.** Solder (or just
+hold) the header on the C3-Zero and measure, with calipers, how high the
+middle of the bent legs sits above the board's top face. Set `hdr_leg_z`
+to that (now 2.5). Also set `hdr_leg_out` (now 6) to how far the legs
+reach past the header's plastic, and `plug` (now 2.54 x 2.54 x 14) to the
+jumper plug's width, height and length.
+- If the leg height is under about 2.3 mm, the plugs will touch the cradle
+  rail on the header side (-X). Tell Claude: that rail gets lowered.
+
+Once a-h pass, re-run `bash print/tests/run.sh` and print the real parts.

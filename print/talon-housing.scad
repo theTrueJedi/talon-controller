@@ -15,10 +15,15 @@ probe = "";                       // part="shell_probe" only: which box (tests)
 // Test-only: boxes the shell must miss, [[x0, y0, z0], [x1, y1, z1]] in the box frame.
 function shell_probe_box(name) =
     // Rim strips inside the back-wall cuts: the plate comes off downward.
+    // Each runs the cut's full height (the notch up to where its top corners
+    // round), so a ledge anywhere inside a cut is caught.
     name == "c3_notch" ? [[c3_x - usb_plug_hole[0] / 2 + 0.1, box_d - wall + 0.05, 0],
-                          [c3_x + usb_plug_hole[0] / 2 - 0.1, box_d - 0.05, 0.5]] :
-    name == "c3_slot"  ? [[c3_hdr_recess_x[0] + 0.1, box_d - wall + 0.05, 0],
-                          [c3_x + c3_slot_hw - 0.1, c3_edge_y - 0.05, 0.5]] :
+                          [c3_x + usb_plug_hole[0] / 2 - 0.1, box_d - 0.05,
+                           c3_port_z + usb_plug_hole[1] / 2 - usb_hole_r - 0.1]] :
+    name == "c3_slot"  ? [[c3_x - c3_slot_hw + 0.1, box_d - wall + 0.05, 0],
+                          [c3_x + c3_slot_hw - 0.1, c3_edge_y - 0.05, c3_z0 + c3[2] - 0.1]] :
+    name == "c3_recess" ? [[c3_hdr_recess_x[0] + 0.1, box_d - wall + 0.05, 0],
+                           [c3_hdr_recess_x[1] - 0.1, c3_edge_y - 0.05, c3_hdr_recess_z1 - 0.1]] :
     // The cradle's whole volume: it belongs to the plate.
     name == "c3_cradle" ? [[c3_x - c3_cradle_hw, c3_cradle_y0, 0], [c3_x + c3_cradle_hw, c3_cradle_y1, c3_top_h]] :
     assert(false, str("unknown probe: ", name));

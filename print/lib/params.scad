@@ -54,7 +54,7 @@ c3_hdr_n = 9;
 ky_hdr_n = 5;
 ky_stub_room = 5;                       // KY-040: clipped stub (~2) + solder joint + wire bend, past the header edge (+Y)
 ky_stub_h = 2;                          // KY-040 stub envelope half-height about the PCB mid-plane
-plug_env_len = hdr_leg_out + plug[2] + plug_wire_room;    // plug envelope length past the board / PCB edge
+plug_env_len = hdr_leg_out + plug[2] + plug_wire_room;    // plug envelope length past the board edge
 
 // ---- Weights ----
 weight = [19.65, 22, 5.8];
@@ -155,7 +155,6 @@ face_margin = 1.6;                      // seat lip OD to the side edge fillet
 top_flat_min = 10;                      // least flat-top depth behind the slope
 base_extra = 5;                         // added height on the straight lower walls (Evan, 2026-11-17)
 ky_wire_room = ky_stub_room;            // past the KY-040 header edge (+Y): the stub envelope
-ky_wire_h = 3;                          // above the KY-040 PCB top near the header edge
 // Corner bosses for the bottom plate's M3 screws. The nut sits in a
 // side-entry slot with boss material under it, so tightening a screw from
 // below clamps the plate to the shell.

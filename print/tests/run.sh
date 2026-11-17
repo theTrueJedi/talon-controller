@@ -136,14 +136,14 @@ d, h = map(float, sys.argv[2].split())
 assert abs(x - d) <= 0.1 and abs(y - d) <= 0.1 and abs(z - h) <= 0.1
 PY
 pass cap-bbox
-expect_ok   cap-knurl-render -D 'part="cap"' -D cap_knurl=true
-bbox="$(python3 "$here/stl_bbox.py" "$out/cap-knurl-render.stl")"
-python3 - "$bbox" <<'PY' || fail cap-knurl-bbox "got '$bbox'"
+expect_ok   cap-plain-render -D 'part="cap"' -D cap_knurl=false
+bbox="$(python3 "$here/stl_bbox.py" "$out/cap-plain-render.stl")"
+python3 - "$bbox" <<'PY' || fail cap-plain-bbox "got '$bbox'"
 import sys
 x, y, z = map(float, sys.argv[1].split())
 assert abs(x - 29) <= 0.1 and abs(y - 29) <= 0.1
 PY
-pass cap-knurl-bbox
+pass cap-plain-bbox
 
 expect_ok   driver-render -D 'part="nut_driver"'
 bbox="$(python3 "$here/stl_bbox.py" "$out/driver-render.stl")"
@@ -253,7 +253,7 @@ pass c3-stop
 # Plate removal path: the back-wall board slot (with the header plug recess)
 # and the USB notch open down to the rim. A thin box at the rim inside each cut
 # must miss the shell; closing the cuts above the rim must make it hit.
-for pr in c3_notch c3_slot; do
+for pr in c3_notch c3_slot c3_recess; do
     expect_empty "shell-probe-$pr" -D 'part="shell_probe"' -D "probe=\"$pr\""
     expect_solid "shell-probe-$pr-detects" -D 'part="shell_probe"' -D "probe=\"$pr\"" -D c3_back_cuts_z0=1
 done
@@ -262,7 +262,7 @@ done
 # render is shell-layout above). Centred, the BR weight pocket moves off the
 # TL one's row overlap.
 expect_empty shell-no-cradle-probe -D 'part="shell_probe"' -D 'probe="c3_cradle"'
-expect_solid shell-no-cradle-probe-detects -D 'part="shell_probe"' -D 'probe="c3_cradle"' -D 'c3_cradle_y1=72.3'
+expect_solid shell-no-cradle-probe-detects -D 'part="shell_probe"' -D 'probe="c3_cradle"' -D 'c3_cradle_y1=box_d'
 expect_ok   shell-no-cradle -D 'part="shell"' -D c3_x=0 -D 'weight_pockets=[[-22.85,3,0],[3.2,3,0],[-22.85,46,0],[3.2,46,0]]'
 stl_check "$out/shell-no-cradle.stl" 1 $(echo "$fp" | cut -d' ' -f1) $(echo "$hw" | cut -d' ' -f1) $(echo "$fp" | cut -d' ' -f2) \
     || fail shell-no-cradle "c3_x=0: not one body"
@@ -285,7 +285,7 @@ expect_fail checks-fail-frame  "body frame reaches the KY-040 PCB" -D body_frame
 expect_fail checks-fail-detent "nut detent" -D m3_detent=0
 
 # ---- Bottom plate, feet, assembly, interference (Task 6) ----
-for p in shell hood cap bottom foot nut_driver fit_test glow_test c3_clip; do
+for p in shell hood cap bottom foot nut_driver fit_test frame_test glow_test c3_clip; do
     render "all-$p" -D "part=\"$p\""
     [ "$rc" -eq 0 ] || fail all-parts-render "$p: exit $rc"
 done
