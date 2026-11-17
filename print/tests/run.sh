@@ -198,7 +198,9 @@ expect_fail c3-wall-slot "C3 wall slot" -D 'part="shell"' -D c3_wall_slot=2
 # Direct-soldered C3-Zero: solder-tail grooves under the pin rows, and a
 # separate clip holding the inner short edge's middle (off the pin-row corners).
 expect_fail checks-fail-groove "C3 solder groove cuts through the pedestal" -D 'c3_groove=[3, 4]'
-expect_fail checks-fail-notch  "C3 clip notch cuts through the rail" -D c3_clip_barb=1.2
+expect_fail checks-fail-notch  "C3 clip notch cuts through the rail" -D c3_clip_engage=1.1
+expect_fail checks-fail-engage "C3 clip barb engagement" -D c3_clip_engage=0.3
+expect_fail checks-fail-corner "C3 clip within c3_corner_clr of a pin-row corner hole" -D c3_hole_end=0.1
 expect_ok   c3-clip-render -D 'part="c3_clip"'
 dims="$(echo "$err" | sed -n 's/^ECHO: c3_clip_bed = \[\(.*\), \(.*\), \(.*\)\]$/\1 \2 \3/p' | head -1)"
 [ -n "$dims" ] || fail c3-clip-layout "no c3_clip_bed echo"

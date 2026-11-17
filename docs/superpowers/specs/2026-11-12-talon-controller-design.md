@@ -97,7 +97,7 @@ ring stays well under USB current limits.
 | From | To |
 |---|---|
 | Ring 5V / GND | C3-Zero 5V / GND |
-| Ring DIN | C3-Zero GPIO0 via the 330 Ω series resistor, if it can be inserted without solder; otherwise direct |
+| Ring DIN | C3-Zero GPIO0 via the 330 Ω series resistor, soldered inline in the DIN wire (optional; short wire makes it skippable) |
 | KY-040 CLK / DT / SW | C3-Zero GPIO3 / GPIO4 / GPIO5 |
 | KY-040 + | C3-Zero 3V3 |
 | KY-040 GND | C3-Zero GND, shared with the ring GND (one GND hole: twist both wires together and solder them in as one) |

@@ -106,6 +106,9 @@ C3-Zero, no jumper wires.
 | KY-040 DT      | GPIO4        |
 | KY-040 SW      | GPIO5        |
 
+Optional: a 330 Ω resistor soldered inline in the ring's DIN wire protects
+the first LED; with a short DIN wire it can be skipped.
+
 The C3-Zero has a single GND hole, so twist the ring's and the knob's GND
 wires together and solder them into it as one. Check the hole labels
 against Waveshare's pinout image before soldering. Full design and pin
@@ -144,8 +147,8 @@ the box never rests on it.
 6. **C3-Zero into the cradle.** Tilt the board, slide its USB end into the
    slot in the back wall, and lay the other end down on the pedestal. Press
    the small clip down over the two side rails at the board's inner end
-   until both legs click; its tongue holds the middle of the board's inner
-   edge. To remove: spread the clip's legs and lift it off.
+   until both legs click; only its narrow tongue reaches over the board, at
+   the middle of the inner edge, clear of the corner holes. To remove: spread the clip's legs and lift it off.
 7. **Bottom plate.** Stick the weights in their pockets. Slide an M3 nut
    into each corner post's side slot until it clicks past the bumps. Set the
    plate on, then drive the four screws up from below. Snug, not tight.

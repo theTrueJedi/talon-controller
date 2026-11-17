@@ -75,7 +75,13 @@ assert(c3_stop_gap > 0 && c3_stop_gap <= c3_stop_gap_max && c3_stop_gap < c3_wal
            " and < c3_wall_slot ", c3_wall_slot));
 assert(c3_groove[1] < c3_z0, str("C3 solder groove cuts through the pedestal: depth ", c3_groove[1], " >= ", c3_z0));
 assert(c3_groove[0] > 0 && c3_groove[0] < c3[1] / 2, "C3 solder grooves must leave a pedestal spine");
-assert(c3_clip_barb + c3_fit < c3_rail_t, "C3 clip notch cuts through the rail");
+assert(c3_clip_engage + c3_fit < c3_rail_t, "C3 clip notch cuts through the rail");
+assert(c3_clip_barb - c3_fit >= 0.4, str("C3 clip barb engagement past the leg gap < 0.4: ", c3_clip_barb - c3_fit));
+c3_clip_bar_rect = [[-c3_clip_hw, c3_clip_y0], [c3_clip_hw, c3_clip_bar_y1]];
+c3_clip_tongue_rect = [[-c3_clip_w / 2, c3_stop_y], [c3_clip_w / 2, c3_clip_y1]];
+for (h = c3_corner_holes, r = [c3_clip_bar_rect, c3_clip_tongue_rect])
+    assert(rect_pt_dist(r, h) >= c3_corner_clr,
+           str("C3 clip within c3_corner_clr of a pin-row corner hole: ", rect_pt_dist(r, h)));
 assert(c3_clip_barb_z > c3_fit, "C3 clip notch runs off the rail bottom");
 assert(c3_clip_w < 2 * (c3[1] / 2 - c3_groove[0]),
        "C3 clip tongue reaches the pin rows (keep it inside the groove-free middle)");

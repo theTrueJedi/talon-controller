@@ -158,7 +158,10 @@ c3_lip_h = 0.8;                         // clip tongue height: its underside to 
 c3_lip_len = 1;                         // clip tongue length (Y) past the front stop face, over the board
 c3_clip_w = 6;                          // clip tongue width (X), centred on the board's inner short edge
 c3_clip_t = 1.2;                        // clip bar thickness (Z) and leg thickness (X)
-c3_clip_barb = 0.3;                     // leg barb depth into its rail notch
+c3_clip_engage = 0.5;                   // barb overlap onto the rail, past the leg's c3_fit gap
+c3_hole_edge = 1.6;                     // pin-row hole centres in from the board's long edge (unmeasured)
+c3_hole_end = 1.6;                      // end hole centres in from the board's short edge (unmeasured)
+c3_corner_clr = 1.5;                    // least clip clearance (plan) to an inner-end corner hole centre
 c3_clip_barb_h = 1;                     // barb height (Z): ramp below, flat catch on top
 c3_clip_barb_z = 1;                     // barb bottom above the rail bottom
 usb_hole_r = 1.5;                       // USB plug hole corner radius
@@ -314,6 +317,10 @@ c3_clip_y0 = c3_cradle_y0;
 c3_clip_y1 = c3_stop_y + c3_lip_len;            // tongue tip, over the board
 c3_clip_leg_x = c3_cradle_hw + c3_fit;          // leg inner face
 c3_clip_hw = c3_clip_leg_x + c3_clip_t;         // leg outer face
+c3_clip_barb = c3_fit + c3_clip_engage;         // barb depth from the leg's inner face
+c3_clip_bar_y1 = c3_stop_y;                     // bar and legs end at the stop face; only the tongue reaches over the board
+// Inner-end corner holes (GPIO5 / GPIO6), plan [x, y] in the box frame.
+c3_corner_holes = [for (s = [-1, 1]) [s * (c3[1] / 2 - c3_hole_edge), c3_edge_y - c3[0] + c3_hole_end]];
 c3_clip_top_z = c3_top_h + c3_clip_t;
 c3_clip_size = [2 * c3_clip_hw, c3_clip_y1 - c3_clip_y0, c3_clip_top_z - c3_clip_barb_z];
 boss_x = box_w / 2 - boss_c;

@@ -56,8 +56,8 @@ else if (part == "bottom") {
 else if (part == "c3_clip") {
     // Bed bbox: box-frame X, Z (standing up), Y (depth on the bed).
     echo(c3_clip_bed = [c3_clip_size[0], c3_clip_size[2], c3_clip_size[1]]);
-    // Print on its tongue-end face: the bar, legs and tongue stand up from the bed.
-    translate([0, 0, c3_clip_y1]) rotate([-90, 0, 0]) c3_clip();
+    // Print on its front face: bar and legs on the bed, the tongue rising from them.
+    translate([0, 0, -c3_clip_y0]) rotate([90, 0, 0]) c3_clip();
 }
 else if (part == "foot") foot();                       // print flat; TPU, x4
 else if (part == "assembly") assembly();               // preview, box frame
