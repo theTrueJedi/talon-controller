@@ -69,3 +69,5 @@ assert(c3_wall_slot < wall, "C3 wall slot cuts through the back wall: nothing st
 assert(c3_stop_gap <= 0.3, str("C3 front stop too far from the board: ", c3_stop_gap));
 assert(ky_low_z >= c3_top_z + clr, str("KY-040 hangs onto the C3-Zero: ", ky_low_z));
 assert(top_flat_min > 0, "top_flat_min must be > 0 (flat-topped rear)");
+assert(pin_bot_z < ky_pcb_bottom_z, str("anti-rotation pin stops short of the KY-040 PCB bottom: ", pin_bot_z));
+assert(m3_detent > 0 && m3_detent < (m3_nut_af + fit) / 4, str("nut detent must be > 0 and small: ", m3_detent));

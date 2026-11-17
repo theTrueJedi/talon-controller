@@ -35,8 +35,8 @@ module fit_coupon() {
     // hole, pin and clamp stack are tested on this piece.
     translate([coupon_disc_x, 0, 0]) rotate([180, 0, 0]) intersection() {
         face_center(coupon_face_r);
-        translate([0, 0, -face_t - body[2] - eps])
-            cylinder(r = coupon_split_r, h = face_t + body[2] + eps);
+        translate([0, 0, pin_bot_z - eps])
+            cylinder(r = coupon_split_r, h = face_t + pin_len + eps);
     }
     // Well-floor washer: stands in for the hood floor in the clamp stack.
     translate([coupon_washer_x, 0, 0]) tube(collar_hole_d / 2, floor_washer_od / 2, 0, floor_t);

@@ -177,3 +177,6 @@ gap="$(echo "$err" | sed -n 's/^ECHO: c3_stop_gap = \([-0-9.e]*\)$/\1/p' | head 
 python3 -c "import sys; g = float(sys.argv[1]); assert 0 <= g <= 0.3" "$gap" || fail c3-stop "gap $gap"
 pass c3-stop
 expect_fail c3-wall-slot "C3 wall slot" -D 'part="shell"' -D c3_wall_slot=2
+# Fix round 1: the pin must reach through the KY-040 PCB; nut slots need a detent.
+expect_fail checks-fail-pin    "pin stops short of the KY-040 PCB bottom" -D pin_through=0
+expect_fail checks-fail-detent "nut detent" -D m3_detent=0

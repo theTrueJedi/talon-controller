@@ -24,9 +24,9 @@ module face_center_solid(r) {
         cylinder(r = lip_or, h = lip_h);
         translate([0, 0, -eps]) cylinder(r = lip_ir, h = lip_h + 2 * eps);
     }
-    // Anti-rotation pin into the far KY-040 hole.
-    translate([ky_far_hole_xy[0], ky_far_hole_xy[1], -face_t - body[2]])
-        cylinder(d = pin_d, h = body[2] + eps);
+    // Anti-rotation pin through the far KY-040 hole, tip pin_through past the PCB.
+    translate([ky_far_hole_xy[0], ky_far_hole_xy[1], pin_bot_z])
+        cylinder(d = pin_d, h = pin_len + eps);
 }
 
 // Holes and notches through the face center.

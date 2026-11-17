@@ -104,6 +104,7 @@ glow_digit_depth = 0.6;                 // label emboss height, out of the leg
 
 // ---- Fits and pins ----
 pin_d = 2.6;
+pin_through = 0.5;                      // pin tip past the KY-040 PCB underside
 clr = 1;
 fit = 0.2;
 
@@ -125,6 +126,7 @@ m3_nut_af = 5.7;
 m3_trap_h = 2.6;                        // nut slot height
 boss_floor = 2;                         // boss material between plate and nut
 boss_roof = 1.2;                        // boss material over the nut (screw-tip room)
+m3_detent = 0.25;                       // bumps narrowing the nut slot at the hex pocket mouth
 // C3-Zero cradle: pedestal, front stop, two flexing snap rails.
 c3_wall_slot = 1;                       // board's port edge sinks this far into the back wall
 c3_stop_t = 2;                          // front stop thickness (Y)
@@ -169,6 +171,9 @@ cap_h        = cap_top_z - stem_bot_z;
 driver_shaft_l = hood_top_z + driver_handle_clear - (nut_top_z - nut_t);
 // glow_gap at which hood_top_z == cap_top_z - 3.5 - cap_float
 max_glow_gap = cap_top_z - 3.5 - cap_float - ring_top_z - hood_top_t;
+ky_pcb_bottom_z = body_top_z - body[2] - ky_pcb[2];
+pin_bot_z    = ky_pcb_bottom_z - pin_through;   // anti-rotation pin tip
+pin_len      = -face_t - pin_bot_z;             // pin, from the face underside
 
 // ================= Derived (face and hood radii) =================
 hood_od = hood_id + 2 * hood_wall;
@@ -195,7 +200,7 @@ coupon_plug_x = coupon_washer_x + floor_washer_od / 2 + coupon_gap + coupon_plug
 coupon_seg_x = coupon_plug_x + coupon_plug_d / 2 + coupon_gap + coupon_seg_half_w;
 fit_footprint = [coupon_seg_x + coupon_seg_half_w + coupon_face_r,
                  2 * coupon_face_r,
-                 max(face_t + lip_h, face_t + body[2], hood_top_z, coupon_plug_h)];
+                 max(face_t + lip_h, face_t + pin_len, hood_top_z, coupon_plug_h)];
 glow_step_l = glow_strip[0] / len(glow_steps);
 glow_footprint = [glow_strip[0], glow_strip[1] + glow_digit_depth,
                   ring_t + max(glow_steps) + hood_top_t];

@@ -80,15 +80,23 @@ module bosses() {
 }
 
 // M3 clearance hole (blind) and a side-entry nut slot opening into the box:
-// +Y for front bosses, -Y for rear. The nut sits on boss_floor of boss.
+// +Y for front bosses, -Y for rear. The nut sits on boss_floor of boss, held
+// centred on the screw axis by a detent at the hex pocket mouth.
 module boss_cuts() {
     for (p = boss_xy) translate([p[0], p[1], 0]) {
         s = boss_front(p) ? 1 : -1;
         translate([0, 0, -eps]) cylinder(d = m3_clear_d, h = boss_stack_h + eps);
-        translate([0, 0, boss_floor]) {
-            rotate([0, 0, 90]) cylinder(r = m3_nut_r, h = m3_trap_h, $fn = 6);
-            translate([-(m3_nut_af + fit) / 2, s > 0 ? 0 : -(boss_d + 1), 0])
-                cube([m3_nut_af + fit, boss_d + 1, m3_trap_h]);
+        // Hex pocket plus entry channel, minus two detent bumps just past the
+        // seated nut's flats: the nut snaps past them and stays on the screw axis.
+        translate([0, 0, boss_floor]) difference() {
+            union() {
+                rotate([0, 0, 90]) cylinder(r = m3_nut_r, h = m3_trap_h, $fn = 6);
+                translate([-(m3_nut_af + fit) / 2, s > 0 ? 0 : -(boss_d + 1), 0])
+                    cube([m3_nut_af + fit, boss_d + 1, m3_trap_h]);
+            }
+            for (x = [-1, 1])
+                translate([x * (m3_nut_af + fit) / 2, s * (m3_nut_r / 2 + m3_detent), -eps])
+                    cylinder(r = m3_detent, h = m3_trap_h + 2 * eps, $fn = 16);
         }
     }
 }

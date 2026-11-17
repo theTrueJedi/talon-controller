@@ -47,6 +47,8 @@ Studio and do not rotate them. None of these should need supports.
 The hood is the only part the light shines through, so it is the only big
 part in translucent PETG. Everything else is opaque so light does not leak.
 
+The USB-C unplug pull is taken by the back wall's slot at the board's corners, so unplug by the plug body, not the cable.
+
 ## Test coupons (print these first)
 
 Two small, cheap prints that test the fits that are hard to get right on
