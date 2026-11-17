@@ -23,18 +23,17 @@ module face_center(r) {
         }
         // Collar hole.
         translate([0, 0, -face_t - eps]) cylinder(d = collar_hole_d, h = face_t + 2 * eps);
-        // Key notches: pockets at the lip's inner edge for the hood's tabs.
+        // Key notches through the seat lip for the hood's tabs.
         for (a = key_tab_angles)
-            radial_box(a, hood_od / 2 - key_tab[1] - fit,
-                       [key_tab[0] + 2 * fit, key_tab[1] + 2 * fit, key_tab[2] + fit + eps],
-                       -key_tab[2] - fit);
+            radial_box(a, lip_ir - eps, [key_tab_w + 2 * fit, lip_w + 2 * eps, lip_h + 2 * eps], -eps);
         // Ring wire slot, through the face under the ring band.
         radial_box(wire_slot_angle, wire_slot_r - wire_slot[1] / 2,
                    [wire_slot[0], wire_slot[1], face_t + 2 * eps], -face_t - eps);
-        // M2 fallback clearance holes on the hood wall circle.
+        // M2 fallback: clearance holes, and lip notches for the bosses.
         if (hood_screws)
-            for (a = hood_screw_angles)
-                rotate([0, 0, a]) translate([0, hood_screw_r, -face_t - eps])
-                    cylinder(d = m2_clear_d, h = face_t + 2 * eps);
+            for (a = hood_screw_angles) rotate([0, 0, a]) translate([0, hood_screw_r, 0]) {
+                translate([0, 0, -face_t - eps]) cylinder(d = m2_clear_d, h = face_t + 2 * eps);
+                translate([0, 0, -eps]) cylinder(d = m2_boss_d + 2 * fit, h = lip_h + 2 * eps);
+            }
     }
 }

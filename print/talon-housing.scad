@@ -8,7 +8,7 @@ part = "checks";
 
 if (part == "checks") cube(1);   // checks ran above; emit something exportable
 else if (part == "hood") {
-    echo(hood_top_z = hood_top_z);
+    echo(hood_top_z = hood_top_z, hood_od = hood_od, key_tab_len = key_tab_len);
     // Print top-down: top annulus on the bed.
     translate([0, 0, hood_top_z]) rotate([180, 0, 0]) hood();
 }

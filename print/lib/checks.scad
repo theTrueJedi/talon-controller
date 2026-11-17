@@ -26,10 +26,10 @@ assert(ky_pin_corner_dist >= pin_d / 2 + 0.5,
        str("anti-rotation pin hits encoder body corner: ", ky_pin_corner_dist));
 
 // Hood keying, wire slot and fallback options.
-assert(key_tab[2] + fit < face_t, "key notch cuts through the face");
+assert(hood_od / 2 + key_tab_len <= lip_or, "key tab sticks out past the seat lip");
 assert(wire_slot_r - wire_slot[1] / 2 >= ring_id / 2 &&
        wire_slot_r + wire_slot[1] / 2 <= ring_od / 2, "wire slot outside ring band");
-assert(hood_screw_r - m2_boss_d / 2 >= ring_od / 2, "M2 boss hits the ring");
+assert(hood_screw_r - m2_boss_d / 2 >= ring_od / 2 + m2_boss_ring_clr, "M2 boss hits the ring");
 if (hood_screws)
     for (s = hood_screw_angles) {
         assert(ang_dist(s, wire_slot_angle) >= 30, "M2 boss on wire slot");

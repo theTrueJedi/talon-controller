@@ -53,14 +53,18 @@ collar_hole_d = 7.4;
 well_wall = 1.6;                        // hood inner (well) wall thickness
 lip_h = 1;                              // hood seat lip on the face
 lip_w = 1.6;
-key_tab = [2, 2, 1];                    // [tangential, radial, below z 0]
+// Key tabs project outward from the hood outer wall at z 0..lip_h and sit
+// in notches cut through the seat lip.
+key_tab_w = 2;                          // tangential
+key_tab_len = lip_w;                    // radial; stays inside the lip OD
 wire_slot = [8, 3];                     // [tangential, radial], under the ring band
 // M2 fallback (hood_screws): clearance through the face, pilot in a boss
-// thickened inward from the hood outer wall.
+// grown outward from the hood outer wall (notched through the seat lip).
 m2_clear_d = 2.4;
 m2_pilot_d = 1.6;
 m2_pilot_depth = 6;
 m2_boss_d = 3.6;
+m2_boss_ring_clr = 0.5;                 // boss inner edge to ring OD
 hood_screw_angles = [45, 225];          // about +Z; 0 = +Y
 // Opaque halo sleeve (halo_block): slips over the outside of the well wall.
 halo_t = 0.8;
@@ -108,7 +112,7 @@ max_glow_gap = cap_top_z - 3.5 - cap_float - ring_top_z - hood_top_t;
 
 // ================= Derived (face and hood radii) =================
 hood_od = hood_id + 2 * hood_wall;
-hood_screw_r = hood_id / 2 + hood_wall / 2;     // M2 circle, on the hood wall
+hood_screw_r = ring_od / 2 + m2_boss_ring_clr + m2_boss_d / 2;  // M2 circle
 lip_ir = hood_od / 2 + fit;                     // lip inner radius
 lip_or = lip_ir + lip_w;
 wire_slot_r = (ring_id + ring_od) / 4;          // centre of the ring band

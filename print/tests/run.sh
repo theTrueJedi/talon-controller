@@ -51,13 +51,16 @@ expect_fail checks-fail-cap  "cap covers LEDs"    -D cap_d=34
 expect_fail checks-fail-tab  "key tab on wire slot" -D 'key_tab_angles=[350]'
 
 expect_ok   hood-render -D 'part="hood"'
-z="$(echo "$err" | sed -n 's/^ECHO: hood_top_z = //p' | head -1)"
-[ -n "$z" ] || fail hood-bbox "no hood_top_z echo"
+# ECHO: hood_top_z = 13.1, hood_od = 55.2, key_tab_len = 1.6
+dims="$(echo "$err" | sed -n 's/^ECHO: hood_top_z = \([0-9.]*\), hood_od = \([0-9.]*\), key_tab_len = \([0-9.]*\)$/\1 \2 \3/p' | head -1)"
+[ -n "$dims" ] || fail hood-bbox "no hood dims echo"
 bbox="$(python3 "$here/stl_bbox.py" "$out/hood-render.stl")"
-python3 - "$bbox" "$z" <<'PY' || fail hood-bbox "got '$bbox', hood_top_z=$z"
+# Default key tabs sit at 90/270 (both on the X axis): they widen x only.
+python3 - "$bbox" "$dims" <<'PY' || fail hood-bbox "got '$bbox', dims=$dims"
 import sys
-x, y, zz = map(float, sys.argv[1].split()); want = float(sys.argv[2]) + 1
-assert abs(x - 55.2) <= 0.1 and abs(y - 55.2) <= 0.1 and abs(zz - want) <= 0.1
+x, y, z = map(float, sys.argv[1].split())
+top, od, tab = map(float, sys.argv[2].split())
+assert abs(x - (od + 2 * tab)) <= 0.1 and abs(y - od) <= 0.1 and abs(z - top) <= 0.1
 PY
 pass hood-bbox
 
