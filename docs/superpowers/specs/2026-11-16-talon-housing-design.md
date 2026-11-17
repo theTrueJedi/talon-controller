@@ -93,7 +93,8 @@ encoder body. There are no screw posts for the KY-040.
   hood's underside is one flat plane, so it prints flat and seats without
   rocking.
 - Anti-rotation: one printed pin hangs from the face underside into the
-  KY-040 hole **farther from the shaft**. The nearer hole sits about 1 mm
+  KY-040 hole **farther from the shaft** (4.5 from the header edge, 10 from
+  the shaft; pin Ø2.6 in the Ø3 hole, a parameter). The nearer hole sits about 1 mm
   from the encoder body's corner, too tight for a pin. The encoder top has
   no lug (Evan, 2026-11-16): the collar rises straight from a flat square.
 
@@ -121,7 +122,7 @@ than about 3.5 mm. The collar budget is face + floor + washer + nut = 5.5 of
 
 **Shell (opaque):**
 - Face plate 1.5 mm, locally thicker away from the center if needed for
-  stiffness. A **Ø7.4 hole** for the collar (M7 assumed; measure). The
+  stiffness. A **Ø7.4 hole** for the collar (measured Ø7). The
   encoder body sits entirely below the face.
 - The KY-040 hangs from the face on the nut. Its **header edge points toward
   the back** of the wedge, the tallest part of the interior. The pins are
@@ -217,9 +218,6 @@ written.
   default assumes EC11: Ø6, flat at 4.5. The fit-test coupon confirms it.
 - **USB-C cable plug body** width × height (the back-wall hole). The default
   is 12.5 × 7.5.
-- **Collar outer diameter** (M7 assumed).
-- **Mounting hole positions along the board:** distance from the header-edge
-  to each hole center. The photo estimate is about 4.5 and 21.5.
 
 
 ## Risks

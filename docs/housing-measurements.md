@@ -17,13 +17,14 @@ Source data for the parametric OpenSCAD housing. Units: mm. Blank = not yet meas
 | Shaft, D-flat section (top) | 7 |
 | Shaft, round section | 5 |
 | Gap shaft→collar | 0.5 |
+| Collar outer diameter | 7 |
 | Threaded collar height | 7 |
 | Encoder body height above PCB top | 6.5 (8 from PCB underside) |
 | PCB thickness | 1.5 |
 | PCB length × width | 26 × 19 |
 | Shaft center from PCB edges | 11.5 from the short edge opposite the header; 10 from the long edge opposite the holes (so 14.5 from header edge, 9 from hole edge) |
 | Header | right-angle, 5 pins on the short edge opposite the shaft side; pins stick ~5 mm past the PCB edge (photo estimate); with F–F jumpers on, ~6.5 high |
-| Mounting holes | 2× Ø3, 17 c–c, along the long edge 9 from shaft center; distance from that edge: |
+| Mounting holes | 2× Ø3, 17 c–c, 2.5 from the long edge; centers 4.5 and 21.5 from the header edge (4.5 matches 17 c–c; measured 4.5–4.8). Far hole (4.5) is 10 from the shaft, near hole 7 |
 | Nut across flats / thickness | 10 / 2 |
 
 Shaft is NOT centered on the PCB; the ring centers on the shaft.
