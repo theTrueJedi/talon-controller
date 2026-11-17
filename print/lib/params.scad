@@ -74,6 +74,19 @@ cap_d = 28;
 cap_float = 1.5;
 cap_over_shaft = 1.5;
 stem_od = 15;
+cap_chamfer = 0.8;                      // disc top and bottom edge chamfer
+shaft_clr = 0.6;                        // diametral clearance on the round shaft
+collar_clr_h = 0.5;                     // collar counterbore height above collar top
+cap_roof_min = 1.2;                     // material over the blind bore
+knurl_n = 36;                           // flutes round a knurled grip
+knurl_flute_d = 1.2;                    // flute cutter diameter
+knurl_depth = 0.4;                      // flute depth into the grip
+
+// ---- Nut driver ----
+socket_depth = 3;
+driver_od = well_id - 1;                // socket and shaft OD; must fit the well
+driver_handle_clear = 15;               // handle bottom above the hood top
+driver_handle = [20, 20];               // [diameter, height]
 
 // ---- Fits and pins ----
 pin_d = 2.6;
@@ -95,6 +108,7 @@ hood_screws = false;
 halo_block = false;
 key_tab_angles = [90, 270];             // about +Z; 0 = +Y
 wire_slot_angle = 0;                    // about +Z; 0 = +Y
+cap_knurl = false;                      // flute the cap rim
 
 // ================= Derived (face frame Z) =================
 body_top_z   = -face_t;                         // encoder body top meets face underside
@@ -107,6 +121,13 @@ cap_under_z  = hood_top_z + cap_float;
 cap_top_z    = shaft_top_z + cap_over_shaft;
 nut_top_z    = floor_t + washer_t + nut_t;      // well floor, washer, nut on face top
 nut_corner   = nut_af / cos(30);
+stem_bot_z   = nut_top_z + 1;                   // cap stem bottom, 1 above the nut
+shaft_dsec_z = shaft_top_z - shaft_d_h;         // bottom of the shaft's D section
+cap_bore_top_z = shaft_top_z + fit;             // blind end of the cap bore
+cap_roof     = cap_top_z - cap_bore_top_z;
+cap_h        = cap_top_z - stem_bot_z;
+// Driver open end rests on the washer; shaft runs from there to the handle.
+driver_shaft_l = hood_top_z + driver_handle_clear - (nut_top_z - nut_t);
 // glow_gap at which hood_top_z == cap_top_z - 3.5 - cap_float
 max_glow_gap = cap_top_z - 3.5 - cap_float - ring_top_z - hood_top_t;
 

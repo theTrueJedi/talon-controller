@@ -69,3 +69,26 @@ expect_ok   face-screws-render -D 'part="face"' -D hood_screws=true
 expect_ok   hood-screws-render -D 'part="hood"' -D hood_screws=true
 expect_ok   halo-render        -D 'part="halo"' -D halo_block=true
 expect_fail halo-off           "part halo needs" -D 'part="halo"'
+
+expect_ok   cap-render -D 'part="cap"'
+# ECHO: cap_d = 28, cap_h = 14.5
+dims="$(echo "$err" | sed -n 's/^ECHO: cap_d = \([0-9.]*\), cap_h = \([0-9.]*\)$/\1 \2/p' | head -1)"
+[ -n "$dims" ] || fail cap-bbox "no cap dims echo"
+bbox="$(python3 "$here/stl_bbox.py" "$out/cap-render.stl")"
+python3 - "$bbox" "$dims" <<'PY' || fail cap-bbox "got '$bbox', dims=$dims"
+import sys
+x, y, z = map(float, sys.argv[1].split())
+d, h = map(float, sys.argv[2].split())
+assert abs(x - d) <= 0.1 and abs(y - d) <= 0.1 and abs(z - h) <= 0.1
+PY
+pass cap-bbox
+expect_ok   cap-knurl-render -D 'part="cap"' -D cap_knurl=true
+
+expect_ok   driver-render -D 'part="nut_driver"'
+bbox="$(python3 "$here/stl_bbox.py" "$out/driver-render.stl")"
+python3 - "$bbox" <<'PY' || fail driver-bbox "got '$bbox'"
+import sys
+x, y, z = map(float, sys.argv[1].split())
+assert x <= 20.1 and y <= 20.1
+PY
+pass driver-bbox

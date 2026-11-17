@@ -3,6 +3,8 @@ include <lib/params.scad>
 include <lib/checks.scad>
 include <parts/face.scad>
 include <parts/hood.scad>
+include <parts/cap.scad>
+include <parts/tools.scad>
 
 part = "checks";
 
@@ -15,6 +17,15 @@ else if (part == "hood") {
 else if (part == "halo") {
     assert(halo_block, "part halo needs -D halo_block=true");
     halo_sleeve();
+}
+else if (part == "cap") {
+    echo(cap_d = cap_d, cap_h = cap_h);
+    // Print top-face down: cap top on the bed.
+    translate([0, 0, cap_top_z]) rotate([180, 0, 0]) cap();
+}
+else if (part == "nut_driver") {
+    // Print handle down: handle end on the bed, socket up.
+    translate([0, 0, driver_shaft_l + driver_handle[1]]) rotate([180, 0, 0]) nut_driver();
 }
 else if (part == "face") face_center(lip_or + wall);   // face-center preview
 else assert(false, str("unknown part: ", part));

@@ -36,3 +36,9 @@ if (hood_screws)
         for (a = key_tab_angles) assert(ang_dist(s, a) >= 30, "M2 boss on key tab");
     }
 assert(halo_ir + halo_t <= ring_id / 2 - 1, "halo sleeve reaches the LEDs");
+
+// Cap bore and nut driver.
+assert(cap_roof >= cap_roof_min, str("cap roof over bore too thin: ", cap_roof));
+assert(stem_bot_z >= nut_top_z + 0.5, "cap stem hits the nut");
+assert(driver_od <= well_id - 1, "nut driver too wide for well");
+assert((nut_af + fit) / cos(30) <= driver_od - 2, "driver socket wall too thin");
