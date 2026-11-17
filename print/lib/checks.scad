@@ -103,15 +103,20 @@ function rect_pt_dist(r, p) = norm([max(r[0][0] - p[0], 0, p[0] - r[1][0]),
                                     max(r[0][1] - p[1], 0, p[1] - r[1][1])]);
 function rects_gap(a, b) = max(a[0][0] - b[1][0], b[0][0] - a[1][0],
                                a[0][1] - b[1][1], b[0][1] - a[1][1]);
-c3_cradle_rect = [[-c3_cradle_hw, c3_cradle_y0], [c3_cradle_hw, box_d]];
-for (i = [0 : weight_count - 1]) {
-    w = [weight_xy(i), weight_xy(i) + [weight[0], weight[1]]];
+c3_cradle_rect = [[c3_x - c3_cradle_hw, c3_cradle_y0], [c3_x + c3_cradle_hw, c3_cradle_y1]];
+for (p = boss_xy) if (!boss_front(p))
+    assert(rect_pt_dist(c3_cradle_rect, p) >= boss_d / 2 + clr,
+           str("C3 cradle hits a rear boss: ", rect_pt_dist(c3_cradle_rect, p)));
+for (i = [0 : len(weight_pockets) - 1]) {
+    w = weight_rect(i);
     assert(w[0][0] >= -box_w / 2 + plate_fit + wall && w[1][0] <= box_w / 2 - plate_fit - wall &&
            w[0][1] >= plate_fit + wall && w[1][1] <= box_d - plate_fit - wall,
            str("weight pocket ", i, " too near the plate edge"));
-    assert(rects_gap(w, c3_cradle_rect) >= clr, str("weight pocket ", i, " under the C3-Zero cradle"));
     for (p = boss_xy) assert(rect_pt_dist(w, p) >= m3_cbore_d / 2 + clr,
                              str("weight pocket ", i, " cuts an M3 counterbore"));
+    for (j = [0 : len(weight_pockets) - 1]) if (j > i)
+        assert(rects_gap(w, weight_rect(j)) >= weight_gap,
+               str("weight pockets overlap (or under weight_gap): ", i, " and ", j));
 }
 for (f = foot_xy) {
     assert(abs(f[0]) + foot_recess_r + foot_edge <= box_w / 2 - plate_fit &&

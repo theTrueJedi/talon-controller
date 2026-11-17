@@ -47,8 +47,8 @@ module screws_ghost() {                                                   // box
 }
 
 module weights_ghost() {                                                  // box frame
-    for (i = [0 : weight_count - 1])
-        translate([weight_xy(i)[0], weight_xy(i)[1], -weight[2]]) cube(weight);
+    for (i = [0 : len(weight_pockets) - 1]) let(r = weight_rect(i))
+        translate([r[0][0], r[0][1], weight_z0]) cube([r[1][0] - r[0][0], r[1][1] - r[0][1], weight[2]]);
 }
 
 module feet_placed() {                                                    // box frame
@@ -72,7 +72,7 @@ module item(i) {
     else if (i == 9) face_pose() nut_ghost();
     else if (i == 10) screws_ghost();
     else if (i == 11) weights_ghost();
-    else if (i == 12) c3_clip();
+    else if (i == 12) translate([c3_x, 0, 0]) c3_clip();
 }
 
 module assembly() {
@@ -93,21 +93,21 @@ module assembly() {
 // Intended face contacts: item j is moved eps off item i along the contact
 // normal before intersecting, so only a real overlap survives.
 interference_contacts = [
-    [0, 1, [0, 0, -eps]],               // shell rim, bosses, cradle on the plate top
+    [0, 1, [0, 0, -eps]],               // shell rim and bosses on the plate top
     [0, 2, face_n * eps],               // hood (walls, well floor, key tabs) on the face top
     [0, 5, face_n * eps],               // ring on the face top
     [0, 6, -face_n * eps],              // KY-040 body top against the face underside
-    [0, 7, [0, -eps, eps]],             // C3-Zero on its pedestal, port edge at the wall-slot end
-    [0, 11, [0, 0, -eps]],              // weights flush with the plate top, under the front ramp
-    [0, 12, [0, eps, eps]],             // C3 clip bar on the rail/stop tops, tongue against the stop face
+    [0, 7, [0, -eps, 0]],               // C3-Zero port edge at the wall-slot end
     [1, 4, [0, 0, -eps]],               // foot against its recess ceiling
+    [1, 7, [0, 0, eps]],                // C3-Zero on the plate cradle's pedestal
     [1, 10, [0, 0, -eps]],              // screw head against its counterbore ceiling
+    [1, 12, [0, eps, eps]],             // C3 clip bar on the rail/stop tops, tongue against the stop face
     [2, 8, face_n * eps],               // washer on the well floor
     [8, 9, face_n * eps],               // nut on the washer
 ];
 // Pairs left out entirely (contact is the design, not a fault).
 interference_omit = [
-    [1, 11],                            // weights in exact-size pockets (no clearance by spec)
+    [1, 11],                            // weights sealed in exact-size pockets (no clearance by spec)
     [6, 8], [6, 9],                     // washer and nut on the encoder collar thread
 ];
 

@@ -213,7 +213,7 @@ assert abs(x - w) <= 0.1 and abs(y - h) <= 0.1 and abs(z - d) <= 0.1
 assert w >= od + 2 * wall + 4
 PY
 pass shell-bbox
-# One body: bosses, cradle and channel ribs all fused to the walls.
+# One body: bosses and channel ribs all fused to the walls.
 stl_check "$out/shell-render.stl" 1 $(echo "$fp" | cut -d' ' -f1) $(echo "$hw" | cut -d' ' -f1) $(echo "$fp" | cut -d' ' -f2) \
     || fail shell-layout "footprint=$fp h=$hw"
 pass shell-layout
@@ -223,6 +223,19 @@ gap="$(echo "$err" | sed -n 's/^ECHO: c3_stop_gap = \([-0-9.e]*\)$/\1/p' | head 
 [ -n "$gap" ] || fail c3-stop "no c3_stop_gap echo"
 python3 -c "import sys; g = float(sys.argv[1]); assert 0 <= g <= 0.3" "$gap" || fail c3-stop "gap $gap"
 pass c3-stop
+# Plate removal path: the back-wall board slot and USB notch open down to the rim.
+z0="$(echo "$err" | sed -n 's/^ECHO: c3_back_cuts_z0 = \([-0-9.e]*\)$/\1/p' | head -1)"
+[ -n "$z0" ] || fail c3-notch-open "no c3_back_cuts_z0 echo"
+python3 -c "import sys; assert float(sys.argv[1]) <= 0" "$z0" || fail c3-notch-open "z0 $z0"
+pass c3-notch-open
+# The C3 cradle lives on the bottom plate: the shell stays one body wherever the
+# board sits (the default render is shell-layout above). Centred, the BR weight
+# pocket moves off the TL one's row overlap.
+expect_ok   shell-no-cradle -D 'part="shell"' -D c3_x=0 -D 'weight_pockets=[[-22.85,3,0],[3.2,3,0],[-22.85,46,0],[3.2,46,0]]'
+stl_check "$out/shell-no-cradle.stl" 1 $(echo "$fp" | cut -d' ' -f1) $(echo "$hw" | cut -d' ' -f1) $(echo "$fp" | cut -d' ' -f2) \
+    || fail shell-no-cradle "c3_x=0: not one body"
+expect_fail checks-fail-c3-boss "C3 cradle hits a rear boss" -D c3_x=16
+
 expect_fail c3-wall-slot "C3 wall slot" -D 'part="shell"' -D c3_wall_slot=2
 # Direct-soldered C3-Zero: solder-tail grooves under the pin rows, and a
 # separate clip holding the inner short edge's middle (off the pin-row corners).
@@ -250,8 +263,16 @@ expect_ok   bottom-render -D 'part="bottom"'
 # ECHO: bottom_footprint = [w, d, t]
 dims="$(echo "$err" | sed -n 's/^ECHO: bottom_footprint = \[\(.*\), \(.*\), \(.*\)\]$/\1 \2 \3/p' | head -1)"
 [ -n "$dims" ] || fail bottom-layout "no bottom_footprint echo"
-stl_check "$out/bottom-render.stl" 1 $dims || fail bottom-layout "dims=$dims"
+# Plate plus the C3 cradle on top (z = plate_t + c3_top_h). Each sealed weight
+# pocket is a closed cavity, which the vertex-sharing count sees as its own body.
+stl_check "$out/bottom-render.stl" 5 $dims || fail bottom-layout "dims=$dims"
 pass bottom-layout
+# Print pause height for inserting the weights: pocket tops, bottom_t + weight z.
+pz="$(echo "$err" | sed -n 's/^ECHO: weight_pause_z = \([-0-9.e]*\)$/\1/p' | head -1)"
+[ -n "$pz" ] || fail weight-pause "no weight_pause_z echo"
+python3 -c "import sys; assert abs(float(sys.argv[1]) - 8.8) <= 0.01" "$pz" || fail weight-pause "got $pz"
+pass weight-pause
+expect_fail checks-fail-pocket-overlap "weight pockets overlap" -D 'weight_pockets=[[-22.85,3,0],[-22.85,3,0],[3.2,3,0],[-22.85,46,0]]'
 
 expect_ok   assembly-render -D 'part="assembly"'
 
@@ -271,4 +292,5 @@ for brk in collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10; do
     [ "$rc" -eq 0 ] || fail "interference-detects-$brk" "exit $rc"
     pass "interference-detects-$brk"
 done
-expect_fail checks-fail-screw "M3 head" -D m3_screw_l=12
+# 12 sits flush in the 10 mm plate; 16 sticks out.
+expect_fail checks-fail-screw "M3 head" -D m3_screw_l=16

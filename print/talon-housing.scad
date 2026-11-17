@@ -46,6 +46,7 @@ else if (part == "shell") {
     echo(box_footprint = box_footprint);
     echo(box_h = box_h, hood_od = hood_od, wall = wall);
     echo(c3_stop_gap = c3_stop_gap);
+    echo(c3_back_cuts_z0 = c3_back_cuts_z0);
     echo(front_h = front_h, front_h_ky = front_h_ky, front_h_boss = front_h_boss,
          rear_d = rear_d, rear_d_c3 = rear_d_c3, ky_low_z = ky_low_z, c3_top_z = c3_top_z);
     // Print on its back wall: back outer face on the bed, open bottom to the side.
@@ -53,8 +54,10 @@ else if (part == "shell") {
 }
 else if (part == "bottom") {
     echo(bottom_footprint = bottom_footprint);
+    echo(weight_pause_z = weight_pause_z);
     echo(m3_screw_l = m3_screw_l, m3_cbore_h = m3_cbore_h, m3_tip_z = m3_tip_z);
-    // Print outside face down: pockets open upward, recesses and counterbores on the bed.
+    // Print outside face down (recesses and counterbores on the bed), cradle up;
+    // pause at weight_pause_z to drop the weights into the sealed pockets.
     translate([0, 0, plate_t]) bottom();
 }
 else if (part == "c3_clip") {

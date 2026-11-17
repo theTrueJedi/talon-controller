@@ -40,8 +40,8 @@ c3_port_len = 7.35;                     // USB-C receptacle depth (assembly ghos
 
 // ---- Weights ----
 weight = [19.65, 22, 5.8];
-weight_count = 4;
-weight_gap = 2;                         // between weight pockets
+weight_gap = 2;                         // least gap between weight pockets
+weight_roof = 1.2;                      // plate over the sealed weight pockets
 
 // ---- Face and hood ----
 face_t = 1.5;
@@ -145,11 +145,15 @@ m3_trap_h = 2.6;                        // nut slot height
 boss_floor = 2;                         // boss material between plate and nut
 boss_roof = 1.2;                        // boss material over the nut (screw-tip room)
 m3_detent = 0.25;                       // bumps narrowing the nut slot at the hex pocket mouth
-// C3-Zero cradle: pedestal, front stop, two side rails, and a separate clip.
-// Wires solder straight into the board's holes (no headers), so solder tails
-// stick out under both pin rows (the board's long edges) and wires stand up
-// from the corner holes: grooves clear the tails, and the hold-down sits on
-// the middle of the inner short edge, away from every pad.
+// C3-Zero cradle: pedestal, front stop, two side rails, and a separate clip,
+// all on the bottom plate. The board is fitted to the plate before the plate
+// goes on; its port edge then slides up into the back-wall slot and USB
+// notch, both open at the rim. Solder tails stick out under both pin rows
+// (the board's long edges) and wires stand up from the corner holes: grooves
+// clear the tails, and the hold-down sits on the middle of the inner short
+// edge, away from every pad.
+c3_x = 11.5;                            // board centre x: off-centre so the header plugs point toward -X (box middle)
+c3_z0 = 2;                              // pedestal: header solder-tail clearance
 c3_wall_slot = 1;                       // board's port edge sinks this far into the back wall
 c3_stop_gap_max = 0.3;                  // most board play between the wall slot and front stop
 c3_stop_t = 2;                          // front stop thickness (Y)
@@ -293,8 +297,7 @@ function face_to_box(p) = face_origin + [p[0], p[1] * cos(slope) - p[2] * sin(sl
 // Inside ceiling under the slope at box y.
 function slope_under_z(y) = front_h + y * tan(slope) - face_t / cos(slope);
 ky_low_z = face_to_box([0, ky_y_range[0], ky_z_range[0]])[2];
-// C3-Zero: board bottom high enough that the plug hole keeps `wall` below it.
-c3_z0 = wall + usb_plug_hole[1] / 2 - c3[2] - usb_port[1] / 2;
+// C3-Zero (board bottom at c3_z0, see the cradle params).
 c3_port_z = c3_z0 + c3[2] + usb_port[1] / 2;    // port (and plug hole) centre
 c3_top_z = c3_z0 + c3[2] + usb_port[1];
 c3_reach = (wall - c3_wall_slot) + c3[0] + c3_fit + c3_stop_t;  // back outer face to stop front
@@ -313,6 +316,7 @@ c3_slot_hw = (c3[1] + c3_fit) / 2;                 // board slot half width (rai
 c3_ped_hw = c3_slot_hw - c3_rail_gap;
 c3_cradle_hw = c3_slot_hw + c3_rail_t;          // rail outer face
 c3_cradle_y0 = c3_stop_y - c3_stop_t;           // front stop's front face
+c3_cradle_y1 = box_d - wall - c3_fit;           // cradle back end: c3_fit off the back wall (separate parts)
 c3_top_h = c3_lip_z + c3_lip_h;                 // rail and stop top; the clip bar rests on it
 // C3 clip (box frame): a bar across the rail tops over the stop, legs down the
 // rails' outer faces with barbs into rail notches, tongue over the board.
@@ -336,18 +340,21 @@ cable_ch_z0 = c3_port_z + usb_plug_hole[1] / 2 + wall;
 
 // ================= Derived (bottom plate, box frame) =================
 // The plate spans z = -plate_t .. 0, footprint inset `plate_fit` from the shell's.
-plate_t = bottom_t + weight[2];
-bottom_footprint = [box_w - 2 * plate_fit, box_d - 2 * plate_fit, plate_t];
+plate_t = bottom_t + weight[2] + weight_roof;
+bottom_footprint = [box_w - 2 * plate_fit, box_d - 2 * plate_fit, plate_t + c3_top_h];  // plate + cradle
 m3_tip_z = boss_floor + m3_nut_t + m3_tip_over_nut;       // screw tip, above the plate top
 m3_cbore_h = plate_t - (m3_screw_l - m3_tip_z);           // counterbore depth from below
 m3_cbore_d = m3_head[0] + m3_cbore_clr;
-// Weight pockets, rows of two from the front (front-biased: the knob press
-// lands at the front). Row 0 hugs the centreline; later rows step outboard
-// of the C3-Zero cradle. weight_xy(i) = pocket's min corner [x, y].
-weight_y0 = wall + clr;
-function weight_row_x(r) = r == 0 ? weight_gap / 2 : c3_cradle_hw + clr;
-function weight_xy(i) = let(r = floor(i / 2), s = i % 2 == 0 ? -1 : 1, xi = weight_row_x(r))
-    [s > 0 ? xi : -xi - weight[0], weight_y0 + r * (weight[1] + weight_gap)];
+// Weight pockets, plan [x0, y0, rot]: rot 0 lays weight[0] along X, rot 90 swaps.
+// One per corner; BR under the C3 cradle (sealed pockets may sit under it).
+weight_pockets = [[-22.85, 3, 0], [3.2, 3, 0], [-22.85, 46, 0], [c3_x - weight[0] / 2, 46, 0]];
+// Weight pocket i, plan [[x0, y0], [x1, y1]]. Pockets are closed cavities,
+// z -plate_t + bottom_t .. -weight_roof, exactly weight-sized.
+function weight_rect(i) = let(p = weight_pockets[i],
+                              s = p[2] == 90 ? [weight[1], weight[0]] : [weight[0], weight[1]])
+    [[p[0], p[1]], [p[0] + s[0], p[1] + s[1]]];
+weight_z0 = -plate_t + bottom_t;
+weight_pause_z = bottom_t + weight[2];          // print-bed height of the pocket tops: pause and insert
 // Feet: on the screw rows, just inboard of the counterbores.
 foot_recess_r = foot_d / 2 + foot_fit;
 foot_y = plate_fit + foot_edge + foot_recess_r;
