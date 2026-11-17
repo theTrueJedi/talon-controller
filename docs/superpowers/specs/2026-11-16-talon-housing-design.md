@@ -295,11 +295,19 @@ can be unplugged for troubleshooting, and a bigger, heavier knob.
   mode by itself. BOOT is only for recovering firmware that broke USB:
   remove the plate for that.
 - **Wiring (supersedes "direct solder, no headers"):** one 9-pin 2.54 mm
-  right-angle header on the C3's wired pin row, long legs lying flat over the
-  board (inward). If the strips arrive bent at 45°, bend the legs to 90°
-  before soldering. Female-female jumpers plug onto it. The knob board keeps
-  its stock right-angle header and gets F-F jumpers, so it needs no solder.
-  The ring gets jumpers cut in half, cut ends soldered to its pads.
+  right-angle header on the C3's wired row (USB end first: 5V, GND, 3V3,
+  GPIO0-5, measured from Evan's board). Its legs point **sideways off the
+  board**, toward the middle of the box (Evan's call, 2026-11-17: no plugs
+  over the board). If the strips are 45°, bend the legs to 90° first.
+  Female-female jumpers plug onto it. The knob board keeps its stock
+  right-angle header and gets F-F jumpers, so it needs no solder. The ring
+  gets jumpers cut in half, cut ends soldered to its pads.
+- **C3 off-centre:** the board, its plate cradle, and the back-wall
+  port notch all shift sideways together (`c3_x`), away from the wired row,
+  as far as the rear corner bosses allow (~11.5 mm). The cradle's rail on the
+  wired side is lowered so the plugs pass over it. The back wall gets a
+  shallow recess where the 5V plug reaches ~1 mm past the board's port edge.
+  Weight pockets re-lay around the moved cradle.
 - **Base height:** the straight lower part of the box is 5 mm taller
   (new parameter `base_extra = 5`). The box and the face rise 5 mm; the
   slope angle is unchanged.
@@ -315,28 +323,23 @@ can be unplugged for troubleshooting, and a bigger, heavier knob.
 - The disc is set by a new `cap_disc_t = 14` instead of `cap_over_shaft`.
   The glow-gap limit rises with it.
 - Knurl: about 40 pyramids round, ~0.7 mm deep, as parameters.
-- New assembly stand-ins: the C3 header with plugs lying over the board,
-  and the knob board's header with plugs. The interference check covers
+- New assembly stand-ins: the C3 header with plugs pointing off the board's
+  side, and the knob board's header with plugs. The interference check covers
   them both, against the ceiling and the slope.
 - The wire slot in the face stays 11 × 5.5 mm. A jumper's cut end is just
   wire, so it threads through.
 - Every changed part gets a new `_vN` STL. Old ones stay.
 
 **Open, measured when the headers arrive (2026-11-18):**
-- **Which end of the C3's wired row is at the USB socket.** The flat plugs
-  are ~2.5 mm tall over the board, and the USB socket stands 3.15 mm. A
-  used pin near the USB end would put its plug on top of the socket. If
-  that happens, raise the plugs over the socket (box ~2 mm deeper), or
-  turn that row's legs outward and shift the board off-centre. The model
-  takes the order as a parameter.
-- The jumper housing length (usually 14 mm) and the knob board header's
-  height, for the stand-ins.
+- Pin angle (90° or 45°), the header's plastic height and leg length, and
+  the jumper housing length (usually 14 mm), for the stand-ins. The model
+  takes them as parameters with typical values until then.
 
 **Risks:**
 
 | Risk | Severity | Mitigation |
 |---|---|---|
-| Plugs over the USB socket | Moderate | Pin-order check above; fallback layouts |
+| Plugs hit the rear boss or wall | Moderate | Off-centre limit checked against the bosses; stand-ins in the interference check |
 | Knob board's plugs hit the slope | Moderate | +5 mm base; the interference check shows it before printing |
 | Jumpers work loose | FYI | A dab of hot glue or tape over mated pairs |
 | Jumpers too short to lift the plate away | FYI | Leave slack; unplug before lifting fully |
