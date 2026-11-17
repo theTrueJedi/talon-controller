@@ -1,6 +1,6 @@
 # Talon controller housing: design
 
-Status: draft for Evan's approval, 2026-11-16.
+Status: approved by Evan 2026-11-16 ("we can try it"), with the nut-clamp safeguards below.
 Parent spec: `2026-11-12-talon-controller-design.md` (this replaces its short
 "Housing" section). Measurements: `docs/housing-measurements.md`.
 
@@ -97,6 +97,26 @@ encoder body. There are no screw posts for the KY-040.
   the shaft; pin Ø2.6 in the Ø3 hole, a parameter). The nearer hole sits about 1 mm
   from the encoder body's corner, too tight for a pin. The encoder top has
   no lug (Evan, 2026-11-16): the collar rises straight from a flat square.
+
+**Nut-clamp safeguards (Evan was nervous about the nut alone; added
+2026-11-16):**
+- **The hood is keyed, so it can't spin.** Two small tabs on the hood's
+  outer wall drop into notches in the face's seat lip. The nut only presses
+  down; it never has to resist twisting.
+- **Panel mounting is the encoder's intended mount.** The collar and nut are
+  how these encoders go into pedals and amps. Knob turns don't torque the
+  hood: the shaft spins freely inside the collar.
+- **The nut can loosen from detent clicks over time.** Mitigation: a drop of
+  removable (blue) threadlocker, or a printed nut retainer in the cap's
+  stem. Builder's choice.
+- **Fallback, off by default:** a parameter adds 2 hidden M2 screw bosses.
+  M2 screws go up through the face into thickened spots on the hood's outer
+  wall, reachable from inside once the bottom plate is off. Use it only if
+  the nut-only version fails the fit test, because the bosses may show as
+  brighter spots.
+- **Proven before the full print:** the face-center fit coupon includes a
+  small hood-seat segment. Clamp it with the real nut, then try to twist and
+  wiggle it.
 
 **Stack along the shaft:**
 
