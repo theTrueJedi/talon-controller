@@ -49,3 +49,20 @@ pass checks-bbox
 expect_fail checks-fail-glow "glow_gap too large" -D glow_gap=12
 expect_fail checks-fail-cap  "cap covers LEDs"    -D cap_d=34
 expect_fail checks-fail-tab  "key tab on wire slot" -D 'key_tab_angles=[350]'
+
+expect_ok   hood-render -D 'part="hood"'
+z="$(echo "$err" | sed -n 's/^ECHO: hood_top_z = //p' | head -1)"
+[ -n "$z" ] || fail hood-bbox "no hood_top_z echo"
+bbox="$(python3 "$here/stl_bbox.py" "$out/hood-render.stl")"
+python3 - "$bbox" "$z" <<'PY' || fail hood-bbox "got '$bbox', hood_top_z=$z"
+import sys
+x, y, zz = map(float, sys.argv[1].split()); want = float(sys.argv[2]) + 1
+assert abs(x - 55.2) <= 0.1 and abs(y - 55.2) <= 0.1 and abs(zz - want) <= 0.1
+PY
+pass hood-bbox
+
+expect_ok   face-render        -D 'part="face"'
+expect_ok   face-screws-render -D 'part="face"' -D hood_screws=true
+expect_ok   hood-screws-render -D 'part="hood"' -D hood_screws=true
+expect_ok   halo-render        -D 'part="halo"' -D halo_block=true
+expect_fail halo-off           "part halo needs" -D 'part="halo"'

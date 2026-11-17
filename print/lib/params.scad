@@ -50,6 +50,20 @@ hood_top_t = 2;
 glow_gap = 8;
 well_id = 16;
 collar_hole_d = 7.4;
+well_wall = 1.6;                        // hood inner (well) wall thickness
+lip_h = 1;                              // hood seat lip on the face
+lip_w = 1.6;
+key_tab = [2, 2, 1];                    // [tangential, radial, below z 0]
+wire_slot = [8, 3];                     // [tangential, radial], under the ring band
+// M2 fallback (hood_screws): clearance through the face, pilot in a boss
+// thickened inward from the hood outer wall.
+m2_clear_d = 2.4;
+m2_pilot_d = 1.6;
+m2_pilot_depth = 6;
+m2_boss_d = 3.6;
+hood_screw_angles = [45, 225];          // about +Z; 0 = +Y
+// Opaque halo sleeve (halo_block): slips over the outside of the well wall.
+halo_t = 0.8;
 
 // ---- Cap ----
 cap_d = 28;
@@ -66,6 +80,11 @@ fit = 0.2;
 slope = 30;
 face_len = 72;
 wall = 2;
+
+// ---- Facets ----
+$fa = 2;
+$fs = 0.3;
+eps = 0.01;
 
 // ---- Options ----
 hood_screws = false;
@@ -86,6 +105,15 @@ nut_top_z    = floor_t + washer_t + nut_t;      // well floor, washer, nut on fa
 nut_corner   = nut_af / cos(30);
 // glow_gap at which hood_top_z == cap_top_z - 3.5 - cap_float
 max_glow_gap = cap_top_z - 3.5 - cap_float - ring_top_z - hood_top_t;
+
+// ================= Derived (face and hood radii) =================
+hood_od = hood_id + 2 * hood_wall;
+hood_screw_r = hood_id / 2 + hood_wall / 2;     // M2 circle, on the hood wall
+lip_ir = hood_od / 2 + fit;                     // lip inner radius
+lip_or = lip_ir + lip_w;
+wire_slot_r = (ring_id + ring_od) / 4;          // centre of the ring band
+well_wall_or = well_id / 2 + well_wall;
+halo_ir = well_wall_or + fit;
 
 // ================= Derived (face frame XY) =================
 // KY-040 orientation: header edge toward +Y, hole (long) edge toward +X.
