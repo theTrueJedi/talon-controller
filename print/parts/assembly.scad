@@ -57,8 +57,8 @@ module feet_placed() {                                                    // box
 
 // ---- Items, placed in the box frame ----
 // 0 shell, 1 bottom, 2 hood, 3 cap, 4 feet, 5 ring, 6 KY-040, 7 C3-Zero,
-// 8 washer, 9 nut, 10 screws, 11 weights.
-item_n = 12;
+// 8 washer, 9 nut, 10 screws, 11 weights, 12 C3 clip.
+item_n = 13;
 module item(i) {
     if (i == 0) shell();
     else if (i == 1) bottom();
@@ -72,6 +72,7 @@ module item(i) {
     else if (i == 9) face_pose() nut_ghost();
     else if (i == 10) screws_ghost();
     else if (i == 11) weights_ghost();
+    else if (i == 12) c3_clip();
 }
 
 module assembly() {
@@ -85,6 +86,7 @@ module assembly() {
     color("teal") item(7);
     color("silver") { item(8); item(9); item(10); }
     color("gold") item(11);
+    color("dimgray") item(12);
 }
 
 // ---- Interference ----
@@ -97,6 +99,7 @@ interference_contacts = [
     [0, 6, -face_n * eps],              // KY-040 body top against the face underside
     [0, 7, [0, -eps, eps]],             // C3-Zero on its pedestal, port edge at the wall-slot end
     [0, 11, [0, 0, -eps]],              // weights flush with the plate top, under the front ramp
+    [0, 12, [0, eps, eps]],             // C3 clip bar on the rail/stop tops, tongue against the stop face
     [1, 4, [0, 0, -eps]],               // foot against its recess ceiling
     [1, 10, [0, 0, -eps]],              // screw head against its counterbore ceiling
     [2, 8, face_n * eps],               // washer on the well floor

@@ -53,6 +53,12 @@ else if (part == "bottom") {
     // Print outside face down: pockets open upward, recesses and counterbores on the bed.
     translate([0, 0, plate_t]) bottom();
 }
+else if (part == "c3_clip") {
+    // Bed bbox: box-frame X, Z (standing up), Y (depth on the bed).
+    echo(c3_clip_bed = [c3_clip_size[0], c3_clip_size[2], c3_clip_size[1]]);
+    // Print on its tongue-end face: the bar, legs and tongue stand up from the bed.
+    translate([0, 0, c3_clip_y1]) rotate([-90, 0, 0]) c3_clip();
+}
 else if (part == "foot") foot();                       // print flat; TPU, x4
 else if (part == "assembly") assembly();               // preview, box frame
 else if (part == "interference") interference();       // must render empty

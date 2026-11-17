@@ -14,7 +14,7 @@ fi
 
 # `run.sh export`: write every part to print/stl/<part>.stl (binary STL) and stop.
 if [ "${1:-}" = export ]; then
-    for p in shell hood cap bottom foot nut_driver fit_test glow_test halo; do
+    for p in shell hood cap bottom foot nut_driver fit_test glow_test halo c3_clip; do
         extra=(); [ "$p" = halo ] && extra=(-D halo_block=true)
         "$OPENSCAD" --backend=manifold --export-format binstl -o "$here/../stl/$p.stl" \
             -D "part=\"$p\"" ${extra[@]+"${extra[@]}"} "$src" >/dev/null 2>"$out/export.err" \
@@ -195,12 +195,21 @@ gap="$(echo "$err" | sed -n 's/^ECHO: c3_stop_gap = \([-0-9.e]*\)$/\1/p' | head 
 python3 -c "import sys; g = float(sys.argv[1]); assert 0 <= g <= 0.3" "$gap" || fail c3-stop "gap $gap"
 pass c3-stop
 expect_fail c3-wall-slot "C3 wall slot" -D 'part="shell"' -D c3_wall_slot=2
+# Direct-soldered C3-Zero: solder-tail grooves under the pin rows, and a
+# separate clip holding the inner short edge's middle (off the pin-row corners).
+expect_fail checks-fail-groove "C3 solder groove cuts through the pedestal" -D 'c3_groove=[3, 4]'
+expect_fail checks-fail-notch  "C3 clip notch cuts through the rail" -D c3_clip_barb=1.2
+expect_ok   c3-clip-render -D 'part="c3_clip"'
+dims="$(echo "$err" | sed -n 's/^ECHO: c3_clip_bed = \[\(.*\), \(.*\), \(.*\)\]$/\1 \2 \3/p' | head -1)"
+[ -n "$dims" ] || fail c3-clip-layout "no c3_clip_bed echo"
+stl_check "$out/c3-clip-render.stl" 1 $dims || fail c3-clip-layout "dims=$dims"
+pass c3-clip-layout
 # The encoder body's square top locates in a frame under the face; nut slots need a detent.
 expect_fail checks-fail-frame  "body frame reaches the KY-040 PCB" -D body_frame_h=7
 expect_fail checks-fail-detent "nut detent" -D m3_detent=0
 
 # ---- Bottom plate, feet, assembly, interference (Task 6) ----
-for p in shell hood cap bottom foot nut_driver fit_test glow_test; do
+for p in shell hood cap bottom foot nut_driver fit_test glow_test c3_clip; do
     render "all-$p" -D "part=\"$p\""
     [ "$rc" -eq 0 ] || fail all-parts-render "$p: exit $rc"
 done
@@ -223,8 +232,9 @@ case "$err" in *ERROR*) fail interference-empty "render aborted";; esac
 case "$err" in *"top level object is empty"*) pass interference-empty;;
     *) fail interference-empty "parts or ghosts collide (rc $rc)";; esac
 # Deliberate breaks: collar (7) through a 6.5 face/hood hole; cap bore tighter
-# than the shaft; body frame smaller than the encoder body.
-for brk in collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2; do
+# than the shaft; body frame smaller than the encoder body; C3 clip legs
+# moved into the rails.
+for brk in collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10; do
     render "interference-detects-$brk" -D 'part="interference"' -D "$brk"
     case "$err" in *ERROR*|*"top level object is empty"*) fail "interference-detects-$brk" "collision not caught";; esac
     [ "$rc" -eq 0 ] || fail "interference-detects-$brk" "exit $rc"

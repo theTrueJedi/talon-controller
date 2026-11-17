@@ -103,32 +103,55 @@ module boss_cuts() {
 
 // ---- C3-Zero cradle ----
 // Pedestal under the board and a front stop across its inner short edge,
-// both fixed to the back wall. Two rails along the long edges hang off the
-// back wall only, so they flex outward; their lips hook the board's top at
-// the inner-end corners. Board's port edge sits in a slot in the back wall,
-// which takes the cable's pull. Fit: tilt the board, slide the port edge into
-// the wall slot, press the inner end down past the lips. Remove: spread the
-// rails, lift the inner end.
-c3_top_h = c3_lip_z + c3_lip_h;                 // rail and stop top
-
+// both fixed to the back wall; two side rails along the long edges. The
+// board's port edge sits in a slot in the back wall, which takes the cable's
+// pull. Grooves in the pedestal under both pin rows clear the solder tails.
+// The hold-down is a separate clip (c3_clip below): a lip on the shell over
+// the inner edge's middle would hang in mid-air with the shell printed on its
+// back wall, and rail lips at the corners sit on the GPIO5/GPIO6 pads. Fit:
+// tilt the board, slide the port edge into the wall slot, lay the inner end
+// on the pedestal, press the clip down over the rails until both barbs click
+// into the rail notches. Remove: spread the clip legs, lift it off.
 module c3_cradle() {
     back = box_d - wall + eps;
     // Pedestal and front stop.
     translate([-c3_ped_hw, c3_stop_y, 0]) cube([2 * c3_ped_hw, back - c3_stop_y, c3_z0]);
     translate([-c3_ped_hw, c3_cradle_y0, 0]) cube([2 * c3_ped_hw, c3_stop_t, c3_top_h]);
-    for (s = [-1, 1]) {
-        // Rail.
+    // Rails.
+    for (s = [-1, 1])
         translate([s > 0 ? c3_slot_hw : -c3_slot_hw - c3_rail_t, c3_cradle_y0, 0])
             cube([c3_rail_t, back - c3_cradle_y0, c3_top_h]);
-        // Lip: flat underside over the board, sloped top as the lead-in.
-        translate([0, c3_stop_y + c3_lip_len, 0]) rotate([90, 0, 0])
-            linear_extrude(c3_lip_len)
-                polygon([[s * (c3_slot_hw + eps), c3_lip_z], [s * (c3_slot_hw - c3_lip), c3_lip_z],
-                         [s * (c3_slot_hw + eps), c3_top_h]]);
+}
+
+// Clip, in the box frame as installed. Bar over the rail and stop tops, a
+// leg down each rail's outer face with a barb (ramp below, flat catch on
+// top) in the rail's notch, and a tongue c3_fit above the board's top over
+// the middle of its inner short edge, front face against the stop.
+module c3_clip() {
+    translate([0, c3_clip_y1, 0]) rotate([90, 0, 0]) linear_extrude(c3_clip_y1 - c3_clip_y0) {
+        translate([-c3_clip_hw, c3_top_h]) square([2 * c3_clip_hw, c3_clip_t]);
+        for (s = [-1, 1]) {
+            translate([s > 0 ? c3_clip_leg_x : -c3_clip_hw, c3_clip_barb_z])
+                square([c3_clip_t, c3_top_h - c3_clip_barb_z + eps]);
+            polygon([[s * (c3_clip_leg_x + eps), c3_clip_barb_z],
+                     [s * (c3_clip_leg_x + eps), c3_clip_barb_z + c3_clip_barb_h],
+                     [s * (c3_clip_leg_x - c3_clip_barb), c3_clip_barb_z + c3_clip_barb_h]]);
+        }
     }
+    translate([-c3_clip_w / 2, c3_stop_y, c3_lip_z]) cube([c3_clip_w, c3_lip_len, c3_lip_h + eps]);
 }
 
 module c3_cuts() {
+    // Solder-tail grooves under both pin rows, open to the sides, running the
+    // board's full length (into the wall slot).
+    for (s = [-1, 1])
+        translate([s > 0 ? c3[1] / 2 - c3_groove[0] : -c3_ped_hw - eps, c3_stop_y, c3_z0 - c3_groove[1]])
+            cube([c3_ped_hw + eps - (c3[1] / 2 - c3_groove[0]), c3_edge_y - c3_stop_y + eps, c3_groove[1] + eps]);
+    // Clip notches in the rails' outer faces, open at the front.
+    for (s = [-1, 1])
+        translate([s > 0 ? c3_cradle_hw - c3_clip_barb - c3_fit : -c3_cradle_hw - eps,
+                   c3_cradle_y0 - eps, c3_clip_barb_z - c3_fit])
+            cube([c3_clip_barb + c3_fit + eps, c3_clip_y1 - c3_cradle_y0 + c3_fit + eps, c3_clip_barb_h + 2 * c3_fit]);
     // Board edge slot into the back wall.
     translate([-c3_slot_hw, box_d - wall - eps, c3_z0])
         cube([2 * c3_slot_hw, c3_edge_y - (box_d - wall) + eps, c3[2] + c3_fit]);

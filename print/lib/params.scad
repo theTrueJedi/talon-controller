@@ -143,15 +143,24 @@ m3_trap_h = 2.6;                        // nut slot height
 boss_floor = 2;                         // boss material between plate and nut
 boss_roof = 1.2;                        // boss material over the nut (screw-tip room)
 m3_detent = 0.25;                       // bumps narrowing the nut slot at the hex pocket mouth
-// C3-Zero cradle: pedestal, front stop, two flexing snap rails.
+// C3-Zero cradle: pedestal, front stop, two side rails, and a separate clip.
+// Wires solder straight into the board's holes (no headers), so solder tails
+// stick out under both pin rows (the board's long edges) and wires stand up
+// from the corner holes: grooves clear the tails, and the hold-down sits on
+// the middle of the inner short edge, away from every pad.
 c3_wall_slot = 1;                       // board's port edge sinks this far into the back wall
 c3_stop_gap_max = 0.3;                  // most board play between the wall slot and front stop
 c3_stop_t = 2;                          // front stop thickness (Y)
-c3_rail_t = 1.2;                        // snap rail thickness (X)
-c3_rail_gap = 0.6;                      // rail to pedestal gap, lets the rail flex
-c3_lip = 0.6;                           // snap lip overhang onto the board top
-c3_lip_h = 0.8;                         // lip height; its top is the lead-in ramp
-c3_lip_len = 1;                         // lip length (Y) from the board's inner edge
+c3_rail_t = 1.2;                        // side rail thickness (X)
+c3_rail_gap = 0.6;                      // rail to pedestal gap
+c3_groove = [3, 1.5];                   // solder-tail groove under each pin row: [width in from the board's long edge, depth]
+c3_lip_h = 0.8;                         // clip tongue height: its underside to the rail and stop tops
+c3_lip_len = 1;                         // clip tongue length (Y) past the front stop face, over the board
+c3_clip_w = 6;                          // clip tongue width (X), centred on the board's inner short edge
+c3_clip_t = 1.2;                        // clip bar thickness (Z) and leg thickness (X)
+c3_clip_barb = 0.3;                     // leg barb depth into its rail notch
+c3_clip_barb_h = 1;                     // barb height (Z): ramp below, flat catch on top
+c3_clip_barb_z = 1;                     // barb bottom above the rail bottom
 usb_hole_r = 1.5;                       // USB plug hole corner radius
 cable_rib = [1.2, 3];                   // [thickness, height] of the cable channel ribs
 
@@ -293,11 +302,20 @@ c3_edge_y = box_d - wall + c3_wall_slot;        // board port edge, seated in th
 c3_slot_len = c3[0] + c3_fit;
 c3_stop_y = c3_edge_y - c3_slot_len;            // front stop face
 c3_stop_gap = (c3_edge_y - c3[0]) - c3_stop_y;  // board inner edge to stop face
-c3_lip_z = c3_z0 + c3[2] + c3_fit;                 // snap lip underside
+c3_lip_z = c3_z0 + c3[2] + c3_fit;              // clip tongue underside
 c3_slot_hw = (c3[1] + c3_fit) / 2;                 // board slot half width (rail inner face)
 c3_ped_hw = c3_slot_hw - c3_rail_gap;
 c3_cradle_hw = c3_slot_hw + c3_rail_t;          // rail outer face
 c3_cradle_y0 = c3_stop_y - c3_stop_t;           // front stop's front face
+c3_top_h = c3_lip_z + c3_lip_h;                 // rail and stop top; the clip bar rests on it
+// C3 clip (box frame): a bar across the rail tops over the stop, legs down the
+// rails' outer faces with barbs into rail notches, tongue over the board.
+c3_clip_y0 = c3_cradle_y0;
+c3_clip_y1 = c3_stop_y + c3_lip_len;            // tongue tip, over the board
+c3_clip_leg_x = c3_cradle_hw + c3_fit;          // leg inner face
+c3_clip_hw = c3_clip_leg_x + c3_clip_t;         // leg outer face
+c3_clip_top_z = c3_top_h + c3_clip_t;
+c3_clip_size = [2 * c3_clip_hw, c3_clip_y1 - c3_clip_y0, c3_clip_top_z - c3_clip_barb_z];
 boss_x = box_w / 2 - boss_c;
 boss_xy = [[-boss_x, boss_c], [boss_x, boss_c],
            [-boss_x, box_d - boss_c], [boss_x, box_d - boss_c]];

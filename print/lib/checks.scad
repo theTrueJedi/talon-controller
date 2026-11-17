@@ -73,6 +73,13 @@ assert(c3_wall_slot < wall, "C3 wall slot cuts through the back wall: nothing st
 assert(c3_stop_gap > 0 && c3_stop_gap <= c3_stop_gap_max && c3_stop_gap < c3_wall_slot,
        str("C3 front stop gap ", c3_stop_gap, " (set by c3_fit) must be > 0, <= ", c3_stop_gap_max,
            " and < c3_wall_slot ", c3_wall_slot));
+assert(c3_groove[1] < c3_z0, str("C3 solder groove cuts through the pedestal: depth ", c3_groove[1], " >= ", c3_z0));
+assert(c3_groove[0] > 0 && c3_groove[0] < c3[1] / 2, "C3 solder grooves must leave a pedestal spine");
+assert(c3_clip_barb + c3_fit < c3_rail_t, "C3 clip notch cuts through the rail");
+assert(c3_clip_barb_z > c3_fit, "C3 clip notch runs off the rail bottom");
+assert(c3_clip_w < 2 * (c3[1] / 2 - c3_groove[0]),
+       "C3 clip tongue reaches the pin rows (keep it inside the groove-free middle)");
+assert(c3_clip_top_z <= c3_top_z, "C3 clip stands taller than the USB port (the box height ignores it)");
 assert(ky_low_z >= c3_top_z + clr, str("KY-040 hangs onto the C3-Zero: ", ky_low_z));
 assert(top_flat_min > 0, "top_flat_min must be > 0 (flat-topped rear)");
 assert(m3_detent > 0 && m3_detent < m3_slot_w / 4, str("nut detent must be > 0 and small: ", m3_detent));
