@@ -62,7 +62,8 @@
   - `shell-no-cradle`: the shell renders with `-D c3_x=0` and default. Assert both STLs have 1 body (`stl_check` counts bodies).
   - `bottom-layout` update: bbox z = `plate_t + c3_top_h`, from a new echo `bottom_footprint = [w, d, plate_t + c3_top_h]`.
   - `c3-notch-open`: a new echo `c3_back_cuts_z0 = <min z of the wall slot and port cut>`; assert it is ≤ 0.
-  - `expect_fail checks-fail-pocket-overlap "weight pockets overlap" -D 'weight_pockets=[[-20.65,3,0],[-20.65,3,0],[1,3,0],[-22.8,27,90]]'`.
+  - `expect_fail checks-fail-pocket-overlap "weight pockets overlap" -D 'weight_pockets=[[-22.85,3,0],[-22.85,3,0],[3.2,3,0],[-22.85,46,0]]'`.
+  - `weight-pause`: parse the echo `weight_pause_z`; assert it equals 9.0 ± 0.01 (3 + 5.8 + 0.2).
   - `expect_fail checks-fail-c3-boss "C3 cradle hits a rear boss" -D c3_x=16`.
 - [ ] **Step 2:** Run the suite. Expected: FAIL at the first new test.
 - [ ] **Step 3: Implement.**
@@ -72,7 +73,18 @@
   - Back wall (still in `shell.scad` `c3_cuts`, shifted by `c3_x`):
     - The board-edge slot runs from z = -eps up to `c3_z0 + c3[2] + c3_fit`.
     - The USB plug hole becomes a notch: the same width and rounded top corners, open down to z = -eps.
-  - Weight pockets: `weight_pockets = [[-20.65, 3, 0], [1, 3, 0], [-22.8, 27, 90], [-22.8, 48.65, 90]];` with the comment "front pair as before; the other two in a column on the -X side, clear of the C3 cradle". These values were checked by hand against the cradle (gap ≥ clr), the rear-left counterbore (5.1 ≥ 5.05) and the plate edge.
+  - Weights sealed in the plate (spec: "Weights sealed in the plate"):
+    - New params:
+      - `weight_fit = 0.2`: pocket over the weight, in plan and depth.
+      - `weight_roof = 1.2`.
+      - `plate_t = bottom_t + weight[2] + weight_fit + weight_roof`.
+    - Pockets are closed cavities from z = `-plate_t + bottom_t` to `-weight_roof`.
+    - Echo `weight_pause_z = bottom_t + weight[2] + weight_fit`. That is the print-bed height of the pocket tops, for the pause.
+    - Layout: `weight_pockets = [[-22.85, 3, 0], [3.2, 3, 0], [-22.85, 46, 0], [c3_x - weight[0] / 2, 46, 0]];` with the comment "one per corner; BR under the C3 cradle".
+    - Delete the "weight pocket under the C3-Zero cradle" check: sealed pockets may sit under it.
+    - Keep the edge and counterbore checks, using pocket size `weight + weight_fit`.
+    - Interference: the weights ghost sits in its pocket (`[1, 11]` stays omitted).
+  - Board lower: `c3_z0 = 2;  // pedestal: header solder-tail clearance`. This replaces the wall-under-port formula. `c3_groove` depth stays 1.5 (< c3_z0).
   - `checks.scad`:
     - `c3_cradle_rect` shifts by `c3_x`.
     - Add a pocket-pocket check: `rects_gap ≥ weight_gap`, message "weight pockets overlap".

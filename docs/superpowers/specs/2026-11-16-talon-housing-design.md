@@ -307,7 +307,15 @@ can be unplugged for troubleshooting, and a bigger, heavier knob.
   as far as the rear corner bosses allow (~11.5 mm). The cradle's rail on the
   wired side is lowered so the plugs pass over it. The back wall gets a
   shallow recess where the 5V plug reaches ~1 mm past the board's port edge.
-  Weight pockets re-lay around the moved cradle.
+- **Weights sealed in the plate (Evan's method, 2026-11-17):** the pockets
+  are fully enclosed. The print pauses at the pocket tops, Evan drops the
+  weights in, and the printer seals over them. Layers through the plate:
+  3 mm floor, weight + 0.2 mm, then a 1.2 mm roof. Four ½ oz weights, one per
+  corner (FL, FR, BL, BR); BR sits under the C3 cradle. Pockets are 0.2 mm
+  over the weight in plan. The model echoes the pause height.
+- **Board lower:** with the port and board-edge cuts open at the rim, the
+  board needs no wall under the port. It sits on a 2 mm pedestal (solder-tail
+  clearance) on the plate top.
 - **Base height:** the straight lower part of the box is 5 mm taller
   (new parameter `base_extra = 5`). The box and the face rise 5 mm; the
   slope angle is unchanged.
