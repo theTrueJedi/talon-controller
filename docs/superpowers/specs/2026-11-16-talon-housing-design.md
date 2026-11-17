@@ -299,9 +299,11 @@ can be unplugged for troubleshooting, and a bigger, heavier knob.
   GPIO0-5, measured from Evan's board). Its legs point **sideways off the
   board**, toward the middle of the box (Evan's call, 2026-11-17: no plugs
   over the board). If the strips are 45°, bend the legs to 90° first.
-  Female-female jumpers plug onto it. The knob board keeps its stock
-  right-angle header and gets F-F jumpers, so it needs no solder. The ring
-  gets jumpers cut in half, cut ends soldered to its pads.
+  Female jumpers plug onto it: the C3 is the only plug point. The knob
+  board's pins are clipped to stubs and the ring's pads take jumpers cut in
+  half, cut ends soldered on (Evan, 2026-11-17: the knob board's own header
+  plus plugs reached ~6 mm past the back wall; this keeps the knob and ring
+  small and still unplugs everything at the C3).
 - **C3 off-centre:** the board, its plate cradle, and the back-wall
   port notch all shift sideways together (`c3_x`), away from the wired row,
   as far as the rear corner bosses allow (~11.5 mm). The cradle's rail on the
