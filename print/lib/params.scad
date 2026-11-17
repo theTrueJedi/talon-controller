@@ -51,7 +51,7 @@ hood_wall = 1.6;
 hood_top_t = 2;
 glow_gap = 8;
 well_id = 16;
-collar_hole_d = 7.4;
+collar_hole_d = 7.2;
 well_wall = 1.6;                        // hood inner (well) wall thickness
 lip_h = 1;                              // hood seat lip on the face
 lip_w = 1.6;
@@ -110,14 +110,14 @@ glow_tile_gap = 4;                      // bed spacing between glow tiles
 // encoder body's square top seats inside it, so the body can't turn.
 body_frame_h = 1.0;                     // frame height below the face underside
 body_frame_wall = 1.2;                  // frame wall thickness
-body_fit = 0.2;                         // frame inner side = body side + body_fit
+body_fit = 0.1;                         // frame inner side = body side + body_fit
 
 // ---- Fits ----
 // Printed-fit clearances, one per feature, so a checkpoint failure names the
 // one number to change.
 clr = 1;                                // least inside clearance around bought parts
-bore_fit = 0.2;                         // cap D-bore over the shaft (and bore plug)
-key_fit = 0.2;                          // hood in its seat lip, key tab in its notch
+bore_fit = 0.15;                        // cap D-bore over the shaft (and bore plug)
+key_fit = 0.1;                          // hood in its seat lip, key tab in its notch
 halo_fit = 0.2;                         // halo sleeve over the well wall (radial)
 c3_fit = 0.2;                           // C3-Zero slot: length (stop gap), width, height
 m3_nut_fit = 0.2;                       // M3 nut slot across flats

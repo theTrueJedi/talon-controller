@@ -206,7 +206,7 @@ changing one never moves another.
 **(a) The encoder's threaded collar goes through the face disc and the floor
 washer.** Push the encoder up from underside through the disc, then the
 washer on top.
-- Too tight: raise `collar_hole_d` (now 7.4) by 0.2 at a time.
+- Too tight: raise `collar_hole_d` (now 7.2) by 0.2 at a time.
 - Very loose: lower it by 0.2.
 
 **(b) Nut + washer clamp the stack with thread to spare.** Stack: face disc,
@@ -220,15 +220,15 @@ and have a little thread showing above it.
 
 **(c) The hood key holds.** Drop the hood segment's tab into a notch in
 the lip ring's lip. Twist and wiggle it.
-- Tab will not go in: raise `key_fit` (now 0.2) to 0.3. This widens the
+- Tab will not go in: raise `key_fit` (now 0.1) to 0.2. This widens the
   notch and the gap around the hood wall.
-- Sloppy, twists noticeably: lower `key_fit` to 0.1, or raise `key_tab_w`
+- Sloppy, twists noticeably: lower `key_fit` to 0.05, or raise `key_tab_w`
   (now 2).
 - Snapped off easily: raise `key_tab_w` to 3.
 
 **(d) The bore plug slides onto the knob shaft's flat (D) end without slop
 or forcing.**
-- Will not go on, or needs force: raise `bore_fit` (now 0.2) by 0.1, or
+- Will not go on, or needs force: raise `bore_fit` (now 0.15) by 0.1, or
   raise `shaft_flat` by 0.1 if only the flat side binds.
 - Wobbles or turns on the shaft: lower `bore_fit` by 0.1.
 
@@ -246,7 +246,7 @@ and print the hood on that plate.
 **(f) The encoder body sits in the frame.** With the face disc on the
 collar (frame side down), the encoder body's square top drops into the
 frame with no wobble, and the disc sits flat on the body.
-- Will not go in, or the disc rocks: raise `body_fit` (now 0.2) by 0.1.
+- Will not go in, or the disc rocks: raise `body_fit` (now 0.1) by 0.1.
 - Goes in but the body turns or wobbles: lower `body_fit` by 0.1.
 
 **(g) Measure your USB-C plug.** With calipers, measure your USB-C cable's
