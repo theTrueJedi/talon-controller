@@ -318,9 +318,10 @@ case "$err" in *"top level object is empty"*) pass interference-empty;;
 # Deliberate breaks: collar (7) through a 6.5 face/hood hole; cap bore tighter
 # than the shaft; body frame smaller than the encoder body; C3 clip legs
 # moved into the rails; C3 header plug wires too long (they reach the -X side
-# wall); C3 centred (its plugs reach the rear-left boss and wall).
+# wall); C3 centred (its plugs reach the rear-left boss and wall); KY-040
+# stub/solder room too long (it reaches the back wall).
 nocradle_w='weight_pockets=[[-22.85,3,0],[3.2,3,0],[-22.85,46,0],[3.2,46,0]]'
-for brk in collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10 plug_wire_room=40 "c3_x=0;$nocradle_w"; do
+for brk in collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10 plug_wire_room=40 "c3_x=0;$nocradle_w" ky_stub_room=30; do
     name="interference-detects-${brk%%;*}"
     render "$name" -D 'part="interference"' -D "$brk"
     case "$err" in *ERROR*|*"top level object is empty"*) fail "$name" "collision not caught";; esac

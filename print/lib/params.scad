@@ -38,10 +38,12 @@ usb_port = [8.85, 3.15];
 usb_plug_hole = [12.5, 7.5];
 c3_port_len = 7.35;                     // USB-C receptacle depth (assembly ghost only)
 
-// ---- Header pins and jumper plugs (C3-Zero and KY-040) ----
-// Right-angle headers with F jumper plugs on them; typical values until Evan
-// measures (spec, "Open"). Each side's mated plugs plus wire room are one
-// envelope box in the assembly's interference check.
+// ---- Header pins and jumper plugs ----
+// Plugs only at the C3-Zero: a right-angle header with F jumper plugs on it.
+// The KY-040's header pins are clipped to short stubs and half-cut F jumpers
+// soldered on (Evan, 2026-11-17), so its end has no plugs. Typical values
+// until Evan measures (spec, "Open"). Each side is one envelope box in the
+// assembly's interference check.
 hdr_pitch = 2.54;
 hdr_body_h = 2.5;                       // plastic height on the board
 hdr_leg_z = 2.5;                        // right-angle leg height above the board top
@@ -50,6 +52,8 @@ plug = [2.54, 2.54, 14];                // F jumper housing [w, h, length]
 plug_wire_room = 5;                     // wire past the housing before it bends
 c3_hdr_n = 9;
 ky_hdr_n = 5;
+ky_stub_room = 5;                       // KY-040: clipped stub (~2) + solder joint + wire bend, past the header edge (+Y)
+ky_stub_h = 2;                          // KY-040 stub envelope half-height about the PCB mid-plane
 plug_env_len = hdr_leg_out + plug[2] + plug_wire_room;    // plug envelope length past the board / PCB edge
 
 // ---- Weights ----
@@ -150,7 +154,7 @@ fillet_r = 3;                           // outer edge fillets (bottom edges stay
 face_margin = 1.6;                      // seat lip OD to the side edge fillet
 top_flat_min = 10;                      // least flat-top depth behind the slope
 base_extra = 5;                         // added height on the straight lower walls (Evan, 2026-11-17)
-ky_wire_room = 5;                       // past the KY-040 header edge (+Y): stubs + wires
+ky_wire_room = ky_stub_room;            // past the KY-040 header edge (+Y): the stub envelope
 ky_wire_h = 3;                          // above the KY-040 PCB top near the header edge
 // Corner bosses for the bottom plate's M3 screws. The nut sits in a
 // side-entry slot with boss material under it, so tightening a screw from
