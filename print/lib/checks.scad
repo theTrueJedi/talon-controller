@@ -61,3 +61,11 @@ assert(glow_strip[1] - 2 * glow_leg_w >= glow_band_need,
        str("glow legs land on the ring band: need ", glow_band_need, " between them"));
 assert(glow_digit_size + 1 <= ring_t + min(glow_steps), "glow digits taller than the lowest leg");
 assert(glow_digit_depth > 0, "glow digits must be embossed, not cut");
+
+// Shell.
+assert(fillet_r > wall, "fillet_r must exceed wall (inside corners round at fillet_r - wall)");
+assert(face_half - fillet_r >= lip_or, "face_len too short: hood seat lip runs into the edge fillet");
+assert(c3_wall_slot < wall, "C3 wall slot cuts through the back wall: nothing stops a cable pull");
+assert(c3_stop_gap <= 0.3, str("C3 front stop too far from the board: ", c3_stop_gap));
+assert(ky_low_z >= c3_top_z + clr, str("KY-040 hangs onto the C3-Zero: ", ky_low_z));
+assert(top_flat_min > 0, "top_flat_min must be > 0 (flat-topped rear)");

@@ -147,3 +147,33 @@ dims="$(echo "$err" | sed -n 's/^ECHO: glow_footprint = \[\(.*\), \(.*\), \(.*\)
 # One body: digits are embossed onto the strip, not loose islands.
 stl_check "$out/glow-renders.stl" 1 $dims || fail glow-layout "dims=$dims"
 pass glow-layout
+
+# ---- Shell (Task 5) ----
+expect_ok   shell-render -D 'part="shell"'
+expect_big  shell-render
+# ECHO: box_footprint = [w, d]  /  ECHO: box_h = h, hood_od = o, wall = t
+fp="$(echo "$err" | sed -n 's/^ECHO: box_footprint = \[\(.*\), \(.*\)\]$/\1 \2/p' | head -1)"
+hw="$(echo "$err" | sed -n 's/^ECHO: box_h = \([0-9.]*\), hood_od = \([0-9.]*\), wall = \([0-9.]*\)$/\1 \2 \3/p' | head -1)"
+[ -n "$fp" ] && [ -n "$hw" ] || fail shell-bbox "no box_footprint / box_h echo"
+bbox="$(python3 "$here/stl_bbox.py" "$out/shell-render.stl")"
+# Printed on its back wall: STL x = box width, y = box height, z = box depth.
+python3 - "$bbox" "$fp" "$hw" <<'PY' || fail shell-bbox "got '$bbox', footprint=$fp, h/od/wall=$hw"
+import sys
+x, y, z = map(float, sys.argv[1].split())
+w, d = map(float, sys.argv[2].split())
+h, od, wall = map(float, sys.argv[3].split())
+assert abs(x - w) <= 0.1 and abs(y - h) <= 0.1 and abs(z - d) <= 0.1
+assert w >= od + 2 * wall + 4
+PY
+pass shell-bbox
+# One body: bosses, cradle and channel ribs all fused to the walls.
+stl_check "$out/shell-render.stl" 1 $(echo "$fp" | cut -d' ' -f1) $(echo "$hw" | cut -d' ' -f1) $(echo "$fp" | cut -d' ' -f2) \
+    || fail shell-layout "footprint=$fp h=$hw"
+pass shell-layout
+
+# Review Focus 3: the C3-Zero front stop sits against the board's inner edge.
+gap="$(echo "$err" | sed -n 's/^ECHO: c3_stop_gap = \([-0-9.e]*\)$/\1/p' | head -1)"
+[ -n "$gap" ] || fail c3-stop "no c3_stop_gap echo"
+python3 -c "import sys; g = float(sys.argv[1]); assert 0 <= g <= 0.3" "$gap" || fail c3-stop "gap $gap"
+pass c3-stop
+expect_fail c3-wall-slot "C3 wall slot" -D 'part="shell"' -D c3_wall_slot=2

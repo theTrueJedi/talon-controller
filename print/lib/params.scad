@@ -111,6 +111,30 @@ fit = 0.2;
 slope = 30;
 face_len = 72;
 wall = 2;
+fillet_r = 3;                           // outer edge fillets (bottom edges stay sharp)
+face_margin = 1.6;                      // seat lip OD to the side edge fillet
+top_flat_min = 10;                      // least flat-top depth behind the slope
+ky_wire_room = 5;                       // past the KY-040 header edge (+Y): stubs + wires
+ky_wire_h = 3;                          // above the KY-040 PCB top near the header edge
+// Corner bosses for the bottom plate's M3 screws. The nut sits in a
+// side-entry slot with boss material under it, so tightening a screw from
+// below clamps the plate to the shell.
+boss_d = 8;
+m3_clear_d = 3.4;
+m3_nut_af = 5.7;
+m3_trap_h = 2.6;                        // nut slot height
+boss_floor = 2;                         // boss material between plate and nut
+boss_roof = 1.2;                        // boss material over the nut (screw-tip room)
+// C3-Zero cradle: pedestal, front stop, two flexing snap rails.
+c3_wall_slot = 1;                       // board's port edge sinks this far into the back wall
+c3_stop_t = 2;                          // front stop thickness (Y)
+c3_rail_t = 1.2;                        // snap rail thickness (X)
+c3_rail_gap = 0.6;                      // rail to pedestal gap, lets the rail flex
+c3_lip = 0.6;                           // snap lip overhang onto the board top
+c3_lip_h = 0.8;                         // lip height; its top is the lead-in ramp
+c3_lip_len = 1;                         // lip length (Y) from the board's inner edge
+usb_hole_r = 1.5;                       // USB plug hole corner radius
+cable_rib = [1.2, 3];                   // [thickness, height] of the cable channel ribs
 
 // ---- Facets ----
 $fa = 2;
@@ -185,3 +209,57 @@ ky_far_hole_xy  = [ky_hole_x, ky_shaft_from_header_edge - ky_hole_x_from_header[
 ky_near_hole_xy = [ky_hole_x, ky_shaft_from_header_edge - ky_hole_x_from_header[1]];
 // Encoder body corner nearest the far hole (body centred on shaft).
 ky_far_body_corner_xy = [body[0] / 2, body[1] / 2];
+
+// ================= Derived (box frame) =================
+// BOX FRAME: x = 0 on the shaft axis (box is symmetric in X), +X right;
+// y = 0 at the front outer face, +Y toward the back; z = 0 at the shell's
+// open bottom rim, which is also the bottom plate's top (inside) face.
+// The bottom plate sits below z = 0.
+face_half = face_len / 2;
+face_run = face_len * cos(slope);               // slope's footprint depth
+face_rise = face_len * sin(slope);
+box_w = 2 * (lip_or + face_margin + fillet_r);
+// KY-040 envelope (face frame): PCB plus header wire room, up to the face underside.
+ky_pcb_top_z = body_top_z - body[2];
+ky_x_range = [ky_shaft_from_hole_edge - ky_pcb[1], ky_shaft_from_hole_edge];
+ky_y_range = [ky_shaft_from_header_edge - ky_pcb[0], ky_shaft_from_header_edge + ky_wire_room];
+ky_z_range = [ky_pcb_top_z - ky_pcb[2], body_top_z];
+// Front height: the least that keeps the KY-040 clr above the plate, and
+// keeps each front boss's nut slot (+ roof) under the face.
+front_h_ky = -((ky_y_range[0] - clr) * sin(slope) + (ky_z_range[0] - clr) * cos(slope))
+           - face_half * sin(slope);
+boss_c = wall + boss_d / 2;                     // boss centre inset from the outer faces
+m3_nut_r = (m3_nut_af + fit) / 2 / cos(30);     // nut slot hex circumradius
+boss_stack_h = boss_floor + m3_trap_h + boss_roof;
+front_h_boss = boss_stack_h + face_t / cos(slope) - (boss_c - m3_nut_r) * tan(slope);
+front_h = max(front_h_ky, front_h_boss);
+box_h = front_h + face_rise;
+face_origin = [0, face_half * cos(slope), front_h + face_half * sin(slope)];
+function face_to_box(p) = face_origin + [p[0], p[1] * cos(slope) - p[2] * sin(slope),
+                                         p[1] * sin(slope) + p[2] * cos(slope)];
+// Inside ceiling under the slope at box y.
+function slope_under_z(y) = front_h + y * tan(slope) - face_t / cos(slope);
+ky_low_z = face_to_box([0, ky_y_range[0], ky_z_range[0]])[2];
+// C3-Zero: board bottom high enough that the plug hole keeps `wall` below it.
+c3_z0 = wall + usb_plug_hole[1] / 2 - c3[2] - usb_port[1] / 2;
+c3_port_z = c3_z0 + c3[2] + usb_port[1] / 2;    // port (and plug hole) centre
+c3_top_z = c3_z0 + c3[2] + usb_port[1];
+c3_reach = (wall - c3_wall_slot) + c3[0] + fit + c3_stop_t;  // back outer face to stop front
+// Rear depth: the least flat top that keeps the cradle's front clr under the slope.
+rear_d_c3 = (c3_top_z + clr - front_h + face_t / cos(slope)) / tan(slope)
+          + c3_reach - face_run;
+rear_d = max(rear_d_c3, top_flat_min);
+box_d = face_run + rear_d;
+box_footprint = [box_w, box_d];                 // outer, plan corners rounded fillet_r
+c3_edge_y = box_d - wall + c3_wall_slot;        // board port edge, seated in the wall slot
+c3_slot_len = c3[0] + fit;
+c3_stop_y = c3_edge_y - c3_slot_len;            // front stop face
+c3_stop_gap = (c3_edge_y - c3[0]) - c3_stop_y;  // board inner edge to stop face
+c3_lip_z = c3_z0 + c3[2] + fit;                 // snap lip underside
+boss_x = box_w / 2 - boss_c;
+boss_xy = [[-boss_x, boss_c], [boss_x, boss_c],
+           [-boss_x, box_d - boss_c], [boss_x, box_d - boss_c]];
+// Cable channel: from the ring wire slot, under the face and top, down the back wall.
+cable_ch_x = -wire_slot_r * sin(wire_slot_angle);
+cable_ch_y0 = face_to_box([cable_ch_x, wire_slot_r * cos(wire_slot_angle), -face_t])[1];
+cable_ch_z0 = c3_port_z + usb_plug_hole[1] / 2 + wall;

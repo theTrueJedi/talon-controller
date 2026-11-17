@@ -10,30 +10,39 @@ module radial_box(a, r0, s, z0) {
 module face_center(r) {
     assert(r >= lip_or, str("face_center radius ", r, " < lip outer ", lip_or));
     difference() {
-        union() {
-            translate([0, 0, -face_t]) cylinder(r = r, h = face_t);
-            // Hood seat lip, just outside the hood outer wall.
-            difference() {
-                cylinder(r = lip_or, h = lip_h);
-                translate([0, 0, -eps]) cylinder(r = lip_ir, h = lip_h + 2 * eps);
-            }
-            // Anti-rotation pin into the far KY-040 hole.
-            translate([ky_far_hole_xy[0], ky_far_hole_xy[1], -face_t - body[2]])
-                cylinder(d = pin_d, h = body[2] + eps);
-        }
-        // Collar hole.
-        translate([0, 0, -face_t - eps]) cylinder(d = collar_hole_d, h = face_t + 2 * eps);
-        // Key notches through the seat lip for the hood's tabs.
-        for (a = key_tab_angles)
-            radial_box(a, lip_ir - eps, [key_tab_w + 2 * fit, lip_w + 2 * eps, lip_h + 2 * eps], -eps);
-        // Ring wire slot, through the face under the ring band.
-        radial_box(wire_slot_angle, wire_slot_r - wire_slot[1] / 2,
-                   [wire_slot[0], wire_slot[1], face_t + 2 * eps], -face_t - eps);
-        // M2 fallback: clearance holes, and lip notches for the bosses.
-        if (hood_screws)
-            for (a = hood_screw_angles) rotate([0, 0, a]) translate([0, hood_screw_r, 0]) {
-                translate([0, 0, -face_t - eps]) cylinder(d = m2_clear_d, h = face_t + 2 * eps);
-                translate([0, 0, -eps]) cylinder(d = m2_boss_d + 2 * fit, h = lip_h + 2 * eps);
-            }
+        face_center_solid(r);
+        face_center_cuts();
     }
+}
+
+// Solids only: disc, seat lip, anti-rotation pin. The shell unions this into
+// its own face plate, then subtracts face_center_cuts().
+module face_center_solid(r) {
+    translate([0, 0, -face_t]) cylinder(r = r, h = face_t);
+    // Hood seat lip, just outside the hood outer wall.
+    difference() {
+        cylinder(r = lip_or, h = lip_h);
+        translate([0, 0, -eps]) cylinder(r = lip_ir, h = lip_h + 2 * eps);
+    }
+    // Anti-rotation pin into the far KY-040 hole.
+    translate([ky_far_hole_xy[0], ky_far_hole_xy[1], -face_t - body[2]])
+        cylinder(d = pin_d, h = body[2] + eps);
+}
+
+// Holes and notches through the face center.
+module face_center_cuts() {
+    // Collar hole.
+    translate([0, 0, -face_t - eps]) cylinder(d = collar_hole_d, h = face_t + 2 * eps);
+    // Key notches through the seat lip for the hood's tabs.
+    for (a = key_tab_angles)
+        radial_box(a, lip_ir - eps, [key_tab_w + 2 * fit, lip_w + 2 * eps, lip_h + 2 * eps], -eps);
+    // Ring wire slot, through the face under the ring band.
+    radial_box(wire_slot_angle, wire_slot_r - wire_slot[1] / 2,
+               [wire_slot[0], wire_slot[1], face_t + 2 * eps], -face_t - eps);
+    // M2 fallback: clearance holes, and lip notches for the bosses.
+    if (hood_screws)
+        for (a = hood_screw_angles) rotate([0, 0, a]) translate([0, hood_screw_r, 0]) {
+            translate([0, 0, -face_t - eps]) cylinder(d = m2_clear_d, h = face_t + 2 * eps);
+            translate([0, 0, -eps]) cylinder(d = m2_boss_d + 2 * fit, h = lip_h + 2 * eps);
+        }
 }
