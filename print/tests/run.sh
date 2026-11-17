@@ -269,7 +269,7 @@ stl_check "$out/shell-no-cradle.stl" 1 $(echo "$fp" | cut -d' ' -f1) $(echo "$hw
 expect_fail checks-fail-c3-boss "C3 cradle hits a rear boss" -D c3_x=16
 
 expect_fail c3-wall-slot "C3 wall slot" -D 'part="shell"' -D c3_wall_slot=2
-# Direct-soldered C3-Zero: solder-tail grooves under the pin rows, and a
+# C3-Zero with its header: solder-tail grooves under the pin rows, and a
 # separate clip holding the inner short edge's middle (off the pin-row corners).
 expect_fail checks-fail-groove "C3 solder groove cuts through the pedestal" -D 'c3_groove=[3, 4]'
 expect_fail checks-fail-notch  "C3 clip notch cuts through the rail" -D c3_clip_engage=1.1
@@ -315,13 +315,21 @@ render interference-empty -D 'part="interference"'
 case "$err" in *ERROR*) fail interference-empty "render aborted";; esac
 case "$err" in *"top level object is empty"*) pass interference-empty;;
     *) fail interference-empty "parts or ghosts collide (rc $rc)";; esac
+# Lowest common right-angle header legs (1.27: plug bottoms level with the
+# board top): the lowered wired-side rail still clears the plugs.
+render interference-empty-leg127 -D 'part="interference"' -D hdr_leg_z=1.27
+case "$err" in *ERROR*) fail interference-empty-leg127 "render aborted";; esac
+case "$err" in *"top level object is empty"*) pass interference-empty-leg127;;
+    *) fail interference-empty-leg127 "plugs collide at hdr_leg_z 1.27 (rc $rc)";; esac
+expect_fail checks-fail-rail-low "C3 wired-side rail too low" -D hdr_leg_z=0.5
 # Deliberate breaks: collar (7) through a 6.5 face/hood hole; cap bore tighter
 # than the shaft; body frame smaller than the encoder body; C3 clip legs
 # moved into the rails; C3 header plug wires too long (they reach the -X side
 # wall); C3 centred (its plugs reach the rear-left boss and wall); KY-040
-# stub/solder room too long (it reaches the back wall).
+# stub/solder room too long (it reaches the back wall); the wired-side rail
+# left full height under 1.27 mm header legs.
 nocradle_w='weight_pockets=[[-22.85,3,0],[3.2,3,0],[-22.85,46,0],[3.2,46,0]]'
-for brk in collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10 plug_wire_room=40 "c3_x=0;$nocradle_w" ky_stub_room=30; do
+for brk in collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10 plug_wire_room=40 "c3_x=0;$nocradle_w" ky_stub_room=30 "hdr_leg_z=1.27;c3_rail_low_z=c3_top_h"; do
     name="interference-detects-${brk%%;*}"
     render "$name" -D 'part="interference"' -D "$brk"
     case "$err" in *ERROR*|*"top level object is empty"*) fail "$name" "collision not caught";; esac

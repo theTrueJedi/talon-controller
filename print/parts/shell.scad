@@ -104,7 +104,8 @@ module boss_cuts() {
 // ---- C3-Zero cradle ----
 // On the bottom plate (bottom() places it at c3_x), modelled centred on x = 0:
 // a pedestal under the board and a front stop across its inner short edge,
-// two side rails along the long edges, all ending c3_fit short of the back
+// two side rails along the long edges (the wired-side one lowered behind the
+// stop face so the header plugs pass over it), all ending c3_fit short of the back
 // wall's inner face (c3_cradle_y1). Grooves in the pedestal under both pin
 // rows clear the solder tails.
 // The board's port edge sits in a back-wall slot, which takes the cable's
@@ -121,10 +122,12 @@ module c3_cradle() {
             // Pedestal and front stop.
             translate([-c3_ped_hw, c3_stop_y, 0]) cube([2 * c3_ped_hw, back - c3_stop_y, c3_z0]);
             translate([-c3_ped_hw, c3_cradle_y0, 0]) cube([2 * c3_ped_hw, c3_stop_t, c3_top_h]);
-            // Rails.
-            for (s = [-1, 1])
-                translate([s > 0 ? c3_slot_hw : -c3_slot_hw - c3_rail_t, c3_cradle_y0, 0])
-                    cube([c3_rail_t, back - c3_cradle_y0, c3_top_h]);
+            // Rails. The wired-side (-X) rail runs full height only in front
+            // of the stop face (the clip's barb notch); behind it, it drops to
+            // c3_rail_low_z so the header plugs pass over it.
+            translate([c3_slot_hw, c3_cradle_y0, 0]) cube([c3_rail_t, back - c3_cradle_y0, c3_top_h]);
+            translate([-c3_slot_hw - c3_rail_t, c3_cradle_y0, 0]) cube([c3_rail_t, c3_stop_y - c3_cradle_y0, c3_top_h]);
+            translate([-c3_slot_hw - c3_rail_t, c3_cradle_y0, 0]) cube([c3_rail_t, back - c3_cradle_y0, c3_rail_low_z]);
         }
         // Solder-tail grooves under both pin rows, open to the sides, running
         // the board's full length.
@@ -185,8 +188,9 @@ module c3_board_cuts(slot_y, slot_d) {
 
 // ---- Cable channel ----
 // Two ribs flanking the wire slot's width, following the inside ceiling from
-// the slot up the face, along the top and down the back wall to above the
-// plug hole.
+// the slot up the face, along the top and down the back wall. It runs at the
+// wire slot's x (cable_ch_x, near the middle), not over the USB notch at c3_x,
+// and stops at cable_ch_z0 (the notch's top height plus a wall).
 module cable_channel() {
     for (s = [-1, 1])
         translate([cable_ch_x + s * (wire_slot[0] / 2 + cable_rib[0] / 2) - cable_rib[0] / 2, 0, 0])

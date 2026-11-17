@@ -18,8 +18,7 @@ later.
 
 ## Status (2026-11-17)
 
-**Housing model built** in `print/` (branch `housing-c3-plate`):
-parametric OpenSCAD, tests via `bash print/tests/run.sh`, STLs in
+**Housing model built** in `print/`: parametric OpenSCAD, tests via `bash print/tests/run.sh`, STLs in
 `print/stl/`. Spec: `docs/superpowers/specs/2026-11-16-talon-housing-design.md`.
 Amended 2026-11-17 after the first test prints: the C3-Zero sits on a cradle
 on the bottom plate, the base is 5 mm taller, four weights are sealed in the

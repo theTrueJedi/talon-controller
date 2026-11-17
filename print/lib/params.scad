@@ -46,7 +46,7 @@ c3_port_len = 7.35;                     // USB-C receptacle depth (assembly ghos
 // assembly's interference check.
 hdr_pitch = 2.54;
 hdr_body_h = 2.5;                       // plastic height on the board
-hdr_leg_z = 2.5;                        // right-angle leg height above the board top
+hdr_leg_z = 1.4;                        // right-angle header leg height above the board top (leg centre); measure at checkpoint (h)
 hdr_leg_out = 6;                        // leg past the plastic
 plug = [2.54, 2.54, 14];                // F jumper housing [w, h, length]
 plug_wire_room = 5;                     // wire past the housing before it bends
@@ -179,6 +179,7 @@ c3_stop_gap_max = 0.3;                  // most board play between the wall slot
 c3_stop_t = 2;                          // front stop thickness (Y)
 c3_rail_t = 1.2;                        // side rail thickness (X)
 c3_rail_gap = 0.6;                      // rail to pedestal gap
+c3_plug_clr = 0.2;                      // least gap from the header plugs down to the lowered wired-side rail
 c3_groove = [3, 1.5];                   // solder-tail groove under each pin row: [width in from the board's long edge, depth]
 c3_lip_h = 0.8;                         // clip tongue height: its underside to the rail and stop tops
 c3_lip_len = 1;                         // clip tongue length (Y) past the front stop face, over the board
@@ -358,6 +359,10 @@ c3_back_cuts_z0 = -eps;
 c3_hdr_x = c3[1] / 2 - c3_hole_edge;                      // pin row, C3 frame x
 c3_hdr_y0 = c3_hole_end - hdr_pitch / 2;                  // header (and envelope) start, C3 frame y
 c3_hdr_env_z = [c3[2] + hdr_leg_z - plug[1] / 2, c3[2] + hdr_leg_z + plug[1] / 2];  // plug envelope, C3 frame z
+// Wired-side (-X) rail behind the stop face: lowered under the plugs, at most to
+// the board top (box frame z). In front of the stop face it stays full height
+// for the clip's barb notch.
+c3_rail_low_z = min(c3_z0 + c3[2], c3_z0 + c3_hdr_env_z[0] - c3_plug_clr);
 // The 5V plug and the header end overhang the port edge into the back wall;
 // a recess c3_wall_slot deep, open at the rim, clears them (box frame x, top z).
 c3_hdr_recess_x = [c3_x - c3[1] / 2 - plug_env_len - c3_fit, c3_x - (c3_hdr_x - hdr_pitch / 2) + c3_fit];

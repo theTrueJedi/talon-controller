@@ -307,7 +307,12 @@ can be unplugged for troubleshooting, and a bigger, heavier knob.
 - **C3 off-centre:** the board, its plate cradle, and the back-wall
   port notch all shift sideways together (`c3_x`), away from the wired row,
   as far as the rear corner bosses allow (~11.5 mm). The cradle's rail on the
-  wired side is lowered so the plugs pass over it. The back wall gets a
+  wired side is lowered behind the front stop face (where the plugs run) to
+  `c3_rail_low_z`: 0.2 mm (`c3_plug_clr`) under the plugs, never above the
+  board top, never below half the board's thickness (the model refuses
+  that). In front of the stop face it stays full height, so the clip's barb
+  notch, and the clip's hold, are unchanged on both sides. The interference
+  check also runs at `hdr_leg_z = 1.27`, the lowest common leg height. The back wall gets a
   shallow recess where the 5V plug reaches ~1 mm past the board's port edge.
 - **Weights sealed in the plate (Evan's method, 2026-11-17):** the pockets
   are fully enclosed. The print pauses at the pocket tops, Evan drops the
@@ -328,13 +333,14 @@ can be unplugged for troubleshooting, and a bigger, heavier knob.
 
 **Claude's calls (Evan can override):**
 - The plate's cradle prints as upright ribs on the plate (the plate prints
-  outside face down), so it needs no supports. Weight pockets stay clear
-  of it, as now.
+  outside face down), so it needs no supports. The BR weight pocket sits
+  under the cradle, sealed inside the plate.
 - The disc is set by a new `cap_disc_t = 14` instead of `cap_over_shaft`.
-  The glow-gap limit rises with it.
+  It sits high enough that every glow step (5 to 12) fits; the glow-gap
+  limit is gone.
 - Knurl: about 40 pyramids round, ~0.7 mm deep, as parameters.
 - New assembly stand-ins: the C3 header with plugs pointing off the board's
-  side, and the knob board's header with plugs. The interference check covers
+  side, and the knob board's clipped stubs and solder joints. The interference check covers
   them both, against the ceiling and the slope.
 - The wire slot in the face stays 11 × 5.5 mm. A jumper's cut end is just
   wire, so it threads through.

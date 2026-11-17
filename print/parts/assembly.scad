@@ -4,7 +4,8 @@
 //
 // Ghosts are the bought parts, modelled from params.scad: LED ring, KY-040
 // (PCB with its two holes, body, collar, shaft), ESP32-C3-Zero (PCB, USB-C
-// port), encoder nut and washer, M3 screws, weights.
+// port), the C3's right-angle header with its jumper plugs, the KY-040's
+// clipped stubs and solder joints, encoder nut and washer, M3 screws, weights.
 
 face_n = [0, -sin(slope), cos(slope)];          // face normal (face frame +Z), box frame
 

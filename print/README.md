@@ -37,8 +37,9 @@ when its shape changed; old versions stay, so you can tell which file a
 print came from. Always print the highest number.
 
 Two more `part=` values are for checking, not printing: `assembly` shows
-every part in place with stand-ins for the bought parts (ring, knob board,
-C3-Zero, nut, washer, screws, weights), and `interference` shows any
+every part in place with stand-ins for the bought parts (ring, knob board
+with its clipped stubs and solder joints, C3-Zero with its header and
+jumper plugs, nut, washer, screws, weights), and `interference` shows any
 place two of them overlap. `interference` must come out empty; the test
 run checks that.
 
@@ -64,8 +65,9 @@ Studio and do not rotate them. None of these should need supports.
 "None" means the part was shaped to print without supports: the shell's
 inside front is a 45 degree ramp and its front screw posts are teardrops;
 the square frame under the face (it holds the knob's body) is only 1 mm
-deep; the bottom plate's screw counterbores and its weight-pocket roofs are short
-bridges, and the C3 cradle is upright ribs. Still glance at Bambu Studio's
+deep; the bottom plate's screw counterbores are short bridges, its
+weight-pocket roofs print straight onto the weights (see the pause below),
+and the C3 cradle is upright ribs. Still glance at Bambu Studio's
 overhang preview before printing the shell.
 
 **Bottom plate: pause for the weights.** The four weights are sealed inside
@@ -87,10 +89,10 @@ part in translucent PETG. Everything else is opaque so light does not leak.
 The C3-Zero sits face-up in a cradle on the bottom plate, 11.5 mm off
 centre (`c3_x`), away from its wired row. Its USB-C port sits 1 mm inside
 the back wall on purpose: the board's edge sits in a slot in the wall, and
-the slot, the USB hole and the header recess beside it are all open at the
-bottom edge, so the board lifts out with the plate. So
-the plug's plastic body has to fit INTO the wall's hole for the plug to
-seat (checkpoint g). The unplug pull is taken by that slot, so unplug by
+that slot holds the board. So the plug's plastic body has to fit INTO the
+wall's hole for the plug to seat (checkpoint g). The slot, the USB hole and
+the header recess beside them are all open at the bottom edge, so the board
+lifts out with the plate. The unplug pull is taken by that slot, so unplug by
 the plug body, not the cable.
 
 ## Bought parts for the box
@@ -121,9 +123,10 @@ desoldering.
   point **sideways off the board, toward the middle of the box** (away from
   the board's other row), not up and not over the board. If the strip's
   legs are bent at 45 degrees, bend them to 90 degrees first.
-- **KY-040 knob board:** clip its right-angle pins to short stubs. Cut five
-  female jumpers in half and solder each cut end to a stub. The female ends
-  plug onto the C3's header.
+- **KY-040 knob board:** clip its right-angle pins to short stubs. Cut four
+  female jumpers in half and solder each cut end to the +, CLK, DT and SW
+  stubs. The female ends plug onto the C3's header. The GND stub gets a
+  plain wire instead (see the GND splice below).
 - **Ring:** cut three female jumpers in half and solder each cut end to one
   of the ring's pads (5V, GND, DIN).
 
@@ -139,10 +142,13 @@ desoldering.
 | KY-040 SW      | GPIO5       |
 
 The C3-Zero has a single GND pin, and only one plug fits on it. So the
-ring's GND and the knob's GND share one plug: solder the knob's GND stub to
-a short bare-ended wire, strip about 5 mm from the middle of the ring's GND
-jumper, wrap the knob wire round it, solder, and cover it with tape or heat
-shrink. Only the ring's GND plug goes onto the GND pin.
+ring's GND and the knob's GND share one plug: the knob's GND stub gets a
+short plain wire, and its free end is spliced onto the ring's GND jumper
+between the face slot and the plug (strip about 5 mm from the jumper's
+middle, wrap the knob wire round it, solder, and cover it with tape or heat
+shrink). The splice ends up inside the shell, below the face, so it is done
+after the ring's jumpers are threaded through the slot (assembly step 3).
+Only the ring's GND plug goes onto the GND pin.
 
 Optional: a 330 Ω resistor soldered inline in the ring's DIN wire protects
 the first LED; with a short DIN wire it can be skipped.
@@ -163,40 +169,43 @@ the box never rests on it.
 
 1. **Solder everything first** (see Wiring): the header on the C3-Zero, the
    half jumpers on the knob board's stubs and on the ring's pads, and the
-   GND splice.
+   plain GND wire on the knob board's GND stub.
 2. **Ring.** Thread the ring jumpers' plug ends down through the slot in the
    face (a plug is 2.54 mm square and passes the 11 x 5.5 mm slot), then lay
    the ring flat on the face. Turn the ring to its 12 o'clock position and
    fix it to the face with two small pieces of thin double-sided tape (or a
    dab of hot glue): the firmware's 12 o'clock LED assumes the ring never
    turns. The ring goes before the hood: the hood covers it, and the nut in
-   step 3 clamps the hood down.
-3. **Hood and knob board.** Set the hood over the ring, its tabs in the
+   step 4 clamps the hood down.
+3. **GND splice.** Below the face, inside the shell, splice the knob
+   board's GND wire onto the ring's GND jumper, between the slot and the
+   plug (see Wiring). Tape or heat shrink over it.
+4. **Hood and knob board.** Set the hood over the ring, its tabs in the
    lip's notches. From inside the shell, push the encoder's threaded collar
    up through the face and the hood's well floor; the encoder body's square
    top drops into the square frame on the face's underside, which stops it
    turning. Add the metal washer and the nut inside the well and snug it
    with the nut driver. Do not crank it.
-4. **Route the ring wires** along the channel under the face and top and
+5. **Route the ring wires** along the channel under the face and top and
    down the back wall.
-5. **C3-Zero onto the plate.** The weights are already sealed in the plate
+6. **C3-Zero onto the plate.** The weights are already sealed in the plate
    (see the print pause). Set the board face-up in the plate's cradle, its
    USB end toward the plate's back edge and its header toward the middle.
    Press the small clip down over the two side rails at the board's inner
    end until both legs click; only its narrow tongue reaches over the board,
    at the middle of the inner edge, clear of the corner holes. To remove:
    spread the clip's legs and lift it off.
-6. **Plug in the jumpers.** Hold the plate next to the open shell and plug
+7. **Plug in the jumpers.** Hold the plate next to the open shell and plug
    each jumper onto its C3 pin (see the table). Leave enough slack that
    the plate can be lifted away from the box with the plugs still on.
-7. **Bottom plate, last of the box.** Slide an M3 nut into each corner
+8. **Bottom plate, last of the box.** Slide an M3 nut into each corner
    post's side slot until it clicks past the bumps. Lower the plate on: the
    board's USB end slides into the back wall's slot and notch, and the
    header and its plugs into the recess beside them. Tuck the wires in so
    none is pinched under the plate's edge, then drive the four screws up
    from below. Snug, not tight.
-8. **Feet.** Glue a TPU foot into each round recess on the underside.
-9. **Cap.** Turn the box onto its feet and push the cap onto the shaft
+9. **Feet.** Glue a TPU foot into each round recess on the underside.
+10. **Cap.** Turn the box onto its feet and push the cap onto the shaft
    (flat side matches).
 
 To get at the board later (or reach its BOOT button): unscrew the plate,
@@ -316,10 +325,13 @@ fit into the hole for the plug to seat.
 **(h) When the header arrives: measure its bent legs.** Solder (or just
 hold) the header on the C3-Zero and measure, with calipers, how high the
 middle of the bent legs sits above the board's top face. Set `hdr_leg_z`
-to that (now 2.5). Also set `hdr_leg_out` (now 6) to how far the legs
+to that (now 1.4). Also set `hdr_leg_out` (now 6) to how far the legs
 reach past the header's plastic, and `plug` (now 2.54 x 2.54 x 14) to the
 jumper plug's width, height and length.
-- If the leg height is under about 2.3 mm, the plugs will touch the cradle
-  rail on the header side (-X). Tell Claude: that rail gets lowered.
+- The cradle's rail on the header side (-X) is already lowered under the
+  plugs, and it follows `hdr_leg_z`: re-render and it keeps 0.2 mm under
+  them. It goes no lower than half the board's thickness; below about
+  1 mm of leg height the render stops with "C3 wired-side rail too low".
+  Tell Claude if that happens.
 
 Once a-h pass, re-run `bash print/tests/run.sh` and print the real parts.
