@@ -24,14 +24,14 @@
 <h2>1 · Parts hunt: find it, check it, photograph both sides</h2>
 <table>
   <tr><th style="width:3%"></th><th style="width:27%">Part</th><th style="width:42%">Check</th><th>Notes / label text</th></tr>
-  <tr><td><span class="box"></span></td><td><b>Seeed XIAO ESP32C3</b></td><td>Pins already attached on both edges ("Pre-Soldered")</td><td class="notes"></td></tr>
+  <tr><td><span class="box"></span></td><td><b>Waveshare ESP32-C3-Zero</b> (any 1 of 5)</td><td>Bare holes, no pins. Count the <span class="m">GND</span> holes; photo the pin labels. A header strip to cut pins from</td><td class="notes"></td></tr>
   <tr><td><span class="box"></span></td><td><b>12-LED ring</b> (any 1 of 5)</td><td>Back pad labels: <span class="m">DI/DIN</span> <span class="m">5V/VCC</span> <span class="m">GND</span> <span class="m">DO/DOUT</span>, plus any model text</td><td class="notes"></td></tr>
   <tr><td><span class="box"></span></td><td><b>KY-040 knob</b></td><td>5 pins attached: <span class="m">CLK DT SW + GND</span>. Pressing the shaft clicks</td><td class="notes"></td></tr>
   <tr><td><span class="box"></span></td><td><b>Jumper wires, female–female</b></td><td>Socket on both ends. Needed for the knob (5 wires)</td><td class="notes"></td></tr>
   <tr><td><span class="box"></span></td><td><b>HY2.0 → 2.54 mm cables</b></td><td>Small 4-pin plug on one end, separate sockets on the other</td><td class="notes"></td></tr>
   <tr><td><span class="box"></span></td><td><b>USB-C cable</b></td><td>Must carry <b>data</b>, not charge-only. We'll confirm when testing</td><td class="notes"></td></tr>
 </table>
-<div class="tip"><b>Why the HY2.0 cables matter:</b> cut off the 4-pin plug and solder 3 loose ends to the ring. The socket ends then push straight onto the XIAO's pins, giving you a plug-in ring from parts you own. <b>No F–F jumpers?</b> A pack costs a few dollars and is likely the only purchase.</div>
+<div class="tip"><b>Why the HY2.0 cables matter:</b> cut off the 4-pin plug and solder 3 loose ends to the ring. The socket ends then push straight onto the board's pins, giving you a plug-in ring from parts you own. <b>No F–F jumpers?</b> A pack costs a few dollars and is likely the only purchase.</div>
 
 <div class="cols">
 <div>
@@ -65,6 +65,7 @@
   <li>Touch them together with the iron for about 2 s.</li>
 </ol>
 <ul style="margin-top:6px">
+  <li><span class="box"></span><b>Board header pins, only the holes in use:</b> <span class="m">5V</span> <span class="m">GND</span> <span class="m">3V3</span> <span class="m">GPIO4–7</span>. Push the short ends through from the bottom, stand the board in a breadboard to keep them straight, then solder from the top. Practice on a spare C3-Zero first</li>
   <li><span class="box"></span>3 joints on the real ring: <span class="m">5V</span> <span class="m">GND</span> <span class="m">DIN</span> (the <i>input</i> side)</li>
 </ul>
 </div>

@@ -51,19 +51,21 @@ Talon, holding it hard-mutes the microphone, and turning it scrolls.
   change to a "not connected" state. A reminder that lies is worse than none.
 - **Pressing the button must never fail silently.** If mute fails, the ring
   must not show muted.
-- No soldering beyond the 3 ring joints. No parts that must be bought before
+- No soldering beyond the 3 ring joints plus header pins on the board
+  (amended 2026-11-16, board swap). No parts that must be bought before
   the MVP works, except jumper wires if Evan has none.
 
 ## Constraints
 
 **Hardware Evan owns:**
-- Seeed XIAO ESP32C3 (headers pre-soldered)
+- Waveshare ESP32-C3-Zero ×5, no headers (amended 2026-11-16; was the one
+  Seeed XIAO ESP32C3, now saved for the WLED sign)
 - EC Buying 12-LED WS2812B ring
 - KY-040 rotary encoder with push switch
 - Spare JST SM leads, 330 Ω resistors, capacitors, 74AHCT125
 
-**Soldering:** only the ring needs it. Three joints (5V, GND, DIN) on the
-ring's pads, which Evan has agreed to.
+**Soldering:** three joints (5V, GND, DIN) on the ring's pads, plus header
+pins on the C3-Zero's needed holes only (about 7–8). Evan has agreed to both.
 
 **Board limits:** the ESP32-C3 has **no native USB HID**, so it can't act as a
 keyboard or mouse. Its built-in USB Serial/JTAG gives a CDC serial port, so all
@@ -74,7 +76,7 @@ host interaction goes through Talon over serial.
   `~/.talon/user/community`. Do not edit those files.
 - Evan's own code lives in a separate folder.
 
-**Power:** USB 5V from the XIAO's 5V pin. Cap brightness in firmware so the
+**Power:** USB 5V from the board's 5V pin. Cap brightness in firmware so the
 ring stays well under USB current limits.
 
 ## Approaches considered
@@ -82,7 +84,7 @@ ring stays well under USB current limits.
 | Approach | Trade-off | Outcome |
 |---|---|---|
 | A. Macro pad + WLED light over Wi-Fi | Off-the-shelf firmware for the light, but a WLED device can't easily send a button press back to Talon. Two devices. | Deferred. Its light becomes the later fancy light. |
-| B. **One USB device, custom firmware (XIAO + ring + knob)** | Small custom firmware and protocol to write. Uses parts Evan owns, one cable, two-way by design. | **Chosen** |
+| B. **One USB device, custom firmware (ESP32-C3 + ring + knob)** | Small custom firmware and protocol to write. Uses parts Evan owns, one cable, two-way by design. | **Chosen** |
 | C. Stream Deck + smart bulb | Polished, but costs money. Local control and pricing unverified. Not an "on air" look. | Rejected |
 
 ## Design
@@ -91,15 +93,20 @@ ring stays well under USB current limits.
 
 | From | To |
 |---|---|
-| Ring 5V / GND | XIAO 5V / GND |
-| Ring DIN | XIAO D10 via the 330 Ω series resistor, if it can be inserted without solder; otherwise direct |
-| KY-040 CLK / DT / SW | XIAO D1 / D2 / D3 |
-| KY-040 + / GND | XIAO 3V3 / GND |
+| Ring 5V / GND | C3-Zero 5V / GND |
+| Ring DIN | C3-Zero GPIO7 via the 330 Ω series resistor, if it can be inserted without solder; otherwise direct |
+| KY-040 CLK / DT / SW | C3-Zero GPIO4 / GPIO5 / GPIO6 |
+| KY-040 + / GND | C3-Zero 3V3 / GND |
+
+**Pins to avoid on the C3-Zero:** GPIO10 (onboard WS2812 status LED; free to
+use as a debug light), GPIO9 (BOOT button), GPIO2 and GPIO8 (ESP32-C3 boot
+strapping), GPIO18/19 (USB). Confirm the pad layout against Waveshare's
+pinout image before soldering.
 
 Use female–female jumpers between the header pins. Optionally put a 1000 µF
 capacitor across the ring's power.
 
-### Firmware (XIAO ESP32C3)
+### Firmware (ESP32-C3-Zero)
 
 Written in Arduino or CircuitPython; the builder chooses. Arduino (with
 Adafruit NeoPixel) is the safer bet on the ESP32-C3, whose CircuitPython USB
@@ -365,3 +372,19 @@ Meet tab, focus it, press ⌘D, and return.
 - Which pad.
 - The first macro set.
 - Work-laptop delivery (above).
+
+## Amendment 2026-11-16b: board swap to ESP32-C3-Zero (approved by Evan)
+
+- **Why:** Evan has 5 Waveshare ESP32-C3-Zero boards and only one XIAO.
+  Spares make soldering mistakes cheap, and the XIAO is saved for the WLED sign.
+- **Same chip, same USB serial path.** The C3-Zero has no USB-to-UART chip; it
+  uses the ESP32-C3's built-in USB Serial/JTAG, like the XIAO. Protocol,
+  firmware logic and the Talon add-on are unchanged. Arduino needs
+  "USB CDC On Boot: Enabled". Source: Waveshare wiki, ESP32-C3-Zero.
+- **Cost:** header pins must be soldered. Fit them only on the holes in use.
+- **Flashing:** Waveshare says to hold BOOT (GPIO9) while plugging in USB to
+  flash. Expect this at least for the first upload.
+- **Antenna:** onboard ceramic. Irrelevant (no Wi-Fi), but don't cover it with
+  metal in the housing.
+- **Open:** count the GND holes. With one GND, the ring and knob grounds must
+  share it (a doubled jumper or a splice). Measure the board for the housing.

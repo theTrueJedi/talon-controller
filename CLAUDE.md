@@ -8,7 +8,7 @@ later.
 
 - `user/`: Talon add-ons and custom commands, symlinked into `~/.talon/user/`.
   Never edit `~/.talon/user/community`.
-- `firmware/knob/`: XIAO ESP32C3 firmware (Arduino) for the controller.
+- `firmware/knob/`: ESP32-C3-Zero firmware (Arduino) for the controller.
 - `firmware/sign/`: future WLED sign.
 - `print/`: 3D-print files (housing, translucent cap).
 - `docs/`
@@ -20,8 +20,9 @@ later.
 
 **Design approved.** Next step is hardware prep, before any code:
 1. Evan finds his parts.
-2. Confirm the models: ring pad labels, XIAO headers, KY-040, F–F jumpers,
-   HY2.0→2.54 mm cables, data USB-C cable.
+2. Confirm the models: ring pad labels, C3-Zero pinout, KY-040, F–F jumpers,
+   HY2.0→2.54 mm cables, data USB-C cable. Board is now the ESP32-C3-Zero
+   (spec amendment 2026-11-16b): count its GND holes, find header pins.
 3. Check soldering supplies: solder, flux.
 
 **After that:**
