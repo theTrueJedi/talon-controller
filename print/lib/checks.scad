@@ -53,6 +53,8 @@ assert(stem_bot_z - nut_top_z > press_travel,
        str("stem-to-nut gap <= press_travel: ", stem_bot_z - nut_top_z));
 
 // Test coupons.
+assert(norm(ky_far_hole_xy) + pin_d / 2 < coupon_split_r, "fit coupon split cuts the anti-rotation pin");
+assert(coupon_split_r < lip_ir - 1, "fit coupon split cuts the seat lip");
 glow_band_need = (ring_od - ring_id) / 2
                + ring_od / 2 - sqrt(pow(ring_od / 2, 2) - pow(glow_step_l / 2, 2));
 assert(glow_strip[1] - 2 * glow_leg_w >= glow_band_need,

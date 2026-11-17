@@ -92,6 +92,7 @@ driver_handle = [20, 20];               // [diameter, height]
 // ---- Test coupons ----
 coupon_gap = 5;                         // bed spacing between coupon bodies
 coupon_face_margin = 4;                 // fit-coupon face disc radius past hood OD
+coupon_split_r = ring_id / 2;           // face splits here: inner disc + lip ring
 coupon_arc = 40;                        // hood segment arc, centred on a key tab
 coupon_plug_d = 12;                     // cap-bore plug OD
 coupon_plug_roof = 2;                   // plug height over the D section
@@ -163,13 +164,14 @@ coupon_seg_ir = ring_id / 2;                    // segment top spans the ring ba
 coupon_seg_or = hood_od / 2 + key_tab_len;      // out to the key tab tip
 coupon_seg_half_w = hood_od / 2 * sin(coupon_arc / 2);
 coupon_seg_y0 = coupon_seg_ir * cos(coupon_arc / 2);  // nearest the axis
-// Bed row along +X: face disc, washer, plug, hood segment (centres).
-coupon_washer_x = coupon_face_r + coupon_gap + floor_washer_od / 2;
+// Bed row along +X: lip ring, face disc, washer, plug, hood segment (centres).
+coupon_disc_x = coupon_face_r + coupon_gap + coupon_split_r;
+coupon_washer_x = coupon_disc_x + coupon_split_r + coupon_gap + floor_washer_od / 2;
 coupon_plug_x = coupon_washer_x + floor_washer_od / 2 + coupon_gap + coupon_plug_d / 2;
 coupon_seg_x = coupon_plug_x + coupon_plug_d / 2 + coupon_gap + coupon_seg_half_w;
 fit_footprint = [coupon_seg_x + coupon_seg_half_w + coupon_face_r,
                  2 * coupon_face_r,
-                 max(face_t + lip_h, hood_top_z, coupon_plug_h)];
+                 max(face_t + lip_h, face_t + body[2], hood_top_z, coupon_plug_h)];
 glow_step_l = glow_strip[0] / len(glow_steps);
 glow_footprint = [glow_strip[0], glow_strip[1] + glow_digit_depth,
                   ring_t + max(glow_steps) + hood_top_t];

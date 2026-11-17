@@ -22,14 +22,21 @@ module nut_driver() {
 
 // ---- Test coupons (bed frame: z = 0 is the print bed) ----
 
-// Fit coupon: face disc, well-floor washer, cap-bore plug and a hood segment
-// with one key tab, in a row along +X, coupon_gap apart.
+// Fit coupon, in a row along +X, coupon_gap apart: the face split into a
+// lip ring and a centre disc (so each prints flat with no supports), a
+// well-floor washer, a cap-bore plug, and a hood segment with one key tab.
 module fit_coupon() {
-    // Face disc, underside on the bed. The anti-rotation pin is left off so
-    // the disc lies flat; the clamp stack and key notches are what's tested.
+    // Lip ring, upright: seat lip and key notches for the hood-key test.
     translate([0, 0, face_t]) intersection() {
         face_center(coupon_face_r);
-        translate([0, 0, -face_t]) cylinder(r = coupon_face_r + 1, h = face_t + lip_h + 1);
+        tube(coupon_split_r, coupon_face_r + 1, -face_t - eps, lip_h + eps);
+    }
+    // Centre disc, face top on the bed: anti-rotation pin points up. Collar
+    // hole, pin and clamp stack are tested on this piece.
+    translate([coupon_disc_x, 0, 0]) rotate([180, 0, 0]) intersection() {
+        face_center(coupon_face_r);
+        translate([0, 0, -face_t - body[2] - eps])
+            cylinder(r = coupon_split_r, h = face_t + body[2] + eps);
     }
     // Well-floor washer: stands in for the hood floor in the clamp stack.
     translate([coupon_washer_x, 0, 0]) tube(collar_hole_d / 2, floor_washer_od / 2, 0, floor_t);

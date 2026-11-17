@@ -35,7 +35,7 @@ Studio and do not rotate them. None of these should need supports.
 
 | Part (`part=`) | Material                 | Orientation on the bed                        |
 |----------------|--------------------------|-----------------------------------------------|
-| `fit_test`     | opaque PLA or PETG       | four pieces side by side, see below           |
+| `fit_test`     | opaque PLA or PETG       | five pieces side by side, see below           |
 | `glow_test`    | translucent PETG         | standing on its legs, steps up                |
 | `nut_driver`   | opaque PLA or PETG       | handle down, socket up                        |
 | `hood`         | translucent PETG         | upside down: top face on the bed              |
@@ -52,17 +52,21 @@ part in translucent PETG. Everything else is opaque so light does not leak.
 Two small, cheap prints that test the fits that are hard to get right on
 paper, before you spend hours on the full housing.
 
-**Fit coupon** (`stl/fit_test.stl`, opaque), four pieces in a row:
+**Fit coupon** (`stl/fit_test.stl`, opaque), five pieces in a row. The real
+face is split in two here so each half prints flat with no supports:
 
-1. **Face disc**: the round face plate the knob comes through, with the
-   seat lip and key notches for the hood. The little anti-rotation pin under
-   the real face is left off so the disc can lie flat.
-2. **Floor washer**: a flat ring the same thickness as the hood's well
+1. **Lip ring**: the outer part of the face, with the raised seat lip and
+   the key notches the hood locks into.
+2. **Face disc**: the centre of the face the knob comes through. It prints
+   upside down (the top face on the bed), so the little anti-rotation pin
+   points up. Flip it over to use it: the pin goes down into the knob
+   board's mounting hole.
+3. **Floor washer**: a flat ring the same thickness as the hood's well
    floor. In the real build, the hood floor sits on the face and the nut
    clamps both. This washer stands in for it.
-3. **Bore plug**: a short cylinder with the knob cap's D-shaped hole in it,
+4. **Bore plug**: a short cylinder with the knob cap's D-shaped hole in it,
    open side up.
-4. **Hood segment**: a 40-degree slice of the hood wall with one key tab,
+5. **Hood segment**: a 40-degree slice of the hood wall with one key tab,
    printed upside down like the real hood.
 
 **Glow coupon** (`stl/glow_test.stl`, translucent PETG): a strip in four
@@ -91,7 +95,7 @@ and have a little thread showing above it.
   optional if it works loose. Never red; red is permanent.
 
 **(c) The hood key holds.** Drop the hood segment's tab into a notch in
-the face disc's lip. Twist and wiggle it.
+the lip ring's lip. Twist and wiggle it.
 - Tab will not go in: raise `fit` (now 0.2) to 0.3. This widens the notch
   and gap around the hood wall.
 - Sloppy, twists noticeably: lower `fit` to 0.1, or raise `key_tab_w`
@@ -114,4 +118,10 @@ step where you see one even glow instead of separate dots.
   Tell Claude, and we will raise the knob cap (`cap_over_shaft`) or slim
   the cap float to make room.
 
-Once a-e pass, re-run `bash print/tests/run.sh` and print the real parts.
+**(f) The pin drops into the knob board's hole.** With the face disc on
+the collar (pin side down), the pin drops into the far mounting hole of the
+KY-040 board (the hole farther from the knob) and the disc sits flat.
+- Pin misses the hole: adjust `ky_hole_x_from_header` (now 4.5 and 21.5;
+  your caliper read 4.5 to 4.8 for the far hole, so try 4.7 first).
+
+Once a-f pass, re-run `bash print/tests/run.sh` and print the real parts.

@@ -136,8 +136,8 @@ expect_big  fit-renders
 # ECHO: fit_footprint = [x, y, z]
 dims="$(echo "$err" | sed -n 's/^ECHO: fit_footprint = \[\(.*\), \(.*\), \(.*\)\]$/\1 \2 \3/p' | head -1)"
 [ -n "$dims" ] || fail fit-layout "no fit_footprint echo"
-# Face disc, well-floor washer, bore plug, hood segment.
-stl_check "$out/fit-renders.stl" 4 $dims || fail fit-layout "dims=$dims"
+# Lip ring, face disc (pin up), well-floor washer, bore plug, hood segment.
+stl_check "$out/fit-renders.stl" 5 $dims || fail fit-layout "dims=$dims"
 pass fit-layout
 
 expect_ok   glow-renders -D 'part="glow_test"'
