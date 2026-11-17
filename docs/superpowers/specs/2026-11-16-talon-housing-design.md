@@ -136,8 +136,10 @@ encoder body. There are no screw posts for the KY-040.
 | D-flat section of shaft (axial lengths per Evan's drawing) | 19 … 26 |
 | Cap top (1.5 above shaft top) | 27.5 |
 
-The glow gap can rise to about 9.5 before the cap's overhang gets thinner
-than about 3.5 mm. The collar budget is face + floor + washer + nut = 5.5 of
+*(Superseded 2026-11-17: the cap now has a fixed 14 mm disc riding above
+the hood, so the cap no longer limits the glow gap; the cap rows in this table
+are the original design.)* The glow gap could rise to about 9.5 before the
+cap's overhang got thinner than about 3.5 mm. The collar budget is face + floor + washer + nut = 5.5 of
 7 mm.
 
 **Shell (opaque):**
