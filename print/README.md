@@ -49,7 +49,7 @@ Studio and do not rotate them. None of these should need supports.
 | `glow_test`    | translucent PETG   | 1   | standing on its legs, steps up         | none     |
 | `nut_driver`   | opaque PLA or PETG | 1   | handle down, socket up                 | none     |
 | `shell`        | opaque PLA or PETG | 1   | on its back wall, open bottom sideways | none     |
-| `c3_clip`      | opaque PLA or PETG | 1   | on its tongue end, legs standing up    | none     |
+| `c3_clip`      | **PETG** (PLA may crack at the snap) | 1 | on its front face | none |
 | `hood`         | translucent PETG   | 1   | upside down: top face on the bed       | none     |
 | `cap`          | opaque PLA or PETG | 1   | upside down: top face on the bed       | none     |
 | `bottom`       | opaque PLA or PETG | 1   | outside face down, pockets up          | none     |
