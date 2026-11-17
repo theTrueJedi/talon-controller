@@ -27,5 +27,13 @@ else if (part == "nut_driver") {
     // Print handle down: handle end on the bed, socket up.
     translate([0, 0, driver_shaft_l + driver_handle[1]]) rotate([180, 0, 0]) nut_driver();
 }
+else if (part == "fit_test") {
+    echo(fit_footprint = fit_footprint);
+    fit_coupon();
+}
+else if (part == "glow_test") {
+    echo(glow_footprint = glow_footprint);
+    glow_coupon();     // prints as modelled: legs on the bed, steps bridge between them
+}
 else if (part == "face") face_center(lip_or + wall);   // face-center preview
 else assert(false, str("unknown part: ", part));

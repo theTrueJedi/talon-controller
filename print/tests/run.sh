@@ -95,3 +95,55 @@ x, y, z = map(float, sys.argv[1].split())
 assert x <= 20.1 and y <= 20.1
 PY
 pass driver-bbox
+
+# STL must be non-trivial (> 1 KB).
+expect_big() {
+    local size; size=$(wc -c < "$out/$1.stl")
+    [ "$size" -gt 1024 ] || fail "$1-size" "STL only $size bytes"
+    pass "$1-size"
+}
+
+# stl_check <stl> <bodies> <x> <y> <z>: on the bed (min z = 0), the given
+# number of separate bodies, and bbox within 0.1 of x y z.
+stl_check() {
+    PYTHONDONTWRITEBYTECODE=1 python3 - "$here" "$@" <<'PY'
+import sys
+sys.path.insert(0, sys.argv[1])
+from stl_bbox import vertices
+path, bodies = sys.argv[2], int(sys.argv[3])
+want = list(map(float, sys.argv[4:7]))
+vs = list(vertices(path))
+assert abs(min(v[2] for v in vs)) <= 0.01, "not on the bed"
+size = [max(v[i] for v in vs) - min(v[i] for v in vs) for i in range(3)]
+assert all(abs(s - w) <= 0.1 for s, w in zip(size, want)), f"bbox {size} != {want}"
+# Count bodies: triangles sharing a vertex belong to the same body.
+parent = {}
+def find(a):
+    while parent.setdefault(a, a) != a:
+        parent[a] = parent[parent[a]]; a = parent[a]
+    return a
+key = lambda v: tuple(round(c, 4) for c in v)
+for i in range(0, len(vs), 3):
+    a, b, c = (find(key(v)) for v in vs[i:i + 3])
+    parent[b] = a; parent[find(c)] = a
+n = len({find(k) for k in list(parent)})
+assert n == bodies, f"{n} bodies, expected {bodies}"
+PY
+}
+
+expect_ok   fit-renders -D 'part="fit_test"'
+expect_big  fit-renders
+# ECHO: fit_footprint = [x, y, z]
+dims="$(echo "$err" | sed -n 's/^ECHO: fit_footprint = \[\(.*\), \(.*\), \(.*\)\]$/\1 \2 \3/p' | head -1)"
+[ -n "$dims" ] || fail fit-layout "no fit_footprint echo"
+# Face disc, well-floor washer, bore plug, hood segment.
+stl_check "$out/fit-renders.stl" 4 $dims || fail fit-layout "dims=$dims"
+pass fit-layout
+
+expect_ok   glow-renders -D 'part="glow_test"'
+expect_big  glow-renders
+dims="$(echo "$err" | sed -n 's/^ECHO: glow_footprint = \[\(.*\), \(.*\), \(.*\)\]$/\1 \2 \3/p' | head -1)"
+[ -n "$dims" ] || fail glow-layout "no glow_footprint echo"
+# One body: digits are embossed onto the strip, not loose islands.
+stl_check "$out/glow-renders.stl" 1 $dims || fail glow-layout "dims=$dims"
+pass glow-layout

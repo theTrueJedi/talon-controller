@@ -89,6 +89,18 @@ driver_od = well_id - 1;                // socket and shaft OD; must fit the wel
 driver_handle_clear = 15;               // handle bottom above the hood top
 driver_handle = [20, 20];               // [diameter, height]
 
+// ---- Test coupons ----
+coupon_gap = 5;                         // bed spacing between coupon bodies
+coupon_face_margin = 4;                 // fit-coupon face disc radius past hood OD
+coupon_arc = 40;                        // hood segment arc, centred on a key tab
+coupon_plug_d = 12;                     // cap-bore plug OD
+coupon_plug_roof = 2;                   // plug height over the D section
+glow_strip = [60, 14];                  // [length, width] of the glow strip
+glow_steps = [5, 8, 10, 12];            // glow gaps under each step, low to high
+glow_leg_w = hood_wall;                 // side legs, straddling the ring band
+glow_digit_size = 5;                    // embossed label text size
+glow_digit_depth = 0.6;                 // label emboss height, out of the leg
+
 // ---- Fits and pins ----
 pin_d = 2.6;
 clr = 1;
@@ -141,6 +153,26 @@ lip_or = lip_ir + lip_w;
 wire_slot_r = (ring_id + ring_od) / 4;          // centre of the ring band
 well_wall_or = well_id / 2 + well_wall;
 halo_ir = well_wall_or + fit;
+
+// ================= Derived (test coupons) =================
+coupon_face_r = hood_od / 2 + coupon_face_margin;
+floor_washer_od = well_id + 2 * well_wall;      // matches the hood well floor
+coupon_plug_h = shaft_d_h + coupon_plug_roof;
+// Hood segment, flipped and turned so its key tab points -Y.
+coupon_seg_ir = ring_id / 2;                    // segment top spans the ring band
+coupon_seg_or = hood_od / 2 + key_tab_len;      // out to the key tab tip
+coupon_seg_half_w = hood_od / 2 * sin(coupon_arc / 2);
+coupon_seg_y0 = coupon_seg_ir * cos(coupon_arc / 2);  // nearest the axis
+// Bed row along +X: face disc, washer, plug, hood segment (centres).
+coupon_washer_x = coupon_face_r + coupon_gap + floor_washer_od / 2;
+coupon_plug_x = coupon_washer_x + floor_washer_od / 2 + coupon_gap + coupon_plug_d / 2;
+coupon_seg_x = coupon_plug_x + coupon_plug_d / 2 + coupon_gap + coupon_seg_half_w;
+fit_footprint = [coupon_seg_x + coupon_seg_half_w + coupon_face_r,
+                 2 * coupon_face_r,
+                 max(face_t + lip_h, hood_top_z, coupon_plug_h)];
+glow_step_l = glow_strip[0] / len(glow_steps);
+glow_footprint = [glow_strip[0], glow_strip[1] + glow_digit_depth,
+                  ring_t + max(glow_steps) + hood_top_t];
 
 // ================= Derived (face frame XY) =================
 // KY-040 orientation: header edge toward +Y, hole (long) edge toward +X.

@@ -51,3 +51,11 @@ assert(cap_cbore_top_z - collar_top_z > press_travel,
        str("collar counterbore gap <= press_travel: ", cap_cbore_top_z - collar_top_z));
 assert(stem_bot_z - nut_top_z > press_travel,
        str("stem-to-nut gap <= press_travel: ", stem_bot_z - nut_top_z));
+
+// Test coupons.
+glow_band_need = (ring_od - ring_id) / 2
+               + ring_od / 2 - sqrt(pow(ring_od / 2, 2) - pow(glow_step_l / 2, 2));
+assert(glow_strip[1] - 2 * glow_leg_w >= glow_band_need,
+       str("glow legs land on the ring band: need ", glow_band_need, " between them"));
+assert(glow_digit_size + 1 <= ring_t + min(glow_steps), "glow digits taller than the lowest leg");
+assert(glow_digit_depth > 0, "glow digits must be embossed, not cut");
