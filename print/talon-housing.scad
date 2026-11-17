@@ -36,7 +36,7 @@ else if (part == "fit_test") {
 }
 else if (part == "glow_test") {
     echo(glow_footprint = glow_footprint);
-    glow_coupon();     // prints as modelled: legs on the bed, steps bridge between them
+    glow_coupon();     // four tiles, face down on the bed, legs up
 }
 else if (part == "shell") {
     echo(box_footprint = box_footprint);

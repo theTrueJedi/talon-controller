@@ -68,23 +68,26 @@ module hood_segment(a) {
     }
 }
 
-// Glow coupon: a strip of hood-top thickness in steps along +X, each glow_steps
-// gap above the ring top. Side legs straddle the ring band and stand on the
-// surface the ring lies on. Gap labels are embossed on the -Y leg.
+// Glow coupon: one tile per glow_steps gap, printed like the hood: face
+// (hood-top thickness) down on the bed, legs up. Each tile is modelled in use
+// (legs on the desk straddling the ring band, face gap above the ring top),
+// then flipped onto its face. Gap labels are embossed on one leg. Separate
+// tiles because coplanar faces would need unequal legs and the strip would rock.
 module glow_coupon() {
+    for (i = [0 : len(glow_steps) - 1])
+        translate([-glow_footprint[0] / 2 + i * (glow_step_l + glow_tile_gap) + glow_step_l / 2, 0, 0])
+            glow_tile(glow_steps[i]);
+}
+
+module glow_tile(g) {
     w = glow_strip[1];
-    n = len(glow_steps);
-    translate([-glow_strip[0] / 2, 0, 0]) for (i = [0 : n - 1]) {
-        g = glow_steps[i];
-        under = ring_t + g;
-        l = glow_step_l + (i < n - 1 ? eps : 0);      // overlap the next step
-        translate([i * glow_step_l, 0, 0]) {
-            for (y = [-w / 2, w / 2 - glow_leg_w])
-                translate([0, y, 0]) cube([l, glow_leg_w, under + hood_top_t]);
-            translate([0, -w / 2, under]) cube([l, w, hood_top_t]);
-            translate([glow_step_l / 2, -w / 2 + eps, (ring_t + min(glow_steps)) / 2])
-                rotate([90, 0, 0]) linear_extrude(glow_digit_depth + eps)
-                    text(str(g), size = glow_digit_size, halign = "center", valign = "center");
-        }
+    h = ring_t + g + hood_top_t;
+    translate([0, 0, h]) rotate([180, 0, 0]) translate([-glow_step_l / 2, 0, 0]) {
+        for (y = [-w / 2, w / 2 - glow_leg_w])
+            translate([0, y, 0]) cube([glow_step_l, glow_leg_w, h]);
+        translate([0, -w / 2, ring_t + g]) cube([glow_step_l, w, hood_top_t]);
+        translate([glow_step_l / 2, -w / 2 + eps, (ring_t + min(glow_steps)) / 2])
+            rotate([90, 0, 0]) linear_extrude(glow_digit_depth + eps)
+                text(str(g), size = glow_digit_size, halign = "center", valign = "center");
     }
 }

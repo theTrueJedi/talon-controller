@@ -46,7 +46,7 @@ Studio and do not rotate them. None of these should need supports.
 | Part (`part=`) | Material           | Qty | Orientation on the bed                 | Supports |
 |----------------|--------------------|-----|----------------------------------------|----------|
 | `fit_test`     | opaque PLA or PETG | 1   | five pieces side by side, see below    | none     |
-| `glow_test`    | translucent PETG   | 1   | standing on its legs, steps up         | none     |
+| `glow_test`    | translucent PETG   | 1   | four tiles, face down, legs up         | none     |
 | `nut_driver`   | opaque PLA or PETG | 1   | handle down, socket up                 | none     |
 | `shell`        | opaque PLA or PETG | 1   | on its back wall, open bottom sideways | none     |
 | `c3_clip`      | **PETG** (PLA may crack at the snap) | 1 | on its front face | none |
@@ -178,10 +178,24 @@ face is split in two here so each half prints flat with no supports:
 5. **Hood segment**: a 40-degree slice of the hood wall with one key tab,
    printed upside down like the real hood.
 
-**Glow coupon** (`stl/glow_test.stl`, translucent PETG): a strip in four
-steps. Each step sits 5, 8, 10 or 12 mm above the ring's LEDs (the number
-is on the side). Its legs straddle the ring and stand on the desk, so set
-the ring flat on the desk and put the strip over it.
+**Glow coupon** (`stl/glow_test.stl`, translucent PETG): four small tiles.
+Each tile is a face with two legs and holds its face 5, 8, 10 or 12 mm
+above the ring's LEDs (the number is on a leg). They print face down, like
+the hood, so the face you look at gets the same bed finish the hood will.
+To test: flip a tile over, set the ring flat on the desk, and stand the
+tile over the ring with its legs on either side of the LED band.
+
+**Which plate for translucent PETG** (glow tiles and hood). The plate sets
+the look of the face you see:
+- **Textured PEI** (no glue): a frosted face that spreads light. This is
+  probably the best diffuser.
+- **Smooth PEI** or **Engineering plate**: **use glue stick**. Bambu
+  lists glue for PETG on both, and without it PETG can rip the coating.
+  You get a glossier face that is clearer, so the LED dots show more.
+- Avoid the Cool Plate for PETG.
+- Let the plate cool fully before you pop the parts off.
+- Worth doing: print the tiles once per plate, then compare them in
+  checkpoint (e).
 
 ## CHECKPOINT: what to check, and what to change if it fails
 
@@ -220,7 +234,9 @@ or forcing.**
 
 **(e) Pick the glow gap that hides the LED dots.** Light the ring, lay the
 glow strip over it, and look straight down at each step. Pick the lowest
-step where you see one even glow instead of separate dots.
+step where you see one even glow instead of separate dots. If you printed
+tiles on more than one plate, also note which finish hides the dots best
+and print the hood on that plate.
 - Set `glow_gap` to that number (now 8).
 - The cap above limits how tall the hood can be. Right now the maximum is
   9.4. If you pick 10 or 12, the render will stop with "glow_gap too large".

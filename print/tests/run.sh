@@ -162,8 +162,8 @@ expect_ok   glow-renders -D 'part="glow_test"'
 expect_big  glow-renders
 dims="$(echo "$err" | sed -n 's/^ECHO: glow_footprint = \[\(.*\), \(.*\), \(.*\)\]$/\1 \2 \3/p' | head -1)"
 [ -n "$dims" ] || fail glow-layout "no glow_footprint echo"
-# One body: digits are embossed onto the strip, not loose islands.
-stl_check "$out/glow-renders.stl" 1 $dims || fail glow-layout "dims=$dims"
+# Four tiles, one per gap, face down; digits embossed on a leg, not loose islands.
+stl_check "$out/glow-renders.stl" 4 $dims || fail glow-layout "dims=$dims"
 pass glow-layout
 
 # ---- Shell (Task 5) ----

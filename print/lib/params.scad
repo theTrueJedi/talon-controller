@@ -98,11 +98,12 @@ coupon_split_r = ring_id / 2;           // face splits here: inner disc + lip ri
 coupon_arc = 40;                        // hood segment arc, centred on a key tab
 coupon_plug_d = 12;                     // cap-bore plug OD
 coupon_plug_roof = 2;                   // plug height over the D section
-glow_strip = [60, 14];                  // [length, width] of the glow strip
+glow_strip = [60, 14];                  // [total length, width]; split into one tile per gap
 glow_steps = [5, 8, 10, 12];            // glow gaps under each step, low to high
 glow_leg_w = hood_wall;                 // side legs, straddling the ring band
 glow_digit_size = 5;                    // embossed label text size
 glow_digit_depth = 0.6;                 // label emboss height, out of the leg
+glow_tile_gap = 4;                      // bed spacing between glow tiles
 
 // ---- Encoder body locating frame ----
 // A square frame hanging from the face underside, centred on the shaft. The
@@ -248,7 +249,8 @@ fit_footprint = [coupon_seg_x + coupon_seg_half_w + coupon_face_r,
                  2 * coupon_face_r,
                  max(face_t + lip_h, face_t + body_frame_h, hood_top_z, coupon_plug_h)];
 glow_step_l = glow_strip[0] / len(glow_steps);
-glow_footprint = [glow_strip[0], glow_strip[1] + glow_digit_depth,
+glow_footprint = [len(glow_steps) * glow_step_l + (len(glow_steps) - 1) * glow_tile_gap,
+                  glow_strip[1] + glow_digit_depth,
                   ring_t + max(glow_steps) + hood_top_t];
 
 // ================= Derived (face frame XY) =================
