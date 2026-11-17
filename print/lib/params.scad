@@ -132,6 +132,7 @@ wall = 2;
 fillet_r = 3;                           // outer edge fillets (bottom edges stay sharp)
 face_margin = 1.6;                      // seat lip OD to the side edge fillet
 top_flat_min = 10;                      // least flat-top depth behind the slope
+base_extra = 5;                         // added height on the straight lower walls (Evan, 2026-11-17)
 ky_wire_room = 5;                       // past the KY-040 header edge (+Y): stubs + wires
 ky_wire_h = 3;                          // above the KY-040 PCB top near the header edge
 // Corner bosses for the bottom plate's M3 screws. The nut sits in a
@@ -284,7 +285,7 @@ m3_slot_w = m3_nut_af + m3_nut_fit;            // nut slot across flats
 m3_nut_r = m3_slot_w / 2 / cos(30);            // nut slot hex circumradius
 boss_stack_h = boss_floor + m3_trap_h + boss_roof;
 front_h_boss = boss_stack_h + face_t / cos(slope) - (boss_c - m3_nut_r) * tan(slope);
-front_h = max(front_h_ky, front_h_boss);
+front_h = max(front_h_ky, front_h_boss) + base_extra;
 box_h = front_h + face_rise;
 face_origin = [0, face_half * cos(slope), front_h + face_half * sin(slope)];
 function face_to_box(p) = face_origin + [p[0], p[1] * cos(slope) - p[2] * sin(slope),

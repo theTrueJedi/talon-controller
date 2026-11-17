@@ -310,9 +310,9 @@ can be unplugged for troubleshooting, and a bigger, heavier knob.
 - **Weights sealed in the plate (Evan's method, 2026-11-17):** the pockets
   are fully enclosed. The print pauses at the pocket tops, Evan drops the
   weights in, and the printer seals over them. Layers through the plate:
-  3 mm floor, weight + 0.2 mm, then a 1.2 mm roof. Four ½ oz weights, one per
-  corner (FL, FR, BL, BR); BR sits under the C3 cradle. Pockets are 0.2 mm
-  over the weight in plan. The model echoes the pause height.
+  3 mm floor, the 5.8 mm pocket (exact weight size: Evan's proven dimensions keep the nozzle clear), then a 1.2 mm roof. Four ½ oz weights, one per
+  corner (FL, FR, BL, BR); BR sits under the C3 cradle. Pockets are exactly
+  19.65 × 22 × 5.8, no added clearance. The model echoes the pause height.
 - **Board lower:** with the port and board-edge cuts open at the rim, the
   board needs no wall under the port. It sits on a 2 mm pedestal (solder-tail
   clearance) on the plate top.

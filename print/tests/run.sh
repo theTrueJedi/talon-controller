@@ -187,8 +187,17 @@ stl_check "$out/glow-renders.stl" 4 $dims || fail glow-layout "dims=$dims"
 pass glow-layout
 
 # ---- Shell (Task 5) ----
+# Taller base: base_extra adds exactly its height to box_h, and box_d stays put.
+render base-zero -D 'part="shell"' -D base_extra=0
+h0="$(echo "$err" | sed -n 's/^ECHO: box_h = \([0-9.]*\),.*/\1/p' | head -1)"
+d0="$(echo "$err" | sed -n 's/^ECHO: box_footprint = \[.*, \(.*\)\]$/\1/p' | head -1)"
 expect_ok   shell-render -D 'part="shell"'
 expect_big  shell-render
+h1="$(echo "$err" | sed -n 's/^ECHO: box_h = \([0-9.]*\),.*/\1/p' | head -1)"
+d1="$(echo "$err" | sed -n 's/^ECHO: box_footprint = \[.*, \(.*\)\]$/\1/p' | head -1)"
+python3 -c "import sys; h0,h1,d0,d1=map(float,sys.argv[1:]); assert abs(h1-h0-5)<0.01 and abs(d1-d0)<0.01" "$h0" "$h1" "$d0" "$d1" \
+    || fail base-extra "box_h $h0 -> $h1, box_d $d0 -> $d1"
+pass base-extra
 # ECHO: box_footprint = [w, d]  /  ECHO: box_h = h, hood_od = o, wall = t
 fp="$(echo "$err" | sed -n 's/^ECHO: box_footprint = \[\(.*\), \(.*\)\]$/\1 \2/p' | head -1)"
 hw="$(echo "$err" | sed -n 's/^ECHO: box_h = \([0-9.]*\), hood_od = \([0-9.]*\), wall = \([0-9.]*\)$/\1 \2 \3/p' | head -1)"
