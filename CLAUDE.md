@@ -19,7 +19,7 @@ later.
 ## Status (2026-11-16)
 
 **Design approved.** Next step is hardware prep, before any code:
-1. Evan finds his parts.
+1. Evan finds his parts. Confirmed 2026-11-16: ring, HY2.0-4P cables, F–F jumpers, KY-040, C3-Zero.
 2. Confirm the models: ring pad labels, C3-Zero pinout, KY-040, F–F jumpers,
    HY2.0→2.54 mm cables, data USB-C cable. Board is now the ESP32-C3-Zero
    (spec amendment 2026-11-16b): count its GND holes, find header pins.
