@@ -4,9 +4,6 @@
 collar_spare = collar_h - (face_t + floor_t + washer_t + nut_t);
 assert(collar_spare >= 1.0, "collar thread: nut has <1mm engagement");
 
-assert(hood_top_z <= cap_top_z - 3.5 - cap_float,
-       str("glow_gap too large: max is ", max_glow_gap));
-
 assert(cap_d <= 32, "cap covers LEDs");
 
 assert(well_id >= nut_corner + 3, "well too narrow for nut driver");

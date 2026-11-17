@@ -34,7 +34,7 @@ else if (part == "halo") {
     halo_sleeve();
 }
 else if (part == "cap") {
-    echo(cap_d = cap_d, cap_h = cap_h);
+    echo(cap_d = cap_d, cap_h = cap_h, cap_disc = cap_top_z - cap_under_z);
     // Print top-face down: cap top on the bed.
     translate([0, 0, cap_top_z]) rotate([180, 0, 0]) cap();
 }

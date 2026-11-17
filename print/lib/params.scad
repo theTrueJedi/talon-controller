@@ -86,9 +86,9 @@ hood_screw_angles = [45, 225];          // about +Z; 0 = +Y
 halo_t = 0.8;
 
 // ---- Cap ----
-cap_d = 28;
+cap_d = 29;
 cap_float = 1.5;
-cap_over_shaft = 1.5;
+cap_disc_t = 14;                        // disc thickness, cap underside to top
 stem_od = 15;
 cap_chamfer = 0.8;                      // disc top and bottom edge chamfer
 shaft_clr = 0.6;                        // diametral clearance on the round shaft
@@ -98,6 +98,9 @@ cap_roof_min = 1.2;                     // material over the blind bore
 knurl_n = 36;                           // flutes round a knurled grip
 knurl_flute_d = 1.2;                    // flute cutter diameter
 knurl_depth = 0.4;                      // flute depth into the grip
+dknurl_n = 40;                          // cap diamond knurl: pyramids round
+dknurl_depth = 0.7;                     // peak-to-valley depth
+dknurl_angle = 45;                      // helix angle from vertical
 
 // ---- Nut driver ----
 socket_depth = 3;
@@ -213,7 +216,7 @@ hood_screws = false;
 halo_block = false;
 key_tab_angles = [90, 270];             // about +Z; 0 = +Y
 wire_slot_angle = 0;                    // about +Z; 0 = +Y
-cap_knurl = false;                      // flute the cap rim
+cap_knurl = true;                       // diamond-knurl the cap rim
 
 // ================= Derived (face frame Z) =================
 body_top_z   = -face_t;                         // encoder body top meets face underside
@@ -223,7 +226,7 @@ ring_top_z   = ring_t;                          // ring sits on face top
 hood_under_z = ring_top_z + glow_gap;
 hood_top_z   = hood_under_z + hood_top_t;
 cap_under_z  = hood_top_z + cap_float;
-cap_top_z    = shaft_top_z + cap_over_shaft;
+cap_top_z    = cap_under_z + cap_disc_t;
 nut_top_z    = floor_t + washer_t + nut_t;      // well floor, washer, nut on face top
 nut_corner   = nut_af / cos(30);
 stem_bot_z   = nut_top_z + 1;                   // cap stem bottom, 1 above the nut
@@ -234,8 +237,6 @@ cap_roof     = cap_top_z - cap_bore_top_z;
 cap_h        = cap_top_z - stem_bot_z;
 // Driver open end rests on the washer; shaft runs from there to the handle.
 driver_shaft_l = hood_top_z + driver_handle_clear - (nut_top_z - nut_t);
-// glow_gap at which hood_top_z == cap_top_z - 3.5 - cap_float
-max_glow_gap = cap_top_z - 3.5 - cap_float - ring_top_z - hood_top_t;
 ky_pcb_bottom_z = body_top_z - body[2] - ky_pcb[2];
 body_frame_in = [body[0] + body_fit, body[1] + body_fit];  // frame inner sides
 body_frame_out = body_frame_in + 2 * [body_frame_wall, body_frame_wall];

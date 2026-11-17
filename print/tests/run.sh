@@ -88,7 +88,8 @@ bbox="$(python3 "$here/stl_bbox.py" "$out/checks-pass.stl")"
 [ "$bbox" = "1.00 1.00 1.00" ] || fail checks-bbox "got '$bbox'"
 pass checks-bbox
 
-expect_fail checks-fail-glow "glow_gap too large" -D glow_gap=12
+expect_ok   glow-gap-12 -D 'part="cap"' -D glow_gap=12
+expect_fail checks-fail-roof "cap roof over bore too thin" -D cap_disc_t=2
 expect_fail checks-fail-cap  "cap covers LEDs"    -D cap_d=34
 expect_fail checks-fail-tab  "key tab on wire slot" -D 'key_tab_angles=[350]'
 expect_fail checks-fail-float "cap_float gap" -D cap_float=0.4
@@ -122,8 +123,10 @@ expect_ok   halo-render        -D 'part="halo"' -D halo_block=true
 expect_fail halo-off           "part halo needs" -D 'part="halo"'
 
 expect_ok   cap-render -D 'part="cap"'
-# ECHO: cap_d = 28, cap_h = 14.5
-dims="$(echo "$err" | sed -n 's/^ECHO: cap_d = \([0-9.]*\), cap_h = \([0-9.]*\)$/\1 \2/p' | head -1)"
+# ECHO: cap_d = 29, cap_h = ..., cap_disc = 14
+echo "$err" | grep -q '^ECHO: cap_d = 29, .*cap_disc = 14$' || fail cap-dims "want cap_d 29, cap_disc 14"
+pass cap-dims
+dims="$(echo "$err" | sed -n 's/^ECHO: cap_d = \([0-9.]*\), cap_h = \([0-9.]*\), cap_disc = [0-9.]*$/\1 \2/p' | head -1)"
 [ -n "$dims" ] || fail cap-bbox "no cap dims echo"
 bbox="$(python3 "$here/stl_bbox.py" "$out/cap-render.stl")"
 python3 - "$bbox" "$dims" <<'PY' || fail cap-bbox "got '$bbox', dims=$dims"
@@ -134,6 +137,13 @@ assert abs(x - d) <= 0.1 and abs(y - d) <= 0.1 and abs(z - h) <= 0.1
 PY
 pass cap-bbox
 expect_ok   cap-knurl-render -D 'part="cap"' -D cap_knurl=true
+bbox="$(python3 "$here/stl_bbox.py" "$out/cap-knurl-render.stl")"
+python3 - "$bbox" <<'PY' || fail cap-knurl-bbox "got '$bbox'"
+import sys
+x, y, z = map(float, sys.argv[1].split())
+assert abs(x - 29) <= 0.1 and abs(y - 29) <= 0.1
+PY
+pass cap-knurl-bbox
 
 expect_ok   driver-render -D 'part="nut_driver"'
 bbox="$(python3 "$here/stl_bbox.py" "$out/driver-render.stl")"
