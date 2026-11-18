@@ -119,7 +119,7 @@ else if (fig == "screws") {
     color(ACC) translate([0, 0, -26]) screws_ghost();
 }
 else if (fig == "bed_shell") on_bed("../stl/shell_v6.stl") color(SHELL) import("../stl/shell_v6.stl");
-else if (fig == "bed_bottom") on_bed("../stl/bottom_v8.stl") color(PLATE) import("../stl/bottom_v8.stl");
+else if (fig == "bed_bottom") on_bed("../stl/bottom_v9.stl") color(PLATE) import("../stl/bottom_v9.stl");
 else if (fig == "bed_clip") on_bed("../stl/c3_clip_v3.stl") color(ACC) import("../stl/c3_clip_v3.stl");
 else if (fig == "bed_hood") on_bed("../stl/hood_v2.stl") color(HOOD) import("../stl/hood_v2.stl");
 else if (fig == "bed_cap") on_bed("../stl/cap_v3.stl") color(CAP) import("../stl/cap_v3.stl");

@@ -432,7 +432,7 @@ USB receptacle overhanging the board's port edge by 1.3 mm
 (`c3_port_overhang`). Under that overhang a tab on the plate now butts the
 board's port edge, `c3_pinch_fit` (0.1) off it; the front stop is the same
 0.1 off the other end, so the board is pinched end to end. Beside the
-receptacle the tab rises into two hooks reaching `c3_hook_reach` (0.4; Evan cut it from 0.8 to shorten the unsupported overhang) back
+receptacle the tab rises into two hooks reaching `c3_hook_reach` (0.6; Evan went 0.8 -> 0.4 -> 0.6 for a bit more grab, accepting the unsupported overhang) back
 over the board top, `c3_hook_t` (0.6) thick, kept clear of the corner pins
 and the header plastic (Evan: keep them small, he needs the pins). Fit: tilt
 the board in, port end under the hooks, lower the inner end, clip on. The
