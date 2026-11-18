@@ -361,3 +361,48 @@ can be unplugged for troubleshooting, and a bigger, heavier knob.
 | Knob board's plugs hit the slope | Moderate | +5 mm base; the interference check shows it before printing |
 | Jumpers work loose | FYI | A dab of hot glue or tape over mated pairs |
 | Jumpers too short to lift the plate away | FYI | Leave slack; unplug before lifting fully |
+
+## Amendment 2026-11-18 (second test prints: plate fit, C3 clip, port)
+
+**Why:** Evan wants the plate to drop into the shell quickly and fit
+satisfyingly. The C3 clip's tooth lands on the board's chip antenna. The
+board's port edge bumps the shell as the plate goes on. And there's a large
+opening around the port.
+
+**Approaches for seating the plate (Evan picked A):**
+
+| Option | Trade-off | Outcome |
+|---|---|---|
+| A. A lip on the plate top along every open stretch of the shell's inner wall | Most "drops in and stops" feel, locates on every side; binds first if the rim prints undersized (one setting fixes it) | **Chosen** |
+| B. Short tabs, ~10 mm each | Forgiving of warp; locates at a few points, can feel slotted rather than seated | Rejected |
+| C. Collars round the corner bosses | Locates at the screws; the bosses are fused to the walls, so collars only part-wrap | Rejected |
+
+**Decisions (Evan's):**
+- **Plate lip** (A) with `lip_fit = 0.1` per side, matching the tested
+  `key_fit` (Evan has tightened every fit tested so far: key and bore to
+  0.1/0.15, the body frame to 0.07).
+- **Clip: two teeth** either side of the antenna instead of one in the
+  middle. The antenna is ~6 mm long (Evan's measurement); the model uses 6.4.
+- **Board 0.4 mm further into the box** (`c3_slot_clr = 0.4`). The wall slot
+  stays 1 mm deep, so the board edge sits 0.6 mm in it, with 0.4 mm free at
+  the slot bottom. Evan: the lip registers the plate, so the board is held
+  from the base and the shell just needs clearance.
+- **Port opening unchanged:** Evan's cables measure 12.12 × 6.6 and
+  11 × 6.1 mm; both fit the existing 12.5 × 7.5 notch, and shrinking it
+  would gain 0.5 mm for a shell reprint. The shell does not change; the
+  model checks the plug fits. The visible gap under the board is closed by
+  the plate's port filler.
+
+**Claude's calls (Evan can override):**
+- Lip: 1.2 mm thick, 2 mm tall, a 45° lead-in chamfer on its outer top edge.
+  It stops `clr` short of each corner boss, and skips the back wall from the
+  header plug recess across the C3 to the right boss (the cradle stands only
+  0.2 mm off the wall there). On the front, the shell's inside is a 45° ramp
+  meeting the rim, so the lip there seats against the ramp's foot.
+- **Port filler:** a block on the plate rising into the notch's open bottom
+  up to the board's underside, `c3_fit` clear of the notch sides and the
+  outside face. It closes the visible hole under the port and supports the
+  board's last ~1 mm, previously unsupported on purpose.
+- Teeth: ~2 mm wide each, 0.5 mm clear of the antenna (`c3_ant_clr`) and
+  `c3_corner_clr` clear of the corner holes; the model refuses overlap.
+- New `_vN` STLs for bottom and c3_clip; the shell stays `shell_v6`.
