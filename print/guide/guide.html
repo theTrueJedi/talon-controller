@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Talon Controller: Print and Assembly Guide</title>
+<style>
+  @page { size: Letter; margin: 0.6in 0.65in; }
+  :root { --ink: #1d1d22; --soft: #5b5b66; --line: #d9d9e0; --acc: #c2185b; --acc2: #e0a000; --tint: #f6f6f9; }
+  * { box-sizing: border-box; }
+  body { font: 10.5pt/1.45 -apple-system, "Helvetica Neue", Arial, sans-serif; color: var(--ink); margin: 0; }
+  h1 { font-size: 24pt; margin: 0 0 4pt; letter-spacing: -0.01em; }
+  h2 { font-size: 15pt; margin: 0 0 8pt; padding-bottom: 4pt; border-bottom: 2px solid var(--ink); break-after: avoid; }
+  h3 { font-size: 11.5pt; margin: 14pt 0 4pt; break-after: avoid; }
+  p { margin: 0 0 7pt; }
+  .sub { color: var(--soft); font-size: 11pt; margin-bottom: 18pt; }
+  section { break-before: page; }
+  section.first { break-before: auto; }
+  table { border-collapse: collapse; width: 100%; margin: 4pt 0 10pt; font-size: 9.5pt; }
+  th, td { text-align: left; vertical-align: top; padding: 4pt 6pt; border-bottom: 1px solid var(--line); }
+  th { background: var(--tint); font-weight: 600; }
+  code { font: 9pt Menlo, monospace; background: var(--tint); padding: 0 3pt; border-radius: 3px; }
+  .acc { color: var(--acc); font-weight: 600; }
+  .key { display: inline-block; width: 9pt; height: 9pt; border-radius: 2px; vertical-align: -1pt; margin-right: 3pt; }
+  figure { margin: 6pt 0 10pt; text-align: center; break-inside: avoid; }
+  figure img { max-width: 100%; }
+  figcaption { font-size: 9pt; color: var(--soft); margin-top: 3pt; }
+  .row { display: flex; gap: 10pt; align-items: flex-start; }
+  .row > * { flex: 1; }
+  .bed { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8pt 10pt; }
+  .bed figure { margin: 0; border: 1px solid var(--line); border-radius: 6px; padding: 6pt; }
+  .bed img { height: 100pt; object-fit: contain; }
+  .note { background: var(--tint); border-left: 3px solid var(--acc); padding: 7pt 10pt; margin: 8pt 0; break-inside: avoid; }
+  .warn { border-left-color: var(--acc2); }
+  ol.steps { padding-left: 0; list-style: none; counter-reset: s; }
+  ol.steps > li { counter-increment: s; position: relative; padding-left: 26pt; margin-bottom: 10pt; break-inside: avoid; }
+  ol.steps > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 18pt; height: 18pt; border-radius: 50%;
+    background: var(--ink); color: #fff; font-weight: 700; font-size: 9.5pt; text-align: center; line-height: 18pt; }
+  .check { break-inside: avoid; margin-bottom: 8pt; }
+  .check b { display: block; }
+  .small { font-size: 9pt; color: var(--soft); }
+</style>
+</head>
+<body>
+
+<section class="first">
+  <h1>Talon Controller</h1>
+  <div class="sub">Print and assembly guide · housing revision 2026-11-18 · generated from <code>print/</code></div>
+
+  <figure>
+    <img src="fig/exploded.png" style="height: 300pt">
+    <figcaption>The whole controller, pulled apart. Knob cap on top, translucent hood over the LED ring, the shell,
+      the bottom plate with the C3-Zero board, and the <span class="acc">two TPU pads</span> underneath.</figcaption>
+  </figure>
+
+  <h3>What changed in this revision</h3>
+  <table>
+    <tr><th style="width:28%">Change</th><th>What you'll notice</th></tr>
+    <tr><td>Lip on the bottom plate</td><td>The plate drops into the shell and stops sliding. The lip sits 0.1 mm inside the walls.</td></tr>
+    <tr><td>Two-tooth clip</td><td>The clip holds the board either side of its red chip antenna, not on it.</td></tr>
+    <tr><td>Board 0.4 mm further in</td><td>The board's USB end no longer bumps the back wall as the plate goes on.</td></tr>
+    <tr><td>Filler under the USB port</td><td>The open strip under the board in the back wall is now closed by a block on the plate.</td></tr>
+    <tr><td>TPU pads for feet</td><td>Two 15 × 60 mm pads glue into shallow recesses, replacing the four round feet.</td></tr>
+  </table>
+  <p class="small">The shell does not change: <code>shell_v6</code> works with the new plate.</p>
+
+</section>
+
+<section>
+  <h2>1 · Printing</h2>
+  <p>The STLs come out already lying the right way. Import them into Bambu Studio and <b>don't rotate them</b>.
+    Settings not listed here are Bambu's defaults. Only the shell needs support, and only along one edge.</p>
+
+  <h3 style="margin-top:4pt">Which file to print</h3>
+  <table>
+    <tr><th>Part</th><th>File (in <code>print/stl/</code>)</th><th>Material</th><th>Qty</th></tr>
+    <tr><td>Shell</td><td><code>shell_v6.stl</code> (unchanged)</td><td>opaque PLA or PETG</td><td>1</td></tr>
+    <tr><td>Bottom plate</td><td><code>bottom_v5.stl</code> <span class="acc">new</span></td><td>opaque PLA or PETG</td><td>1</td></tr>
+    <tr><td>C3 clip</td><td><code>c3_clip_v3.stl</code> <span class="acc">new</span></td><td><b>PETG</b> (PLA may crack at the snap)</td><td>1</td></tr>
+    <tr><td>Hood</td><td><code>hood_v2.stl</code></td><td>translucent PETG</td><td>1</td></tr>
+    <tr><td>Knob cap</td><td><code>cap_v3.stl</code> (or <code>cap_v3b</code>, 10 mm disc)</td><td>opaque PLA or PETG, 100% infill</td><td>1</td></tr>
+    <tr><td>Nut driver</td><td><code>nut_driver_v1.stl</code></td><td>opaque PLA or PETG</td><td>1</td></tr>
+  </table>
+  <div class="bed">
+    <figure><img src="fig/bed_shell.png"><figcaption><b>Shell:</b> on its back wall, open bottom to the side</figcaption></figure>
+    <figure><img src="fig/bed_bottom.png"><figcaption><b>Bottom plate:</b> outside face down, cradle and lip up</figcaption></figure>
+    <figure><img src="fig/bed_clip.png"><figcaption><b>C3 clip:</b> on its front face, in PETG</figcaption></figure>
+    <figure><img src="fig/bed_hood.png"><figcaption><b>Hood:</b> upside down, top face on the bed</figcaption></figure>
+    <figure><img src="fig/bed_cap.png"><figcaption><b>Knob cap:</b> upside down, <b>100% infill</b></figcaption></figure>
+    <figure style="display:flex;align-items:center;justify-content:center;text-align:left">
+      <div class="small">The light-grey outline under each part shows which side touches the bed.</div></figure>
+  </div>
+
+  <h3 style="break-before: page; margin-top: 0">Shell: paint support on the front rim edge</h3>
+  <div class="row">
+    <figure style="flex:1.2"><img src="fig/paint.png"><figcaption>Looking into the open bottom. Paint the <span class="acc">strip along the inner front rim</span>.</figcaption></figure>
+    <div>
+      <p>The inside of the front wall is a 45° ramp, but where it meets the open rim it starts as a long line
+        with nothing under it. Bambu treats that as a bridge and won't support it, so the first layers sag.</p>
+      <p><b>Do this:</b> keep auto-support off. Use the support-painting tool to paint a thin strip along that
+        inner front rim edge. In Preview, check that support appears under the strip.</p>
+    </div>
+  </div>
+
+  <h3>Bottom plate: pause to drop in the weights</h3>
+  <div class="row">
+    <div>
+      <p>Four ½ oz weights (19.65 × 22 × 5.8 mm) are sealed inside the plate as it prints.</p>
+      <ol>
+        <li>In the Preview's layer slider, find the first layer above <b>8.8 mm</b> (9.0 mm at 0.2 mm layers).</li>
+        <li>Right-click it and add a <b>pause</b>.</li>
+        <li>When the printer pauses, drop one weight into each corner pocket. Leave the sticky backing on; the
+          5.8 mm includes it. Check none sticks up past the pocket top.</li>
+        <li>Resume. The printer seals over them.</li>
+      </ol>
+    </div>
+    <figure><img src="fig/pause.png"><figcaption>The plate at the pause, with the <span style="color:var(--acc2);font-weight:600">weights</span> going in.</figcaption></figure>
+  </div>
+
+  <h3>Hood: which plate</h3>
+  <p><b>Textured PEI</b> (no glue) gives a frosted face that spreads the light best. Smooth PEI or the
+    Engineering plate need <b>glue stick</b> for PETG and give a glossier face. Avoid the Cool Plate for PETG.
+    Let the plate cool fully before popping parts off.</p>
+</section>
+
+<section>
+  <h2>2 · Wiring</h2>
+  <p>Everything plugs in at the C3-Zero, nowhere else. Unplug its jumpers and the plate, with the board on it,
+    comes away from the shell. Nothing needs desoldering.</p>
+  <ul>
+    <li><b>C3-Zero:</b> solder one 9-pin right-angle header on its wired row (5V, GND, 3V3, GPIO0–5, from the USB end).
+      The legs point <b>sideways off the board, toward the middle of the box</b>. If they're bent at 45°, bend them to 90° first.</li>
+    <li><b>Knob board (KY-040):</b> clip its pins to short stubs. Solder half a female jumper to each of +, CLK, DT and SW.
+      The GND stub gets a short plain wire.</li>
+    <li><b>Ring:</b> solder half a female jumper to each pad: 5V, GND, DIN.</li>
+  </ul>
+  <table style="width:70%">
+    <tr><th>Wire</th><th>C3-Zero pin</th></tr>
+    <tr><td>Ring DIN</td><td>GPIO0</td></tr>
+    <tr><td>Ring 5V</td><td>5V</td></tr>
+    <tr><td>Ring GND <i>+ knob GND spliced on</i></td><td>GND</td></tr>
+    <tr><td>Knob +</td><td>3V3</td></tr>
+    <tr><td>Knob CLK</td><td>GPIO3</td></tr>
+    <tr><td>Knob DT</td><td>GPIO4</td></tr>
+    <tr><td>Knob SW</td><td>GPIO5</td></tr>
+  </table>
+  <div class="note"><b>One GND pin.</b> The C3-Zero has a single GND pin, so the knob's GND wire is spliced onto the
+    ring's GND jumper (strip ~5 mm in its middle, wrap, solder, tape or heat-shrink). Only the ring's GND plug goes on the pin.
+    Check the labels against Waveshare's pinout before soldering.</div>
+  <p class="small">Optional: a 330 Ω resistor inline in the ring's DIN wire protects the first LED.</p>
+
+  <h3>Bought parts</h3>
+  <table>
+    <tr><th>Part</th><th>Use</th></tr>
+    <tr><td>4× M3 × 10 socket-head screws, 4× M3 hex nuts</td><td>Plate to shell; the nuts sit in the corner posts</td></tr>
+    <tr><td>4× ½ oz weights, 19.65 × 22 × 5.8 mm</td><td>Sealed in the plate during the print pause</td></tr>
+    <tr><td>9-pin 2.54 mm right-angle header, female jumper wires</td><td>The C3-Zero's only plug point</td></tr>
+    <tr><td>Thin double-sided tape (or hot glue)</td><td>Holds the ring at 12 o'clock</td></tr>
+    <tr><td>2× TPU pads, 15 × 60 × 1.4 mm, and super glue or contact cement</td><td>Feet; they stand 1.1 mm proud</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>3 · Assembly</h2>
+  <p>Work with the shell upside down (open bottom up). The knob cap goes on last, so the box never rests on it.</p>
+  <ol class="steps">
+    <li><b>Solder everything first</b> (see Wiring): the header on the C3-Zero, the half jumpers on the knob board
+      and the ring, the plain GND wire on the knob board.</li>
+    <li><b>Ring.</b> Thread the ring jumpers' plugs down through the slot in the face, lay the ring flat, turn it to its
+      12 o'clock position and fix it with two small pieces of tape. The firmware assumes it never turns.</li>
+    <li><b>GND splice.</b> Inside the shell, splice the knob's GND wire onto the ring's GND jumper. Tape or heat-shrink it.</li>
+    <li><b>Hood and knob board.</b> Set the hood over the ring, its tabs in the notches. From inside, push the encoder's
+      threaded collar up through the face and the hood floor; its square top drops into the frame under the face. Add the
+      washer and nut in the well and snug it with the nut driver. <b>Don't crank it.</b></li>
+    <li><b>Route the ring wires</b> along the channel under the face and top, then down the back wall.</li>
+  </ol>
+</section>
+
+<section class="first">
+  <ol class="steps" start="6" style="counter-reset: s 5">
+    <li><b>C3-Zero onto the plate.</b> Set the board face-up in the cradle, USB end toward the plate's back edge, header
+      toward the middle. Press the clip down over the two side rails at the board's inner end until both legs click.
+      Its <span class="acc">two teeth</span> land on the board's edge either side of the
+      <span style="color:var(--acc2);font-weight:600">red chip antenna</span>, never on it.
+      To remove: spread the legs and lift.
+      <figure><img src="fig/c3.png" style="height: 190pt"><figcaption>Clip lowering onto the cradle; teeth either side of the antenna.</figcaption></figure>
+    </li>
+    <li><b>Plug in the jumpers</b> with the plate held next to the open shell (see the pin table). Leave enough slack to
+      lift the plate away with the plugs still on.</li>
+  </ol>
+</section>
+
+<section>
+  <ol class="steps" start="8" style="counter-reset: s 7">
+    <li><b>Bottom plate.</b> Slide an M3 nut into each corner post's side slot until it clicks past the bumps. Lower the
+      plate on. The <span class="acc">lip</span> drops just inside the shell's walls and stops it sliding. The board's
+      USB end slides into the back wall's slot and notch, and the header plugs into the recess beside them. Tuck the
+      wires so none is pinched, then drive the four screws up from below. <b>Snug, not tight.</b>
+      <div class="row" style="margin-top:6pt">
+        <figure><img src="fig/lip.png" style="height: 150pt"><figcaption>Cut through a side wall: the lip sits 0.1 mm inside it.</figcaption></figure>
+        <figure><img src="fig/lip_front.png" style="height: 150pt"><figcaption>Cut through the front: the lip's sloped face matches the inside ramp.</figcaption></figure>
+      </div>
+      <div class="row">
+        <figure><img src="fig/screws.png" style="height: 200pt"><figcaption>Screws go up through the plate into the nuts in the corner posts.</figcaption></figure>
+        <figure><img src="fig/back.png" style="height: 130pt"><figcaption>From behind: the USB port, with the <span class="acc">filler</span> closing the gap under the board.</figcaption></figure>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <ol class="steps" start="9" style="counter-reset: s 8">
+    <li><b>Feet.</b> Glue a 15 × 60 TPU pad into each long recess on the underside, its length running front to back.
+      The recesses are 0.3 mm deep with 0.15 mm round each edge.
+      <figure><img src="fig/underside.png" style="height: 220pt"><figcaption>The underside: <span class="acc">pads</span> just inboard of the screw holes.</figcaption></figure>
+    </li>
+    <li><b>Knob cap.</b> Turn the box onto its feet and push the cap onto the shaft. The flat side matches.</li>
+  </ol>
+  <p class="small">To get at the board later (or its BOOT button): unscrew the plate, lift it away, unplug the jumpers.</p>
+</section>
+
+<section>
+  <h2>4 · Fit checks for this revision</h2>
+  <p>Each fit has its own number in <code>print/lib/params.scad</code>, so changing one never moves another.
+    After changing one, run <code>bash print/tests/run.sh export</code> and print the new <code>_vN</code> file.</p>
+  <div class="check"><b>(i) The plate drops into the shell</b>
+    Lower it in without screws. It should go in with a light push and not slide.
+    Won't go in or needs force: raise <code>lip_fit</code> (now 0.1) to 0.15. Slides: lower it to 0.05.
+    The back stop is the C3 cradle's back end (no lip fits on the back wall); it follows <code>lip_fit</code> too.</div>
+  <div class="check"><b>(j) The clip holds the board</b>
+    Both teeth sit on the board's edge either side of the antenna, and the board doesn't lift.
+    A tooth touches the antenna: raise <code>c3_ant_w</code> (now 6.4) to the measured length plus 0.4.</div>
+  <div class="check"><b>(k) The board clears the back wall</b>
+    If the USB end still catches as the plate goes on, raise <code>c3_slot_clr</code> (now 0.4) to 0.5.</div>
+  <div class="check"><b>(g) USB plug</b> Measured: 12.12 × 6.6 and 11 × 6.1 mm. Both fit the 12.5 × 7.5 hole.</div>
+  <div class="check"><b>(h) Header legs, still to measure</b>
+    Measure how high the middle of the bent legs sits above the board's top (<code>hdr_leg_z</code>, now 1.4),
+    how far they reach past the plastic (<code>hdr_leg_out</code>, now 6), and the jumper plug size (<code>plug</code>,
+    now 2.54 × 2.54 × 14).</div>
+
+  <h3>Other fits (change only if a real part fails)</h3>
+  <table>
+    <tr><th>Number</th><th>Now</th><th>What it sets</th></tr>
+    <tr><td><code>c3_fit</code></td><td>0.2</td><td>C3-Zero slot: board play, width, height</td></tr>
+    <tr><td><code>m3_nut_fit</code></td><td>0.2</td><td>M3 nut slots in the corner posts</td></tr>
+    <tr><td><code>plate_fit</code></td><td>0.2</td><td>Plate's outside edge inside the shell outline</td></tr>
+    <tr><td><code>pad_fit</code></td><td>0.15</td><td>TPU pad recesses, each edge</td></tr>
+    <tr><td><code>key_fit</code> / <code>bore_fit</code> / <code>body_fit</code></td><td>0.1 / 0.15 / 0.07</td><td>Hood key, knob bore, encoder frame (tested on the coupons)</td></tr>
+  </table>
+  <p class="small">Full details: <code>print/README.md</code> and the housing spec,
+    <code>docs/superpowers/specs/2026-11-16-talon-housing-design.md</code>.</p>
+</section>
+
+</body>
+</html>
