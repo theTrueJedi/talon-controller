@@ -36,6 +36,7 @@ washer_t = 0.5;
 c3 = [24, 18.05, 1.0];
 usb_port = [8.85, 3.15];
 usb_plug_hole = [12.5, 7.5];
+usb_plug = [12.12, 6.6];               // Evan's larger USB-C cable plug body [w, h] (other: 11 x 6.1), measured 2026-11-18
 c3_port_len = 7.35;                     // USB-C receptacle depth (assembly ghost only)
 
 // ---- Header pins and jumper plugs ----
@@ -174,7 +175,8 @@ m3_detent = 0.25;                       // bumps narrowing the nut slot at the h
 // edge, away from every pad.
 c3_x = 11.5;                            // board centre x: off-centre so the header plugs point toward -X (box middle)
 c3_z0 = 2;                              // pedestal: header solder-tail clearance
-c3_wall_slot = 1;                       // board's port edge sinks this far into the back wall
+c3_wall_slot = 1;                       // back-wall slot depth for the board's port edge
+c3_slot_clr = 0.4;                      // board edge short of the slot bottom (Evan, 2026-11-18: it bumped the shell)
 c3_stop_gap_max = 0.3;                  // most board play between the wall slot and front stop
 c3_stop_t = 2;                          // front stop thickness (Y)
 c3_rail_t = 1.2;                        // side rail thickness (X)
@@ -319,14 +321,14 @@ ky_low_z = face_to_box([0, ky_y_range[0], ky_z_range[0]])[2];
 // C3-Zero (board bottom at c3_z0, see the cradle params).
 c3_port_z = c3_z0 + c3[2] + usb_port[1] / 2;    // port (and plug hole) centre
 c3_top_z = c3_z0 + c3[2] + usb_port[1];
-c3_reach = (wall - c3_wall_slot) + c3[0] + c3_fit + c3_stop_t;  // back outer face to stop front
+c3_reach = (wall - c3_wall_slot + c3_slot_clr) + c3[0] + c3_fit + c3_stop_t;  // back outer face to stop front
 // Rear depth: the least flat top that keeps the cradle's front clr under the slope.
 rear_d_c3 = (c3_top_z + clr - front_h + face_t / cos(slope)) / tan(slope)
           + c3_reach - face_run;
 rear_d = max(rear_d_c3, top_flat_min);
 box_d = face_run + rear_d;
 box_footprint = [box_w, box_d];                 // outer, plan corners rounded fillet_r
-c3_edge_y = box_d - wall + c3_wall_slot;        // board port edge, seated in the wall slot
+c3_edge_y = box_d - wall + c3_wall_slot - c3_slot_clr;  // board port edge, in the wall slot, c3_slot_clr short of its bottom
 c3_slot_len = c3[0] + c3_fit;
 c3_stop_y = c3_edge_y - c3_slot_len;            // front stop face
 c3_stop_gap = (c3_edge_y - c3[0]) - c3_stop_y;  // board inner edge to stop face

@@ -67,9 +67,13 @@ assert(face_half - fillet_r >= lip_or, "face_len too short: hood seat lip runs i
 assert(c3_wall_slot < wall, "C3 wall slot cuts through the back wall: nothing stops a cable pull");
 // The front stop must leave the board room to seat, and catch it before a
 // plug push slides its port edge out of the back-wall slot.
-assert(c3_stop_gap > 0 && c3_stop_gap <= c3_stop_gap_max && c3_stop_gap < c3_wall_slot,
+assert(c3_wall_slot - c3_slot_clr >= 0.4,
+       str("C3 slot clearance leaves too little engagement: ", c3_wall_slot - c3_slot_clr, " < 0.4"));
+assert(c3_stop_gap > 0 && c3_stop_gap <= c3_stop_gap_max && c3_stop_gap < c3_wall_slot - c3_slot_clr,
        str("C3 front stop gap ", c3_stop_gap, " (set by c3_fit) must be > 0, <= ", c3_stop_gap_max,
-           " and < c3_wall_slot ", c3_wall_slot));
+           " and < the slot engagement ", c3_wall_slot - c3_slot_clr));
+assert(usb_plug[0] < usb_plug_hole[0] && usb_plug[1] < usb_plug_hole[1],
+       str("USB plug wider than its hole: plug ", usb_plug, ", hole ", usb_plug_hole));
 assert(c3_groove[1] < c3_z0, str("C3 solder groove cuts through the pedestal: depth ", c3_groove[1], " >= ", c3_z0));
 assert(c3_groove[0] > 0 && c3_groove[0] < c3[1] / 2, "C3 solder grooves must leave a pedestal spine");
 assert(c3_clip_engage + c3_fit < c3_rail_t, "C3 clip notch cuts through the rail");

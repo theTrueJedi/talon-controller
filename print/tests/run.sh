@@ -269,6 +269,10 @@ stl_check "$out/shell-no-cradle.stl" 1 $(echo "$fp" | cut -d' ' -f1) $(echo "$hw
 expect_fail checks-fail-c3-boss "C3 cradle hits a rear boss" -D c3_x=16
 
 expect_fail c3-wall-slot "C3 wall slot" -D 'part="shell"' -D c3_wall_slot=2
+# 2026-11-18: board c3_slot_clr inward of the slot bottom; engagement stays >= 0.4.
+expect_fail checks-fail-slot-clr "C3 slot clearance" -D c3_slot_clr=1
+# Evan's plug (12.12 x 6.6) must fit the notch, which stays 12.5 x 7.5 (shell unchanged).
+expect_fail checks-fail-plug "USB plug wider than its hole" -D 'usb_plug=[13, 6.6]'
 # C3-Zero with its header: solder-tail grooves under the pin rows, and a
 # separate clip holding the inner short edge's middle (off the pin-row corners).
 expect_fail checks-fail-groove "C3 solder groove cuts through the pedestal" -D 'c3_groove=[3, 4]'

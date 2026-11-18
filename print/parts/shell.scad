@@ -166,7 +166,7 @@ module c3_clip() {
 // c3_back_cuts_z0) so the board on the plate slides straight up into them.
 module c3_cuts() {
     slot_y = box_d - wall - eps;
-    slot_d = c3_edge_y - (box_d - wall) + eps;
+    slot_d = c3_wall_slot + eps;
     // Header plug recess: the slot widened toward -X over the header and its
     // plugs' X span, up to the plugs' top, same depth.
     translate([c3_hdr_recess_x[0], slot_y, c3_back_cuts_z0])

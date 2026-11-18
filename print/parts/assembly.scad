@@ -118,7 +118,7 @@ interference_contacts = [
     [0, 2, face_n * eps],               // hood (walls, well floor, key tabs) on the face top
     [0, 5, face_n * eps],               // ring on the face top
     [0, 6, -face_n * eps],              // KY-040 body top against the face underside
-    [0, 7, [0, -eps, 0]],               // C3-Zero port edge at the wall-slot end
+    [0, 7, [0, -eps, 0]],               // C3-Zero port edge toward the wall-slot end (c3_slot_clr short)
     [1, 4, [0, 0, -eps]],               // foot against its recess ceiling
     [1, 7, [0, 0, eps]],                // C3-Zero on the plate cradle's pedestal
     [1, 10, [0, 0, -eps]],              // screw head against its counterbore ceiling
