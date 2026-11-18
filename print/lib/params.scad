@@ -38,6 +38,7 @@ usb_port = [8.85, 3.15];
 usb_plug_hole = [12.5, 7.5];
 usb_plug = [12.12, 6.6];               // Evan's larger USB-C cable plug body [w, h] (other: 11 x 6.1), measured 2026-11-18
 c3_port_len = 7.35;                     // USB-C receptacle depth (assembly ghost only)
+c3_port_overhang = 1.3;                 // receptacle mouth past the board's port edge (Evan, measured 2026-11-18)
 
 // ---- Header pins and jumper plugs ----
 // Plugs only at the C3-Zero: a right-angle header with F jumper plugs on it.
@@ -178,6 +179,10 @@ c3_x = 11.5;                            // board centre x: off-centre so the hea
 c3_z0 = 2;                              // pedestal: header solder-tail clearance
 c3_wall_slot = 1;                       // back-wall slot depth for the board's port edge
 c3_slot_clr = 0.4;                      // board edge short of the slot bottom (Evan, 2026-11-18: it bumped the shell)
+c3_pinch_fit = 0.1;                     // board end play at each end: front stop, and the port tab (Evan: snug)
+c3_hook_reach = 0.8;                    // port tab hooks: reach over the board top past its port edge
+c3_hook_t = 0.6;                        // port tab hooks: thickness above the board (+ c3_pinch_fit gap)
+c3_hook_pin_clr = 0.3;                  // port tab hooks: clearance to the header plastic (X)
 c3_stop_gap_max = 0.3;                  // most board play between the wall slot and front stop
 c3_stop_t = 2;                          // front stop thickness (Y)
 c3_rail_t = 1.2;                        // side rail thickness (X)
@@ -336,7 +341,7 @@ rear_d = max(rear_d_c3, top_flat_min);
 box_d = face_run + rear_d;
 box_footprint = [box_w, box_d];                 // outer, plan corners rounded fillet_r
 c3_edge_y = box_d - wall + c3_wall_slot - c3_slot_clr;  // board port edge, in the wall slot, c3_slot_clr short of its bottom
-c3_slot_len = c3[0] + c3_fit;
+c3_slot_len = c3[0] + c3_pinch_fit;
 c3_stop_y = c3_edge_y - c3_slot_len;            // front stop face
 c3_stop_gap = (c3_edge_y - c3[0]) - c3_stop_y;  // board inner edge to stop face
 c3_lip_z = c3_z0 + c3[2] + c3_fit;              // clip teeth underside
@@ -422,11 +427,18 @@ lip_front_c = wall + slope_under_z(wall) + lip_fit * sqrt(2);  // ramp foot + li
 lip_side_y = [max(boss_c + boss_d / 2 * sqrt(2), lip_front_c + plate_lip_h) + clr,
               box_d - boss_c - boss_d / 2 - clr];
 lip_front_hw = boss_x - boss_d / 2 - clr;
-// Port filler: a block on the plate in the USB notch's open bottom, inside the
-// groove-free middle, c3_fit off the notch sides and the outer face. Stepped:
-// up to the board's underside behind the port mouth (it supports the board's
-// edge), and only up to c3_fit under the cable's plug body from the mouth out
-// (the plug pushes ~1.4 mm into the wall to seat).
+// Port filler and tab, on the plate in the USB notch's open bottom, inside the
+// groove-free middle, c3_fit off the notch sides. Under the board up to its
+// underside; past the board's port edge (c3_pinch_fit off it) a tab under the
+// overhanging USB receptacle (c3_fit under it), ending c3_fit inside the
+// outer face. The tab pinches the board against the front stop. Beside the
+// receptacle it rises into two hooks that reach c3_hook_reach back over the
+// board's top, clear of the corner pins and the header (Evan, 2026-11-18).
 c3_filler_hw = c3[1] / 2 - c3_groove[0];
-c3_filler_low_z = min(c3_z0, c3_port_z - usb_plug[1] / 2 - c3_fit);
+c3_port_mouth_y = c3_edge_y + c3_port_overhang;
+c3_tab_y = [c3_edge_y + c3_pinch_fit, min(box_d - c3_fit, c3_port_mouth_y - c3_fit)];
+c3_tab_z = c3_z0 + c3[2] - c3_fit;              // tab top, under the receptacle
+c3_hook_x0 = usb_port[0] / 2 + c3_fit;          // hook inner edge (|x| from the board centre)
+c3_hook_x1 = min(c3_hdr_x - hdr_pitch / 2 - c3_hook_pin_clr, c3_hdr_x - c3_corner_clr);
+c3_hook_top_z = c3_z0 + c3[2] + c3_pinch_fit + c3_hook_t;
 

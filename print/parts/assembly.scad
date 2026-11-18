@@ -27,7 +27,7 @@ module ky_ghost() {                                                       // KY 
 
 module c3_ghost() {                                                       // C3 frame
     translate([-c3[1] / 2, 0, 0]) cube([c3[1], c3[0], c3[2]]);
-    translate([-usb_port[0] / 2, 0, c3[2]]) cube([usb_port[0], c3_port_len, usb_port[1]]);
+    translate([-usb_port[0] / 2, -c3_port_overhang, c3[2]]) cube([usb_port[0], c3_port_len, usb_port[1]]);
 }
 
 // Header plastic on the board top along the wired pin row, plus one envelope
@@ -64,11 +64,11 @@ module screws_ghost() {                                                   // box
 }
 
 // USB-C cable plug body (Evan's larger cable), pushed home: from the port
-// mouth (the board's edge) out through the back-wall notch. Corners rounded
+// mouth (c3_port_overhang past the board's edge) out through the back-wall notch. Corners rounded
 // usb_hole_r like the notch's (assumed: overmolds are rounded; unmeasured).
 module usb_plug_ghost() {                                                 // box frame
-    translate([c3_x, c3_edge_y, c3_port_z]) rotate([-90, 0, 0])
-        linear_extrude(box_d + 5 - c3_edge_y)
+    translate([c3_x, c3_port_mouth_y, c3_port_z]) rotate([-90, 0, 0])
+        linear_extrude(box_d + 5 - c3_port_mouth_y)
             offset(r = usb_hole_r) offset(delta = -usb_hole_r) square(usb_plug, center = true);
 }
 
@@ -135,7 +135,7 @@ interference_contacts = [
     [1, 12, [0, eps, eps]],             // C3 clip bar on the rail/stop tops, teeth against the stop face
     [6, 14, [0, cos(slope), sin(slope)] * eps],  // KY-040 stubs off the header edge (KY frame +Y)
     [7, 13, [0, 0, eps]],               // C3 header plastic on the board top
-    [7, 15, [0, eps, 0]],               // USB plug body against the port mouth (board edge)
+    [7, 15, [0, eps, 0]],               // USB plug body against the port mouth
     [2, 8, face_n * eps],               // washer on the well floor
     [8, 9, face_n * eps],               // nut on the washer
 ];

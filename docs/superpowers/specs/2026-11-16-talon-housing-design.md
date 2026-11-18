@@ -424,3 +424,18 @@ by two of Evan's pre-printed 15 × 60 × 1.4 mm TPU pads, glued at the end.
 Recesses are 0.3 mm deep with 0.15 mm (`pad_fit`) round each edge, lengths
 front to back, centred, each just inboard of its side's screw holes (`clr`
 off the counterbores). The pads stand 1.1 mm proud. The `foot` part is gone.
+
+**Port tab and hooks (Evan, 2026-11-18, after printing bottom_v6):** the
+board hinged up at its port end (only the shell slot held it, and only with
+the plate in) and the v6 filler stood below the platform. Evan measured the
+USB receptacle overhanging the board's port edge by 1.3 mm
+(`c3_port_overhang`). Under that overhang a tab on the plate now butts the
+board's port edge, `c3_pinch_fit` (0.1) off it; the front stop is the same
+0.1 off the other end, so the board is pinched end to end. Beside the
+receptacle the tab rises into two hooks reaching `c3_hook_reach` (0.8) back
+over the board top, `c3_hook_t` (0.6) thick, kept clear of the corner pins
+and the header plastic (Evan: keep them small, he needs the pins). Fit: tilt
+the board in, port end under the hooks, lower the inner end, clip on. The
+v6 filler's low step under the plug is gone: with the overhang the plug
+barely enters the wall. Options rejected: a bigger clip (holds only the
+inner end) and foam tape (blocks lifting the board out for BOOT).

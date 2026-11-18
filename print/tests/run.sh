@@ -98,8 +98,8 @@ expect_fail checks-fail-cbore "collar counterbore gap" -D collar_clr_h=-0.1
 expect_fail checks-fail-stem  "stem-to-nut gap" -D shaft_gap=1.1
 # Per-feature fits: each one reaches its own check.
 expect_fail checks-fail-socket-fit "driver socket wall too thin" -D socket_fit=2
-expect_fail checks-fail-c3-loose   "C3 front stop gap" -D c3_fit=0.5
-expect_fail checks-fail-c3-tight   "C3 front stop gap" -D c3_fit=0
+expect_fail checks-fail-c3-loose   "C3 front stop gap" -D c3_pinch_fit=0.5
+expect_fail checks-fail-c3-tight   "C3 front stop gap" -D c3_pinch_fit=0
 expect_fail checks-fail-nut-t      "M3 nut thicker than its slot" -D m3_nut_t=2.7
 
 expect_ok   hood-render -D 'part="hood"'
@@ -313,7 +313,7 @@ python3 -c "import sys; assert abs(float(sys.argv[1]) - 8.8) <= 0.01" "$pz" || f
 pass weight-pause
 # 2026-11-18: a lip on the plate top seats it inside the shell walls (lip_fit),
 # and a filler block rises into the USB notch's open bottom under the board.
-for pr in lip_left lip_right lip_front back_stop filler; do
+for pr in lip_left lip_right lip_front back_stop filler hook_left hook_right; do
     expect_solid "bottom-probe-$pr" -D 'part="bottom_probe"' -D "probe=\"$pr\""
 done
 # Feet: Evan's pre-printed 15 x 60 x 1.4 TPU pads, two, glued into 0.3 mm
@@ -321,6 +321,11 @@ done
 expect_empty bottom-pad-recess -D 'part="bottom_probe"' -D 'probe="pad"'
 expect_solid bottom-pad-recess-detects -D 'part="bottom_probe"' -D 'probe="pad"' -D pad_recess=0
 expect_fail checks-fail-pad-long "pad recess too near the plate edge" -D 'pad=[15, 72, 1.4]'
+# 2026-11-18 (b): the port tab pinches the board's port edge; its hooks reach over
+# the board top beside the USB port and stay clear of the corner pins.
+expect_empty bottom-probe-pin-clear -D 'part="bottom_probe"' -D 'probe="pin_clear"'
+expect_fail checks-fail-hook "C3 port hooks too narrow" -D c3_hook_pin_clr=1.5
+expect_fail checks-fail-overhang "C3 port tab too thin" -D c3_port_overhang=0
 expect_fail checks-fail-filler "port filler rubs the notch sides" -D 'usb_plug_hole=[12.3, 7.5]'
 expect_fail checks-fail-filler-groove "port filler fills the solder-tail grooves" -D 'c3_filler_hw=7'
 expect_fail checks-fail-pocket-overlap "weight pockets overlap" -D 'weight_pockets=[[-22.85,3,0],[-22.85,3,0],[3.2,3,0],[-22.85,46,0]]'
@@ -348,7 +353,7 @@ expect_fail checks-fail-rail-low "C3 wired-side rail too low" -D hdr_leg_z=0.5
 # stub/solder room too long (it reaches the back wall); the wired-side rail
 # left full height under 1.27 mm header legs.
 nocradle_w='weight_pockets=[[-22.85,3,0],[3.2,3,0],[-22.85,46,0],[3.2,46,0]]'
-for brk in 'c3_filler_low_z=c3_z0' lip_fit=-0.3 collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10 plug_wire_room=40 "c3_x=0;$nocradle_w" ky_stub_room=30 "hdr_leg_z=1.27;c3_rail_low_z=c3_top_h"; do
+for brk in 'c3_tab_z=c3_z0+c3[2]+0.5' lip_fit=-0.3 collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10 plug_wire_room=40 "c3_x=0;$nocradle_w" ky_stub_room=30 "hdr_leg_z=1.27;c3_rail_low_z=c3_top_h"; do
     name="interference-detects-${brk%%;*}"
     render "$name" -D 'part="interference"' -D "$brk"
     case "$err" in *ERROR*|*"top level object is empty"*) fail "$name" "collision not caught";; esac
