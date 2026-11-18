@@ -1,13 +1,17 @@
-# talon
+# talon-controller
 
-Evan's Talon Voice setup. It currently holds the ring+knob USB controller
-project. The room-scale WLED "on air" sign and custom Talon commands come
-later.
+Evan's Talon hardware: the ring+knob USB controller, and later the
+room-scale WLED "on air" sign. Private.
+
+Evan's personal Talon commands and settings are NOT here. They live in the
+public, MIT-licensed repo `theTrueJedi/talon`, cloned straight into
+`~/.talon/user/personal` (same on the work machine, beside an unversioned
+`work/` folder). Keep anything controller-related out of that repo.
 
 ## Layout (planned)
 
-- `user/`: Talon add-ons and custom commands, symlinked into `~/.talon/user/`.
-  Never edit `~/.talon/user/community`.
+- `addon/` (future): the controller's Talon add-on, symlinked into
+  `~/.talon/user/talon-controller`. Never edit `~/.talon/user/community`.
 - `firmware/knob/`: ESP32-C3-Zero firmware (Arduino) for the controller.
 - `firmware/sign/`: future WLED sign.
 - `print/`: 3D-print files (housing, translucent cap).
