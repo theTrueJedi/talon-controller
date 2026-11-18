@@ -348,7 +348,7 @@ expect_fail checks-fail-rail-low "C3 wired-side rail too low" -D hdr_leg_z=0.5
 # stub/solder room too long (it reaches the back wall); the wired-side rail
 # left full height under 1.27 mm header legs.
 nocradle_w='weight_pockets=[[-22.85,3,0],[3.2,3,0],[-22.85,46,0],[3.2,46,0]]'
-for brk in lip_fit=-0.3 collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10 plug_wire_room=40 "c3_x=0;$nocradle_w" ky_stub_room=30 "hdr_leg_z=1.27;c3_rail_low_z=c3_top_h"; do
+for brk in 'c3_filler_low_z=c3_z0' lip_fit=-0.3 collar_hole_d=6.5 shaft_clr=-0.2 body_fit=-0.2 c3_clip_leg_x=10 plug_wire_room=40 "c3_x=0;$nocradle_w" ky_stub_room=30 "hdr_leg_z=1.27;c3_rail_low_z=c3_top_h"; do
     name="interference-detects-${brk%%;*}"
     render "$name" -D 'part="interference"' -D "$brk"
     case "$err" in *ERROR*|*"top level object is empty"*) fail "$name" "collision not caught";; esac

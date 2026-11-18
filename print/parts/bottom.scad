@@ -46,9 +46,11 @@ module plate_lip() {
         polygon([[lip_front_c, 0], [lip_front_c + plate_lip_t, 0], [lip_front_c + plate_lip_t, plate_lip_h], [lip_front_c - plate_lip_h, plate_lip_h]]);
 }
 
-module port_filler()
-    translate([c3_x - c3_filler_hw, c3_cradle_y1 - eps, 0])
-        cube([2 * c3_filler_hw, box_d - c3_fit - c3_cradle_y1 + eps, c3_z0]);
+module port_filler() translate([c3_x - c3_filler_hw, 0, 0]) {
+    // Under the board, ending c3_fit short of the port mouth (the plug body's face).
+    translate([0, c3_cradle_y1 - eps, 0]) cube([2 * c3_filler_hw, c3_edge_y - c3_fit - c3_cradle_y1 + eps, c3_z0]);
+    translate([0, c3_edge_y - c3_fit - eps, 0]) cube([2 * c3_filler_hw, box_d - c3_edge_y + eps, c3_filler_low_z]);
+}
 
 // TPU pad (bought/pre-printed; a ghost for the assembly), centred in its recess.
 module pad_ghost() translate([-pad[0] / 2, -pad[1] / 2, 0]) cube(pad);

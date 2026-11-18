@@ -405,6 +405,12 @@ opening around the port.
   board's last ~1 mm, previously unsupported on purpose.
 - Teeth: ~2 mm wide each, 0.5 mm clear of the antenna (`c3_ant_clr`) and
   `c3_corner_clr` clear of the corner holes; the model refuses overlap.
+- **Port filler stepped (final review):** a full-height filler would stop
+  the plug body short of the port mouth (the plug's bottom sits ~1.3 mm
+  above the plate). The filler is full height under the board, ending
+  `c3_fit` short of the mouth, and only `c3_fit` under the plug body from
+  there out (~1.1 mm). A plug stand-in (rounded `usb_hole_r`, assumed) is now
+  in the interference check.
 - **No back lip (found while building):** the header plug recess, board
   slot and USB notch take the whole back wall between the rear bosses. The
   C3 cradle's back end (its right rail faces solid wall) now stands

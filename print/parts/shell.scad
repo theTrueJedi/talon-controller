@@ -105,7 +105,7 @@ module boss_cuts() {
 // On the bottom plate (bottom() places it at c3_x), modelled centred on x = 0:
 // a pedestal under the board and a front stop across its inner short edge,
 // two side rails along the long edges (the wired-side one lowered behind the
-// stop face so the header plugs pass over it), all ending c3_fit short of the back
+// stop face so the header plugs pass over it), all ending lip_fit short of the back
 // wall's inner face (c3_cradle_y1). Grooves in the pedestal under both pin
 // rows clear the solder tails.
 // The board's port edge sits in a back-wall slot, which takes the cable's

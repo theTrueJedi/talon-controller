@@ -346,8 +346,7 @@ c3_cradle_hw = c3_slot_hw + c3_rail_t;          // rail outer face
 c3_cradle_y0 = c3_stop_y - c3_stop_t;           // front stop's front face
 // Cradle back end: lip_fit off the back wall (separate parts): with the plate
 // lip, it locates the plate front-to-back (Evan, 2026-11-18). The board's last
-// ~1.2 mm (the c3_fit gap plus the open-bottom wall slot) is unsupported on
-// purpose: the slot is open at the rim so the plate can come off. Do not "fix" it.
+// ~0.7 mm, in the open-bottom wall slot, sits on the port filler (bottom.scad).
 c3_cradle_y1 = box_d - wall - lip_fit;
 c3_top_h = c3_lip_z + c3_lip_h;                 // rail and stop top; the clip bar rests on it
 // C3 clip (box frame): a bar across the rail tops over the stop, legs down the
@@ -423,8 +422,11 @@ lip_front_c = wall + slope_under_z(wall) + lip_fit * sqrt(2);  // ramp foot + li
 lip_side_y = [max(boss_c + boss_d / 2 * sqrt(2), lip_front_c + plate_lip_h) + clr,
               box_d - boss_c - boss_d / 2 - clr];
 lip_front_hw = boss_x - boss_d / 2 - clr;
-// Port filler: a block on the plate up to the board's underside, in the USB
-// notch's open bottom; inside the groove-free middle, c3_fit off the notch sides
-// and the outer face.
+// Port filler: a block on the plate in the USB notch's open bottom, inside the
+// groove-free middle, c3_fit off the notch sides and the outer face. Stepped:
+// up to the board's underside behind the port mouth (it supports the board's
+// edge), and only up to c3_fit under the cable's plug body from the mouth out
+// (the plug pushes ~1.4 mm into the wall to seat).
 c3_filler_hw = c3[1] / 2 - c3_groove[0];
+c3_filler_low_z = min(c3_z0, c3_port_z - usb_plug[1] / 2 - c3_fit);
 

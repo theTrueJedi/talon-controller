@@ -104,7 +104,9 @@ inside the back wall on purpose: the board's edge sits 0.6 mm into a 1 mm
 slot in the wall (0.4 mm spare at the slot's bottom, `c3_slot_clr`, so the
 board never bumps the shell as the plate goes on). So the plug's plastic body
 has to fit INTO the wall's hole for the plug to seat (checkpoint g). A small
-block on the plate fills the hole's open bottom under the board. The slot, the USB hole and
+block on the plate fills the hole's open bottom: full height under the board's
+edge (it supports it), and stepped down to 0.2 mm under the plug body where
+the plug enters, so the plug still seats. The slot, the USB hole and
 the header recess beside them are all open at the bottom edge, so the board
 lifts out with the plate. The unplug pull is taken by that slot, so unplug by
 the plug body, not the cable.
@@ -353,7 +355,7 @@ jumper plug's width, height and length.
   1 mm of leg height the render stops with "C3 wired-side rail too low".
   Tell Claude if that happens.
 
-**(i) The plate drops into the shell (bottom_v5).** Lower the plate into
+**(i) The plate drops into the shell (bottom_v6).** Lower the plate into
 the open shell without screws. It should drop in with a light push and not
 slide side to side or front to back.
 - Will not go in, or needs force: raise `lip_fit` (now 0.1) to 0.15.

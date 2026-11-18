@@ -110,7 +110,7 @@ else if (fig == "back") {
     color(SHELL) item(0);
     color(PLATE) item(1);
     color(BOARD) item(7);
-    color(ACC) translate([c3_x, 0, 0]) translate([-c3_filler_hw, box_d - wall - eps, 0]) cube([2 * c3_filler_hw + 0.1, wall - c3_fit + 0.08, c3_z0 + 0.05]);
+    color(ACC) translate([0, 0.05, 0.02]) port_filler();
     }
 }
 else if (fig == "screws") {
@@ -119,7 +119,7 @@ else if (fig == "screws") {
     color(ACC) translate([0, 0, -26]) screws_ghost();
 }
 else if (fig == "bed_shell") on_bed("../stl/shell_v6.stl") color(SHELL) import("../stl/shell_v6.stl");
-else if (fig == "bed_bottom") on_bed("../stl/bottom_v5.stl") color(PLATE) import("../stl/bottom_v5.stl");
+else if (fig == "bed_bottom") on_bed("../stl/bottom_v6.stl") color(PLATE) import("../stl/bottom_v6.stl");
 else if (fig == "bed_clip") on_bed("../stl/c3_clip_v3.stl") color(ACC) import("../stl/c3_clip_v3.stl");
 else if (fig == "bed_hood") on_bed("../stl/hood_v2.stl") color(HOOD) import("../stl/hood_v2.stl");
 else if (fig == "bed_cap") on_bed("../stl/cap_v3.stl") color(CAP) import("../stl/cap_v3.stl");

@@ -63,6 +63,15 @@ module screws_ghost() {                                                   // box
     }
 }
 
+// USB-C cable plug body (Evan's larger cable), pushed home: from the port
+// mouth (the board's edge) out through the back-wall notch. Corners rounded
+// usb_hole_r like the notch's (assumed: overmolds are rounded; unmeasured).
+module usb_plug_ghost() {                                                 // box frame
+    translate([c3_x, c3_edge_y, c3_port_z]) rotate([-90, 0, 0])
+        linear_extrude(box_d + 5 - c3_edge_y)
+            offset(r = usb_hole_r) offset(delta = -usb_hole_r) square(usb_plug, center = true);
+}
+
 module weights_ghost() {                                                  // box frame
     for (i = [0 : len(weight_pockets) - 1]) let(r = weight_rect(i))
         translate([r[0][0], r[0][1], weight_z0]) cube([r[1][0] - r[0][0], r[1][1] - r[0][1], weight[2]]);
@@ -75,8 +84,8 @@ module feet_placed() {                                                    // box
 // ---- Items, placed in the box frame ----
 // 0 shell, 1 bottom, 2 hood, 3 cap, 4 feet, 5 ring, 6 KY-040, 7 C3-Zero,
 // 8 washer, 9 nut, 10 screws, 11 weights, 12 C3 clip, 13 C3 header and plugs,
-// 14 KY-040 stubs and solder joints.
-item_n = 15;
+// 14 KY-040 stubs and solder joints, 15 USB-C plug body.
+item_n = 16;
 module item(i) {
     if (i == 0) shell();
     else if (i == 1) bottom();
@@ -93,6 +102,7 @@ module item(i) {
     else if (i == 12) translate([c3_x, 0, 0]) c3_clip();
     else if (i == 13) c3_pose() c3_hdr_ghost();
     else if (i == 14) ky_pose() ky_hdr_ghost();
+    else if (i == 15) usb_plug_ghost();
 }
 
 module assembly() {
@@ -125,6 +135,7 @@ interference_contacts = [
     [1, 12, [0, eps, eps]],             // C3 clip bar on the rail/stop tops, teeth against the stop face
     [6, 14, [0, cos(slope), sin(slope)] * eps],  // KY-040 stubs off the header edge (KY frame +Y)
     [7, 13, [0, 0, eps]],               // C3 header plastic on the board top
+    [7, 15, [0, eps, 0]],               // USB plug body against the port mouth (board edge)
     [2, 8, face_n * eps],               // washer on the well floor
     [8, 9, face_n * eps],               // nut on the washer
 ];

@@ -100,6 +100,7 @@ assert(m3_detent > 0 && m3_detent < m3_slot_w / 4, str("nut detent must be > 0 a
 
 // Bottom plate.
 assert(c3_filler_hw <= c3[1] / 2 - c3_groove[0], "port filler fills the solder-tail grooves");
+assert(c3_filler_low_z >= 0.6, str("port filler under the USB plug too thin to print: ", c3_filler_low_z));
 assert(c3_filler_hw <= usb_plug_hole[0] / 2 - c3_fit,
        str("port filler rubs the notch sides: half-width ", c3_filler_hw, " > ", usb_plug_hole[0] / 2 - c3_fit));
 assert(lip_side_y[1] - lip_side_y[0] > 10 && lip_front_hw > 5,
