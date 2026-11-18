@@ -144,7 +144,8 @@ halo_fit = 0.2;                         // halo sleeve over the well wall (radia
 c3_fit = 0.2;                           // C3-Zero slot: length (stop gap), width, height
 m3_nut_fit = 0.2;                       // M3 nut slot across flats
 plate_fit = 0.2;                        // bottom plate inset from the shell outline
-foot_fit = 0.2;                         // TPU foot recess (radial)
+lip_fit = 0.1;                          // plate lip to the shell's inner wall faces (Evan, 2026-11-18: matches key_fit)
+pad_fit = 0.15;                         // TPU pad recess, each edge (Evan, 2026-11-18)
 socket_fit = 0.2;                       // nut driver hex socket across flats
 
 // ---- Box ----
@@ -209,10 +210,14 @@ m3_head = [5.5, 3];                     // socket head [diameter, height]
 m3_cbore_clr = 0.6;                     // counterbore diametral clearance on the head
 m3_nut_t = 2.4;                         // M3 hex nut thickness
 m3_tip_over_nut = 0.6;                  // screw tip past the nut top
-foot_d = 12;                            // TPU foot disc
-foot_h = 3;
-foot_recess = 1;                        // recess depth on the plate's outside
-foot_edge = 1.5;                        // least plate rim outside a foot recess
+pad = [15, 60, 1.4];                    // Evan's pre-printed TPU pads [x, y (front to back), thickness]; two, glued in
+pad_recess = 0.3;                       // recess depth on the plate's outside
+pad_edge = 1.5;                         // least plate rim outside a pad recess
+// Plate lip: rises from the plate top just inside the shell's walls, so the
+// plate drops into place. Outer top edge chamfered 45 degrees for a lead-in.
+plate_lip_t = 1.2;
+plate_lip_h = 2;
+plate_lip_chamfer = 0.6;
 
 // ---- Facets ----
 $fa = 2;
@@ -339,10 +344,11 @@ c3_slot_hw = (c3[1] + c3_fit) / 2;                 // board slot half width (rai
 c3_ped_hw = c3_slot_hw - c3_rail_gap;
 c3_cradle_hw = c3_slot_hw + c3_rail_t;          // rail outer face
 c3_cradle_y0 = c3_stop_y - c3_stop_t;           // front stop's front face
-// Cradle back end: c3_fit off the back wall (separate parts). The board's last
+// Cradle back end: lip_fit off the back wall (separate parts): with the plate
+// lip, it locates the plate front-to-back (Evan, 2026-11-18). The board's last
 // ~1.2 mm (the c3_fit gap plus the open-bottom wall slot) is unsupported on
 // purpose: the slot is open at the rim so the plate can come off. Do not "fix" it.
-c3_cradle_y1 = box_d - wall - c3_fit;
+c3_cradle_y1 = box_d - wall - lip_fit;
 c3_top_h = c3_lip_z + c3_lip_h;                 // rail and stop top; the clip bar rests on it
 // C3 clip (box frame): a bar across the rail tops over the stop, legs down the
 // rails' outer faces with barbs into rail notches, two teeth over the board.
@@ -400,7 +406,25 @@ function weight_rect(i) = let(p = weight_pockets[i],
 weight_z0 = -plate_t + bottom_t;
 weight_pause_z = bottom_t + weight[2];          // print-bed height of the pocket tops: pause and insert
 // Feet: on the screw rows, just inboard of the counterbores.
-foot_recess_r = foot_d / 2 + foot_fit;
-foot_y = plate_fit + foot_edge + foot_recess_r;
-foot_x = boss_x - m3_cbore_d / 2 - clr - foot_recess_r;
-foot_xy = [[-foot_x, foot_y], [foot_x, foot_y], [-foot_x, box_d - foot_y], [foot_x, box_d - foot_y]];
+// Pads: one each side, just inboard of the M3 counterbores, centred front to back.
+pad_rec = [pad[0] + 2 * pad_fit, pad[1] + 2 * pad_fit];   // recess plan size
+pad_x = boss_x - m3_cbore_d / 2 - clr - pad_rec[0] / 2;    // recess centre |x|
+function pad_rect(s) = [[s * pad_x - pad_rec[0] / 2, box_d / 2 - pad_rec[1] / 2],
+                        [s * pad_x + pad_rec[0] / 2, box_d / 2 + pad_rec[1] / 2]];
+// Lip runs (box frame). Side lips: outer face lip_fit inside the side walls,
+// from behind the front bosses and the front ramp's corner rounding to clr
+// short of the rear bosses. Front lip: its front face parallel to the 45
+// degree inside ramp, lip_fit off it, between the front bosses. No back lip:
+// the header plug recess, board slot and USB notch take the whole back wall
+// between the rear bosses; the C3 cradle's back end, lip_fit off the wall,
+// is the back stop instead.
+lip_side_xo = box_w / 2 - wall - lip_fit;
+lip_front_c = wall + slope_under_z(wall) + lip_fit * sqrt(2);  // ramp foot + lip_fit (normal), at z = 0
+lip_side_y = [max(boss_c + boss_d / 2 * sqrt(2), lip_front_c + plate_lip_h) + clr,
+              box_d - boss_c - boss_d / 2 - clr];
+lip_front_hw = boss_x - boss_d / 2 - clr;
+// Port filler: a block on the plate up to the board's underside, in the USB
+// notch's open bottom; inside the groove-free middle, c3_fit off the notch sides
+// and the outer face.
+c3_filler_hw = c3[1] / 2 - c3_groove[0];
+

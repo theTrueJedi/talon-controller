@@ -99,13 +99,18 @@ assert(top_flat_min > 0, "top_flat_min must be > 0 (flat-topped rear)");
 assert(m3_detent > 0 && m3_detent < m3_slot_w / 4, str("nut detent must be > 0 and small: ", m3_detent));
 
 // Bottom plate.
+assert(c3_filler_hw <= c3[1] / 2 - c3_groove[0], "port filler fills the solder-tail grooves");
+assert(c3_filler_hw <= usb_plug_hole[0] / 2 - c3_fit,
+       str("port filler rubs the notch sides: half-width ", c3_filler_hw, " > ", usb_plug_hole[0] / 2 - c3_fit));
+assert(lip_side_y[1] - lip_side_y[0] > 10 && lip_front_hw > 5,
+       str("plate lip runs too short: side ", lip_side_y, ", front half ", lip_front_hw));
 assert(m3_cbore_h >= m3_head[1],
        str("M3 head sticks out of its counterbore: screw too long (m3_screw_l ", m3_screw_l, ")"));
 assert(plate_t - m3_cbore_h >= bottom_t,
        str("too little plate under the M3 head: screw too short (m3_screw_l ", m3_screw_l, ")"));
 assert(m3_tip_z <= boss_stack_h, "M3 screw tip hits the boss roof");
 assert(m3_nut_t < m3_trap_h, str("M3 nut thicker than its slot: m3_nut_t ", m3_nut_t, " >= m3_trap_h ", m3_trap_h));
-assert(bottom_t - foot_recess >= 1, "foot recess too close to the weight pocket floor");
+assert(bottom_t - pad_recess >= 1, "pad recess too close to the weight pocket floor");
 // Plan distance from a rectangle [[x0, y0], [x1, y1]] to a point.
 function rect_pt_dist(r, p) = norm([max(r[0][0] - p[0], 0, p[0] - r[1][0]),
                                     max(r[0][1] - p[1], 0, p[1] - r[1][1])]);
@@ -126,10 +131,10 @@ for (i = [0 : len(weight_pockets) - 1]) {
         assert(rects_gap(w, weight_rect(j)) >= weight_gap,
                str("weight pockets overlap (or under weight_gap): ", i, " and ", j));
 }
-for (f = foot_xy) {
-    assert(abs(f[0]) + foot_recess_r + foot_edge <= box_w / 2 - plate_fit &&
-           f[1] - foot_recess_r - foot_edge >= plate_fit - 1e-6 && f[1] + foot_recess_r + foot_edge <= box_d - plate_fit + 1e-6,
-           "foot recess too near the plate edge");
-    for (p = boss_xy) assert(norm(f - p) >= foot_recess_r + m3_cbore_d / 2 + clr - 1e-6,
-                             "foot recess cuts an M3 counterbore");
+for (s = [-1, 1]) let(r = pad_rect(s)) {
+    assert(r[0][0] >= -box_w / 2 + plate_fit + pad_edge && r[1][0] <= box_w / 2 - plate_fit - pad_edge &&
+           r[0][1] >= plate_fit + pad_edge && r[1][1] <= box_d - plate_fit - pad_edge,
+           str("pad recess too near the plate edge: ", r));
+    for (p = boss_xy) assert(rect_pt_dist(r, p) >= m3_cbore_d / 2 + clr - 1e-6,
+                             "pad recess cuts an M3 counterbore");
 }

@@ -28,6 +28,17 @@ function shell_probe_box(name) =
     name == "c3_cradle" ? [[c3_x - c3_cradle_hw, c3_cradle_y0, 0], [c3_x + c3_cradle_hw, c3_cradle_y1, c3_top_h]] :
     assert(false, str("unknown probe: ", name));
 
+// Test-only: boxes the bottom plate must reach (lip segments, port filler), box frame.
+function bottom_probe_box(name) =
+    let(xo = box_w / 2 - wall - lip_fit, ym = box_d / 2)
+    name == "lip_left"  ? [[-xo + 0.1, ym - 1, 0.5], [-xo + 0.5, ym + 1, 1.2]] :
+    name == "lip_right" ? [[xo - 0.5, ym - 1, 0.5], [xo - 0.1, ym + 1, 1.2]] :
+    name == "lip_front" ? [[-1, lip_front_c + 0.3, 0.2], [1, lip_front_c + 0.8, 0.6]] :
+    name == "back_stop" ? [[c3_x + c3_cradle_hw - 0.5, box_d - wall - lip_fit - 0.3, 0.5], [c3_x + c3_cradle_hw - 0.1, box_d - wall - lip_fit - 0.05, 1.2]] :
+    name == "pad"       ? [[pad_x - 1, box_d / 2 - 1, -plate_t + 0.05], [pad_x + 1, box_d / 2 + 1, -plate_t + 0.25]] :
+    name == "filler"    ? [[c3_x - 1, box_d - wall + 0.2, 0.5], [c3_x + 1, box_d - 0.5, 1.5]] :
+    assert(false, str("unknown bottom probe: ", name));
+
 if (part == "checks") cube(1);   // checks ran above; emit something exportable
 else if (part == "hood") {
     echo(hood_top_z = hood_top_z, hood_od = hood_od, key_tab_len = key_tab_len);
@@ -85,7 +96,8 @@ else if (part == "c3_clip") {
 }
 else if (part == "shell_probe")                         // must render empty
     let(b = shell_probe_box(probe)) intersection() { shell(); translate(b[0]) cube(b[1] - b[0]); }
-else if (part == "foot") foot();                       // print flat; TPU, x4
+else if (part == "bottom_probe")                        // must render solid
+    let(b = bottom_probe_box(probe)) intersection() { bottom(); translate(b[0]) cube(b[1] - b[0]); }
 else if (part == "assembly") assembly();               // preview, box frame
 else if (part == "interference") interference();       // must render empty
 else if (part == "face") face_center(lip_or + wall);   // face-center preview

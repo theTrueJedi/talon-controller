@@ -405,4 +405,16 @@ opening around the port.
   board's last ~1 mm, previously unsupported on purpose.
 - Teeth: ~2 mm wide each, 0.5 mm clear of the antenna (`c3_ant_clr`) and
   `c3_corner_clr` clear of the corner holes; the model refuses overlap.
+- **No back lip (found while building):** the header plug recess, board
+  slot and USB notch take the whole back wall between the rear bosses. The
+  C3 cradle's back end (its right rail faces solid wall) now stands
+  `lip_fit` off the back wall instead of `c3_fit`, so it is the back stop.
+  The lip is two side runs plus a front run whose face leans 45° to match
+  the inside ramp.
 - New `_vN` STLs for bottom and c3_clip; the shell stays `shell_v6`.
+
+**Feet (Evan, 2026-11-18, added mid-build):** the round TPU feet are replaced
+by two of Evan's pre-printed 15 × 60 × 1.4 mm TPU pads, glued at the end.
+Recesses are 0.3 mm deep with 0.15 mm (`pad_fit`) round each edge, lengths
+front to back, centred, each just inboard of its side's screw holes (`clr`
+off the counterbores). The pads stand 1.1 mm proud. The `foot` part is gone.

@@ -69,7 +69,7 @@ module weights_ghost() {                                                  // box
 }
 
 module feet_placed() {                                                    // box frame
-    for (p = foot_xy) translate([p[0], p[1], -plate_t - (foot_h - foot_recess)]) foot();
+    for (s = [-1, 1]) translate([s * pad_x, box_d / 2, -plate_t - (pad[2] - pad_recess)]) pad_ghost();
 }
 
 // ---- Items, placed in the box frame ----
@@ -119,7 +119,7 @@ interference_contacts = [
     [0, 5, face_n * eps],               // ring on the face top
     [0, 6, -face_n * eps],              // KY-040 body top against the face underside
     [0, 7, [0, -eps, 0]],               // C3-Zero port edge toward the wall-slot end (c3_slot_clr short)
-    [1, 4, [0, 0, -eps]],               // foot against its recess ceiling
+    [1, 4, [0, 0, -eps]],               // TPU pad against its recess ceiling
     [1, 7, [0, 0, eps]],                // C3-Zero on the plate cradle's pedestal
     [1, 10, [0, 0, -eps]],              // screw head against its counterbore ceiling
     [1, 12, [0, eps, eps]],             // C3 clip bar on the rail/stop tops, teeth against the stop face
