@@ -58,8 +58,7 @@ Studio and do not rotate them. Only the shell needs support, and only on one edg
 | `c3_clip`      | **PETG** (PLA may crack at the snap) | 1 | on its front face | none |
 | `hood`         | translucent PETG   | 1   | upside down: top face on the bed       | none     |
 | `cap`          | opaque PLA or PETG, **100% infill** | 1 | upside down: top face on the bed | none |
-| `bottom`       | opaque PLA or PETG | 1   | outside face down, C3 cradle on top; **pause for the weights** (below) | none |
-| `foot`         | TPU                | 4   | flat                                   | none     |
+| `bottom`       | opaque PLA or PETG | 1   | outside face down, C3 cradle and lip on top; **pause for the weights** (below) | none |
 | `halo`         | opaque PLA or PETG | 1   | either end down (only with `halo_block=true`) | none |
 
 `stl/cap_v3b.stl` is a shorter knob to compare: 10 mm disc instead of 14
@@ -70,7 +69,8 @@ inside front is a 45 degree ramp and its front screw posts are teardrops;
 the square frame under the face (it holds the knob's body) is only 1 mm
 deep; the bottom plate's screw counterbores are short bridges, its
 weight-pocket roofs print straight onto the weights (see the pause below),
-and the C3 cradle is upright ribs.
+and the C3 cradle and the seating lip are upright ribs (the lip's front run
+leans 45 degrees, which prints fine).
 
 **Shell exception, the front rim edge.** The inside front ramp is 45
 degrees, but it starts at the open rim as a ~64 mm line with nothing under
@@ -99,10 +99,12 @@ The hood is the only part the light shines through, so it is the only big
 part in translucent PETG. Everything else is opaque so light does not leak.
 
 The C3-Zero sits face-up in a cradle on the bottom plate, 11.5 mm off
-centre (`c3_x`), away from its wired row. Its USB-C port sits 1 mm inside
-the back wall on purpose: the board's edge sits in a slot in the wall, and
-that slot holds the board. So the plug's plastic body has to fit INTO the
-wall's hole for the plug to seat (checkpoint g). The slot, the USB hole and
+centre (`c3_x`), away from its wired row. Its USB-C port sits about 1.4 mm
+inside the back wall on purpose: the board's edge sits 0.6 mm into a 1 mm
+slot in the wall (0.4 mm spare at the slot's bottom, `c3_slot_clr`, so the
+board never bumps the shell as the plate goes on). So the plug's plastic body
+has to fit INTO the wall's hole for the plug to seat (checkpoint g). A small
+block on the plate fills the hole's open bottom under the board. The slot, the USB hole and
 the header recess beside them are all open at the bottom edge, so the board
 lifts out with the plate. The unplug pull is taken by that slot, so unplug by
 the plug body, not the cable.
@@ -123,6 +125,9 @@ the plug body, not the cable.
 - **One 9-pin 2.54 mm right-angle header** for the C3-Zero, and **female
   jumper wires** (F-F, some cut in half).
 - **Thin double-sided tape** (or a hot-glue gun) for the ring.
+- **2x TPU pads, 15 x 60 x 1.4 mm** (Evan's pre-printed ones) for the
+  feet, and glue for them (super glue or contact cement). They sit in
+  0.3 mm recesses on the plate's underside and stand 1.1 mm proud.
 
 ## Wiring (one header on the C3, jumpers plug in there)
 
@@ -204,19 +209,21 @@ the box never rests on it.
    (see the print pause). Set the board face-up in the plate's cradle, its
    USB end toward the plate's back edge and its header toward the middle.
    Press the small clip down over the two side rails at the board's inner
-   end until both legs click; only its narrow tongue reaches over the board,
-   at the middle of the inner edge, clear of the corner holes. To remove:
+   end until both legs click; only its two small teeth reach over the
+   board, one each side of the red chip antenna, clear of the corner holes. To remove:
    spread the clip's legs and lift it off.
 7. **Plug in the jumpers.** Hold the plate next to the open shell and plug
    each jumper onto its C3 pin (see the table). Leave enough slack that
    the plate can be lifted away from the box with the plugs still on.
 8. **Bottom plate, last of the box.** Slide an M3 nut into each corner
    post's side slot until it clicks past the bumps. Lower the plate on: the
-   board's USB end slides into the back wall's slot and notch, and the
-   header and its plugs into the recess beside them. Tuck the wires in so
+   lip round its top drops just inside the shell's walls and stops it
+   sliding, the board's USB end slides into the back wall's slot and notch,
+   and the header and its plugs into the recess beside them. Tuck the wires in so
    none is pinched under the plate's edge, then drive the four screws up
    from below. Snug, not tight.
-9. **Feet.** Glue a TPU foot into each round recess on the underside.
+9. **Feet.** Glue a 15 x 60 TPU pad into each long recess on the
+   underside, its length running front to back.
 10. **Cap.** Turn the box onto its feet and push the cap onto the shaft
    (flat side matches).
 
@@ -317,22 +324,22 @@ frame with no wobble, and the disc sits flat on the body.
 - Will not go in, or the disc rocks: raise `body_fit` (now 0.07) by 0.1.
 - Goes in but the body turns or wobbles: lower `body_fit` by 0.1.
 
-**(g) Measure your USB-C plug.** With calipers, measure your USB-C cable's
-plug body (the plastic overmold behind the metal tip): width x height. Set
-`usb_plug_hole` to that plus 0.5 each way (now 12.5 x 7.5) before printing
-the shell. The port sits 1 mm inside the back wall, so the overmold has to
-fit into the hole for the plug to seat.
+**(g) USB-C plug: measured 2026-11-18.** Evan's cables measure 12.12 x
+6.6 and 11 x 6.1 mm (`usb_plug`); both fit the 12.5 x 7.5 hole
+(`usb_plug_hole`), so the printed shell stays. The model refuses a plug
+wider than the hole. For a new cable, measure the plastic overmold behind
+the metal tip and set `usb_plug` to it.
 
 **Other fits** (no coupon; change only if the real part fails):
 
-| Number       | What it sets (all now 0.2)                         |
-|--------------|----------------------------------------------------|
-| `c3_fit`     | C3-Zero slot: board play to the front stop, width, height |
-| `m3_nut_fit` | M3 nut slots in the corner posts                   |
-| `plate_fit`  | bottom plate's gap inside the shell outline        |
-| `foot_fit`   | TPU foot recesses                                  |
-| `socket_fit` | nut driver's hex socket                            |
-| `halo_fit`   | halo sleeve over the well wall (`halo_block` only) |
+| Number       | Now  | What it sets                                       |
+|--------------|------|----------------------------------------------------|
+| `c3_fit`     | 0.2  | C3-Zero slot: board play to the front stop, width, height |
+| `m3_nut_fit` | 0.2  | M3 nut slots in the corner posts                   |
+| `plate_fit`  | 0.2  | bottom plate's gap inside the shell outline        |
+| `pad_fit`    | 0.15 | TPU pad recesses, each edge                        |
+| `socket_fit` | 0.2  | nut driver's hex socket                            |
+| `halo_fit`   | 0.2  | halo sleeve over the well wall (`halo_block` only) |
 
 **(h) When the header arrives: measure its bent legs.** Solder (or just
 hold) the header on the C3-Zero and measure, with calipers, how high the
@@ -346,4 +353,22 @@ jumper plug's width, height and length.
   1 mm of leg height the render stops with "C3 wired-side rail too low".
   Tell Claude if that happens.
 
-Once a-h pass, re-run `bash print/tests/run.sh` and print the real parts.
+**(i) The plate drops into the shell (bottom_v5).** Lower the plate into
+the open shell without screws. It should drop in with a light push and not
+slide side to side or front to back.
+- Will not go in, or needs force: raise `lip_fit` (now 0.1) to 0.15.
+- Slides noticeably: lower `lip_fit` to 0.05.
+- The back stop is the C3 cradle's back end (no lip fits on the back wall);
+  it follows `lip_fit` too.
+
+**(j) The clip holds the board (c3_clip_v3).** With the board in the
+cradle, press the clip on. Both teeth should sit on the board's edge either
+side of the red antenna, not on it, and the board should not lift.
+- A tooth touches the antenna: raise `c3_ant_w` (now 6.4) to the measured
+  length plus 0.4.
+
+**(k) The board clears the back wall as the plate goes on.** If the USB
+end still catches, raise `c3_slot_clr` (now 0.4) to 0.5; the model refuses
+less than 0.4 mm of the board edge left in the slot.
+
+Once a-k pass, re-run `bash print/tests/run.sh` and print the real parts.
