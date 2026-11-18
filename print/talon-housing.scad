@@ -80,7 +80,7 @@ else if (part == "bottom") {
 else if (part == "c3_clip") {
     // Bed bbox: box-frame X, Z (standing up), Y (depth on the bed).
     echo(c3_clip_bed = [c3_clip_size[0], c3_clip_size[2], c3_clip_size[1]]);
-    // Print on its front face: bar and legs on the bed, the tongue rising from them.
+    // Print on its front face: bar and legs on the bed, the teeth rising from them.
     translate([0, 0, -c3_clip_y0]) rotate([90, 0, 0]) c3_clip();
 }
 else if (part == "shell_probe")                         // must render empty

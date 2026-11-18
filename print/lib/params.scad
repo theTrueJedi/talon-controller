@@ -183,9 +183,11 @@ c3_rail_t = 1.2;                        // side rail thickness (X)
 c3_rail_gap = 0.6;                      // rail to pedestal gap
 c3_plug_clr = 0.2;                      // least gap from the header plugs down to the lowered wired-side rail
 c3_groove = [3, 1.5];                   // solder-tail groove under each pin row: [width in from the board's long edge, depth]
-c3_lip_h = 0.8;                         // clip tongue height: its underside to the rail and stop tops
-c3_lip_len = 1;                         // clip tongue length (Y) past the front stop face, over the board
-c3_clip_w = 6;                          // clip tongue width (X), centred on the board's inner short edge
+c3_lip_h = 0.8;                         // clip teeth height: their underside to the rail and stop tops
+c3_lip_len = 1;                         // clip teeth length (Y) past the front stop face, over the board
+c3_ant_w = 6.4;                         // chip antenna length (X) at the board's inner short edge, centred (Evan: ~6)
+c3_ant_clr = 0.5;                       // clip tooth clearance to the antenna (X)
+c3_tooth_w = 2;                         // clip tooth width (X): one each side of the antenna
 c3_clip_t = 1.2;                        // clip bar thickness (Z) and leg thickness (X)
 c3_clip_engage = 0.5;                   // barb overlap onto the rail, past the leg's c3_fit gap
 c3_hole_edge = 1.6;                     // pin-row hole centres in from the board's long edge (unmeasured)
@@ -332,7 +334,7 @@ c3_edge_y = box_d - wall + c3_wall_slot - c3_slot_clr;  // board port edge, in t
 c3_slot_len = c3[0] + c3_fit;
 c3_stop_y = c3_edge_y - c3_slot_len;            // front stop face
 c3_stop_gap = (c3_edge_y - c3[0]) - c3_stop_y;  // board inner edge to stop face
-c3_lip_z = c3_z0 + c3[2] + c3_fit;              // clip tongue underside
+c3_lip_z = c3_z0 + c3[2] + c3_fit;              // clip teeth underside
 c3_slot_hw = (c3[1] + c3_fit) / 2;                 // board slot half width (rail inner face)
 c3_ped_hw = c3_slot_hw - c3_rail_gap;
 c3_cradle_hw = c3_slot_hw + c3_rail_t;          // rail outer face
@@ -343,13 +345,15 @@ c3_cradle_y0 = c3_stop_y - c3_stop_t;           // front stop's front face
 c3_cradle_y1 = box_d - wall - c3_fit;
 c3_top_h = c3_lip_z + c3_lip_h;                 // rail and stop top; the clip bar rests on it
 // C3 clip (box frame): a bar across the rail tops over the stop, legs down the
-// rails' outer faces with barbs into rail notches, tongue over the board.
+// rails' outer faces with barbs into rail notches, two teeth over the board.
 c3_clip_y0 = c3_cradle_y0;
-c3_clip_y1 = c3_stop_y + c3_lip_len;            // tongue tip, over the board
+c3_clip_y1 = c3_stop_y + c3_lip_len;            // teeth tips, over the board
+c3_tooth_x0 = c3_ant_w / 2 + c3_ant_clr;        // each tooth's inner edge (|x|)
+c3_tooth_x1 = c3_tooth_x0 + c3_tooth_w;         // each tooth's outer edge (|x|)
 c3_clip_leg_x = c3_cradle_hw + c3_fit;          // leg inner face
 c3_clip_hw = c3_clip_leg_x + c3_clip_t;         // leg outer face
 c3_clip_barb = c3_fit + c3_clip_engage;         // barb depth from the leg's inner face
-c3_clip_bar_y1 = c3_stop_y;                     // bar and legs end at the stop face; only the tongue reaches over the board
+c3_clip_bar_y1 = c3_stop_y;                     // bar and legs end at the stop face; only the teeth reach over the board
 // Inner-end corner holes (GPIO5 / GPIO6), plan [x, y] in the box frame.
 c3_corner_holes = [for (s = [-1, 1]) [s * (c3[1] / 2 - c3_hole_edge), c3_edge_y - c3[0] + c3_hole_end]];
 c3_clip_top_z = c3_top_h + c3_clip_t;

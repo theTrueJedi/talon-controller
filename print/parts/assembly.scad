@@ -122,7 +122,7 @@ interference_contacts = [
     [1, 4, [0, 0, -eps]],               // foot against its recess ceiling
     [1, 7, [0, 0, eps]],                // C3-Zero on the plate cradle's pedestal
     [1, 10, [0, 0, -eps]],              // screw head against its counterbore ceiling
-    [1, 12, [0, eps, eps]],             // C3 clip bar on the rail/stop tops, tongue against the stop face
+    [1, 12, [0, eps, eps]],             // C3 clip bar on the rail/stop tops, teeth against the stop face
     [6, 14, [0, cos(slope), sin(slope)] * eps],  // KY-040 stubs off the header edge (KY frame +Y)
     [7, 13, [0, 0, eps]],               // C3 header plastic on the board top
     [2, 8, face_n * eps],               // washer on the well floor

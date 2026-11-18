@@ -79,16 +79,18 @@ assert(c3_groove[0] > 0 && c3_groove[0] < c3[1] / 2, "C3 solder grooves must lea
 assert(c3_clip_engage + c3_fit < c3_rail_t, "C3 clip notch cuts through the rail");
 assert(c3_clip_barb - c3_fit >= 0.4, str("C3 clip barb engagement past the leg gap < 0.4: ", c3_clip_barb - c3_fit));
 c3_clip_bar_rect = [[-c3_clip_hw, c3_clip_y0], [c3_clip_hw, c3_clip_bar_y1]];
-c3_clip_tongue_rect = [[-c3_clip_w / 2, c3_stop_y], [c3_clip_w / 2, c3_clip_y1]];
-for (h = c3_corner_holes, r = [c3_clip_bar_rect, c3_clip_tongue_rect])
+c3_clip_tooth_rects = [[[c3_tooth_x0, c3_stop_y], [c3_tooth_x1, c3_clip_y1]],
+                       [[-c3_tooth_x1, c3_stop_y], [-c3_tooth_x0, c3_clip_y1]]];
+assert(c3_tooth_x0 >= c3_ant_w / 2, str("C3 clip tooth over the antenna: inner edge ", c3_tooth_x0, " < ", c3_ant_w / 2));
+for (h = c3_corner_holes, r = concat([c3_clip_bar_rect], c3_clip_tooth_rects))
     assert(rect_pt_dist(r, h) >= c3_corner_clr,
            str("C3 clip within c3_corner_clr of a pin-row corner hole: ", rect_pt_dist(r, h)));
 assert(c3_clip_barb_z > c3_fit, "C3 clip notch runs off the rail bottom");
 // The lowered wired-side rail must still locate at least half the board edge.
 assert(c3_rail_low_z >= c3_z0 + c3[2] / 2,
        str("C3 wired-side rail too low to locate the board (hdr_leg_z ", hdr_leg_z, "): top ", c3_rail_low_z));
-assert(c3_clip_w < 2 * (c3[1] / 2 - c3_groove[0]),
-       "C3 clip tongue reaches the pin rows (keep it inside the groove-free middle)");
+assert(c3_tooth_x1 < c3[1] / 2 - c3_groove[0],
+       "C3 clip teeth reach the pin rows (keep them inside the groove-free middle)");
 assert(c3_clip_top_z <= c3_top_z, "C3 clip stands taller than the USB port (the box height ignores it)");
 assert(c3_hdr_y0 + c3_hdr_n * hdr_pitch <= c3[0], str("C3 header longer than the board: ", c3_hdr_n, " pins"));
 assert(ky_hdr_n * hdr_pitch <= ky_pcb[1], str("KY-040 header wider than the board: ", ky_hdr_n, " pins"));

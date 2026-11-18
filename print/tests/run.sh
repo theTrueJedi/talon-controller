@@ -279,6 +279,9 @@ expect_fail checks-fail-groove "C3 solder groove cuts through the pedestal" -D '
 expect_fail checks-fail-notch  "C3 clip notch cuts through the rail" -D c3_clip_engage=1.1
 expect_fail checks-fail-engage "C3 clip barb engagement" -D c3_clip_engage=0.3
 expect_fail checks-fail-corner "C3 clip within c3_corner_clr of a pin-row corner hole" -D c3_hole_end=0.1
+# 2026-11-18: two teeth either side of the chip antenna (c3_ant_w), off the corner holes.
+expect_fail checks-fail-antenna "C3 clip tooth over the antenna" -D c3_ant_clr=-1
+expect_fail checks-fail-tooth-corner "C3 clip within c3_corner_clr of a pin-row corner hole" -D c3_tooth_w=3.5
 expect_ok   c3-clip-render -D 'part="c3_clip"'
 dims="$(echo "$err" | sed -n 's/^ECHO: c3_clip_bed = \[\(.*\), \(.*\), \(.*\)\]$/\1 \2 \3/p' | head -1)"
 [ -n "$dims" ] || fail c3-clip-layout "no c3_clip_bed echo"

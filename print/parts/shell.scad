@@ -145,8 +145,8 @@ module c3_cradle() {
 // Clip, centred on x = 0 like the cradle (placed at c3_x in the assembly).
 // Bar over the rail and stop tops (it stops at the stop face, clear of the
 // corner holes), a leg down each rail's outer face with a barb (ramp below,
-// flat catch on top) in the rail's notch, and a tongue c3_fit above the
-// board's top over the middle of its inner short edge, front face against the stop.
+// flat catch on top) in the rail's notch, and two teeth c3_fit above the
+// board's top on its inner short edge, either side of the chip antenna.
 module c3_clip() {
     translate([0, c3_clip_bar_y1, 0]) rotate([90, 0, 0]) linear_extrude(c3_clip_bar_y1 - c3_clip_y0) {
         translate([-c3_clip_hw, c3_top_h]) square([2 * c3_clip_hw, c3_clip_t]);
@@ -158,8 +158,10 @@ module c3_clip() {
                      [s * (c3_clip_leg_x - c3_clip_barb), c3_clip_barb_z + c3_clip_barb_h]]);
         }
     }
-    // Tongue: the only part over the board; full clip height so it joins the bar.
-    translate([-c3_clip_w / 2, c3_stop_y - eps, c3_lip_z]) cube([c3_clip_w, c3_lip_len + eps, c3_clip_top_z - c3_lip_z]);
+    // Two teeth, either side of the chip antenna: the only parts over the
+    // board; full clip height so they join the bar.
+    for (s = [-1, 1]) translate([s > 0 ? c3_tooth_x0 : -c3_tooth_x1, c3_stop_y - eps, c3_lip_z])
+        cube([c3_tooth_w, c3_lip_len + eps, c3_clip_top_z - c3_lip_z]);
 }
 
 // Back-wall cuts for the board, at c3_x. All open below the rim (z
