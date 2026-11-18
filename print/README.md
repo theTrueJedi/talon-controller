@@ -46,7 +46,7 @@ run checks that.
 ## Parts, material, and how each lies on the bed
 
 The STLs already come out in the orientation listed. Import into Bambu
-Studio and do not rotate them. None of these should need supports.
+Studio and do not rotate them. Only the shell needs support, and only on one edge.
 
 | Part (`part=`) | Material           | Qty | Orientation on the bed                 | Supports |
 |----------------|--------------------|-----|----------------------------------------|----------|
@@ -54,7 +54,7 @@ Studio and do not rotate them. None of these should need supports.
 | `frame_test`   | opaque PLA or PETG | 1   | face down, square frame up             | none     |
 | `glow_test`    | translucent PETG   | 1   | four tiles, face down, legs up         | none     |
 | `nut_driver`   | opaque PLA or PETG | 1   | handle down, socket up                 | none     |
-| `shell`        | opaque PLA or PETG | 1   | on its back wall, open bottom sideways | none     |
+| `shell`        | opaque PLA or PETG | 1   | on its back wall, open bottom sideways | **paint** front rim edge only |
 | `c3_clip`      | **PETG** (PLA may crack at the snap) | 1 | on its front face | none |
 | `hood`         | translucent PETG   | 1   | upside down: top face on the bed       | none     |
 | `cap`          | opaque PLA or PETG, **100% infill** | 1 | upside down: top face on the bed | none |
@@ -70,8 +70,17 @@ inside front is a 45 degree ramp and its front screw posts are teardrops;
 the square frame under the face (it holds the knob's body) is only 1 mm
 deep; the bottom plate's screw counterbores are short bridges, its
 weight-pocket roofs print straight onto the weights (see the pause below),
-and the C3 cradle is upright ribs. Still glance at Bambu Studio's
-overhang preview before printing the shell.
+and the C3 cradle is upright ribs.
+
+**Shell exception, the front rim edge.** The inside front ramp is 45
+degrees, but it starts at the open rim as a ~64 mm line with nothing under
+it except the side walls at each end. Bambu calls that a bridge and won't
+support it, so the first layers sag and the ramp builds on the sag. The
+result would be a drooped lip where the shell sits on the bottom plate. Use
+the support-painting tool to paint a thin strip along that inner front rim
+edge, keep auto-support off, and check in Preview that support appears
+under the strip. No in-model fix works here: a ramp that grows down from
+the face would be a ~25 mm solid wedge in the encoder's space.
 
 **Bottom plate: pause for the weights.** The four weights are sealed inside
 the plate. Render `part="bottom"` and note the `weight_pause_z` echo (now
