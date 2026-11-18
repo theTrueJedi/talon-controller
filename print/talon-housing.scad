@@ -36,9 +36,9 @@ function bottom_probe_box(name) =
     name == "lip_front" ? [[-1, lip_front_c + 0.3, 0.2], [1, lip_front_c + 0.8, 0.6]] :
     name == "back_stop" ? [[c3_x + c3_cradle_hw - 0.5, box_d - wall - lip_fit - 0.3, 0.5], [c3_x + c3_cradle_hw - 0.1, box_d - wall - lip_fit - 0.05, 1.2]] :
     name == "pad"       ? [[pad_x - 1, box_d / 2 - 1, -plate_t + 0.05], [pad_x + 1, box_d / 2 + 1, -plate_t + 0.25]] :
-    // Over the board's top, 0.4 mm in from its port edge, beside the USB port.
-    name == "hook_left"  ? [[c3_x - c3_hook_x1 + 0.2, c3_edge_y - 0.6, c3_z0 + c3[2] + c3_pinch_fit + 0.1], [c3_x - c3_hook_x0 - 0.2, c3_edge_y - 0.2, c3_hook_top_z - 0.1]] :
-    name == "hook_right" ? [[c3_x + c3_hook_x0 + 0.2, c3_edge_y - 0.6, c3_z0 + c3[2] + c3_pinch_fit + 0.1], [c3_x + c3_hook_x1 - 0.2, c3_edge_y - 0.2, c3_hook_top_z - 0.1]] :
+    // Over the board's top, under each hook's reach past its port edge, beside the USB port.
+    name == "hook_left"  ? [[c3_x - c3_hook_x1 + 0.2, c3_edge_y - c3_hook_reach + 0.1, c3_z0 + c3[2] + c3_pinch_fit + 0.1], [c3_x - c3_hook_x0 - 0.2, c3_edge_y - 0.1, c3_hook_top_z - 0.1]] :
+    name == "hook_right" ? [[c3_x + c3_hook_x0 + 0.2, c3_edge_y - c3_hook_reach + 0.1, c3_z0 + c3[2] + c3_pinch_fit + 0.1], [c3_x + c3_hook_x1 - 0.2, c3_edge_y - 0.1, c3_hook_top_z - 0.1]] :
     // Over both port-end corner pins: must stay open.
     name == "pin_clear"  ? [[c3_x - c3_hdr_x - 0.6, c3_edge_y - c3_hole_end - 0.6, c3_z0 + c3[2] + 0.05], [c3_x - c3_hdr_x + 0.6, c3_edge_y - c3_hole_end + 0.6, 8]] :
     name == "filler"    ? [[c3_x - 1, box_d - wall + 0.2, 0.5], [c3_x + 1, box_d - 0.5, 1.5]] :

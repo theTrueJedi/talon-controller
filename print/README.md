@@ -108,7 +108,7 @@ port overhangs the board's edge by 1.3 mm (`c3_port_overhang`, measured), so its
 mouth sits only ~0.1 mm inside the wall. Under that overhang a tab on the plate
 butts against the board's port edge (0.1 mm, `c3_pinch_fit`, as at the front
 stop, so the board is pinched end to end), and two small hooks beside the port
-reach 0.8 mm back over the board's top so that end can't lift. The hooks stay
+reach 0.4 mm back over the board's top so that end can't lift. The hooks stay
 clear of the corner pins on both edges. The slot, the USB hole and
 the header recess beside them are all open at the bottom edge, so the board
 lifts out with the plate. The unplug pull is taken by that slot, so unplug by
@@ -360,7 +360,7 @@ jumper plug's width, height and length.
   1 mm of leg height the render stops with "C3 wired-side rail too low".
   Tell Claude if that happens.
 
-**(i) The plate drops into the shell (bottom_v7).** Lower the plate into
+**(i) The plate drops into the shell (bottom_v8).** Lower the plate into
 the open shell without screws. It should drop in with a light push and not
 slide side to side or front to back.
 - Will not go in, or needs force: raise `lip_fit` (now 0.1) to 0.15.
@@ -374,7 +374,7 @@ side of the red antenna, not on it, and the board should not lift.
 - A tooth touches the antenna: raise `c3_ant_w` (now 6.4) to the measured
   length plus 0.4.
 
-**(l) The board sits firm (bottom_v7).** With the board in and the clip on,
+**(l) The board sits firm (bottom_v8).** With the board in and the clip on,
 the board should not lift at either end or slide end to end.
 - Won't go in under the hooks, or too tight end to end: raise `c3_pinch_fit`
   (now 0.1) to 0.15.
