@@ -32,7 +32,9 @@ Re-export every STL in `stl/` after changing a number:
 
     bash print/tests/run.sh export
 
-Each part is saved as `stl/<part>_vN.stl`. A part gets a new number only
+Each part is saved as `stl/<part>_vN.stl`. The hood and knob are a
+matched pair named by the hood's glow gap: `hood_6mm_vN` goes with
+`cap_6mm_vN` (`hood_v1`-`v2` and `cap_v1`-`v3b` are the older 8 mm set). A part gets a new number only
 when its shape changed; old versions stay, so you can tell which file a
 print came from. Always print the highest number.
 
@@ -56,13 +58,17 @@ Studio and do not rotate them. Only the shell needs support, and only on one edg
 | `nut_driver`   | opaque PLA or PETG | 1   | handle down, socket up                 | none     |
 | `shell`        | opaque PLA or PETG | 1   | on its back wall, open bottom sideways | **paint** front rim edge only |
 | `c3_clip`      | **PETG** (PLA may crack at the snap) | 1 | on its front face | none |
-| `hood`         | translucent PETG   | 1   | upside down: top face on the bed       | none     |
+| `hood`         | **white PLA** (v3; v1-v2 were clear PETG) | 1   | upside down: top face on the bed       | none     |
 | `cap`          | opaque PLA or PETG, **100% infill** | 1 | upside down: top face on the bed | none |
 | `bottom`       | opaque PLA or PETG | 1   | outside face down, C3 cradle and lip on top; **pause for the weights** (below) | none |
 | `halo`         | opaque PLA or PETG | 1   | either end down (only with `halo_block=true`) | none |
 
 `stl/cap_v3b.stl` is a shorter knob to compare: 10 mm disc instead of 14
 (exported by hand with `-D cap_disc_t=10`; same 29 mm knurl and bore).
+`cap_6mm_v1` (2026-11-18) is 34 mm across, 8.5 mm disc, for the `hood_6mm_v1`
+white-PLA diffuser (6 mm glow gap, 0.8 mm top, 1.0 mm wall; same outside
+diameter, so `shell_v6` still fits). Print `cap_6mm_v1` and `hood_6mm_v1` together:
+the new knob sits lower and only fits over the shorter hood.
 
 "None" means the part was shaped to print without supports: the shell's
 inside front is a 45 degree ramp and its front screw posts are teardrops;
@@ -92,11 +98,11 @@ the pocket top, then resume. Leave their sticky backing on: the 5.8 mm
 was measured with it. The printer seals over
 them.
 
-**Knob cap: 100% infill.** It is a solid 29 mm knob; full infill gives it
+**Knob cap: 100% infill.** It is a solid 34 mm knob; full infill gives it
 its weight.
 
 The hood is the only part the light shines through, so it is the only big
-part in translucent PETG. Everything else is opaque so light does not leak.
+part in a light-passing material (white PLA from `hood_6mm_v1`). Everything else is opaque so light does not leak.
 
 The C3-Zero sits face-up in a cradle on the bottom plate, 11.5 mm off
 centre (`c3_x`), away from its wired row. Its USB-C port sits about 1.4 mm
@@ -322,8 +328,9 @@ glow strip over it, and look straight down at each step. Pick the lowest
 step where you see one even glow instead of separate dots. If you printed
 tiles on more than one plate, also note which finish hides the dots best
 and print the hood on that plate.
-- Set `glow_gap` to that number (now 8).
-- Any step from 5 to 12 fits: the knob cap sits high enough for all of them.
+- Set `glow_gap` to that number (now 6).
+- Below 6 the knob's top over the shaft tip gets thinner than `cap_roof_min`
+  (1.2 mm; at 6 it is 1.75) and the model refuses; above 6 the knob just rises.
 
 **(f) The encoder body sits in the frame.** With the face disc on the
 collar (frame side down), the encoder body's square top drops into the

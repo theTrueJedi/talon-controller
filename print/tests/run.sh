@@ -12,26 +12,34 @@ else
     OPENSCAD=/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD
 fi
 
-# `run.sh export`: render every part; save it as print/stl/<part>_v<N+1>.stl only
+# `run.sh export`: render every part; save it as print/stl/<part>_v<N+1>.stl
+# (hood and cap: <part>_<glow_gap>mm_v<N+1>.stl) only
 # when its geometry differs from the newest <part>_v<N>.stl. Old revisions stay.
 if [ "${1:-}" = export ]; then
     stl="$here/../stl"
+    gap="$(sed -n 's/^glow_gap = \([0-9.]*\);.*/\1/p' "$here/../lib/params.scad")"
+    [ -n "$gap" ] || { echo "FAIL export: no glow_gap in params.scad"; exit 1; }
     for p in shell hood cap bottom nut_driver fit_test frame_test glow_test halo c3_clip; do
         extra=(); [ "$p" = halo ] && extra=(-D halo_block=true)
         "$OPENSCAD" --backend=manifold --export-format binstl -o "$out/$p.stl" \
             -D "part=\"$p\"" ${extra[@]+"${extra[@]}"} "$src" >/dev/null 2>"$out/export.err" \
             || { echo "FAIL export $p"; tail -5 "$out/export.err"; exit 1; }
+        # Hood and cap are a matched pair, named by the hood's glow gap
+        # (hood_6mm_vN + cap_6mm_vN), so a knob is printed with its hood.
+        name="$p"
+        case "$p" in hood|cap) name="${p}_${gap}mm" ;; esac
         n=0
-        for f in "$stl/${p}"_v*.stl; do
+        for f in "$stl/${name}"_v*.stl; do
             [ -e "$f" ] || continue
             v="${f##*_v}"; v="${v%.stl}"
+            case "$v" in *[!0-9]*) continue ;; esac   # skip hand exports like cap_v3b
             [ "$v" -gt "$n" ] && n="$v"
         done
-        if [ "$n" -gt 0 ] && [ "$(PYTHONDONTWRITEBYTECODE=1 python3 "$here/stl_same.py" "$here" "$out/$p.stl" "$stl/${p}_v$n.stl")" = same ]; then
-            echo "SAME   $p (stl/${p}_v$n.stl)"
+        if [ "$n" -gt 0 ] && [ "$(PYTHONDONTWRITEBYTECODE=1 python3 "$here/stl_same.py" "$here" "$out/$p.stl" "$stl/${name}_v$n.stl")" = same ]; then
+            echo "SAME   $p (stl/${name}_v$n.stl)"
         else
-            cp "$out/$p.stl" "$stl/${p}_v$((n + 1)).stl"
-            echo "NEW    $p -> stl/${p}_v$((n + 1)).stl"
+            cp "$out/$p.stl" "$stl/${name}_v$((n + 1)).stl"
+            echo "NEW    $p -> stl/${name}_v$((n + 1)).stl"
         fi
     done
     exit 0
@@ -90,12 +98,12 @@ pass checks-bbox
 
 expect_ok   glow-gap-12 -D 'part="cap"' -D glow_gap=12
 expect_fail checks-fail-roof "cap roof over bore too thin" -D cap_disc_t=2
-expect_fail checks-fail-cap  "cap covers LEDs"    -D cap_d=34
+expect_fail checks-fail-cap  "cap covers LEDs"    -D cap_d=36
 expect_fail checks-fail-tab  "key tab on wire slot" -D 'key_tab_angles=[350]'
-expect_fail checks-fail-float "cap_float gap" -D cap_float=0.4
+expect_fail checks-fail-float "cap_float gap" -D cap_float=0.4 -D cap_roof_min=0
 expect_fail checks-fail-cbore "collar counterbore gap" -D collar_clr_h=-0.1
 # press_travel is the measured shaft gap: one source, so raising shaft_gap trips it.
-expect_fail checks-fail-stem  "stem-to-nut gap" -D shaft_gap=1.1
+expect_fail checks-fail-stem  "stem-to-nut gap" -D shaft_gap=1.1 -D cap_roof_min=0
 # Per-feature fits: each one reaches its own check.
 expect_fail checks-fail-socket-fit "driver socket wall too thin" -D socket_fit=2
 expect_fail checks-fail-c3-loose   "C3 front stop gap" -D c3_pinch_fit=0.5
@@ -103,7 +111,7 @@ expect_fail checks-fail-c3-tight   "C3 front stop gap" -D c3_pinch_fit=0
 expect_fail checks-fail-nut-t      "M3 nut thicker than its slot" -D m3_nut_t=2.7
 
 expect_ok   hood-render -D 'part="hood"'
-# ECHO: hood_top_z = 13.1, hood_od = 55.2, key_tab_len = 1.6
+# ECHO: hood_top_z = 9.9, hood_od = 55.2, key_tab_len = 1.6
 dims="$(echo "$err" | sed -n 's/^ECHO: hood_top_z = \([0-9.]*\), hood_od = \([0-9.]*\), key_tab_len = \([0-9.]*\)$/\1 \2 \3/p' | head -1)"
 [ -n "$dims" ] || fail hood-bbox "no hood dims echo"
 bbox="$(python3 "$here/stl_bbox.py" "$out/hood-render.stl")"
@@ -124,7 +132,7 @@ expect_fail halo-off           "part halo needs" -D 'part="halo"'
 
 expect_ok   cap-render -D 'part="cap"'
 # ECHO: cap_d = 29, cap_h = ..., cap_disc = 14
-echo "$err" | grep -q '^ECHO: cap_d = 29, .*cap_disc = 14$' || fail cap-dims "want cap_d 29, cap_disc 14"
+echo "$err" | grep -q '^ECHO: cap_d = 34, .*cap_disc = 8.5$' || fail cap-dims "want cap_d 34, cap_disc 8.5"
 pass cap-dims
 dims="$(echo "$err" | sed -n 's/^ECHO: cap_d = \([0-9.]*\), cap_h = \([0-9.]*\), cap_disc = [0-9.]*$/\1 \2/p' | head -1)"
 [ -n "$dims" ] || fail cap-bbox "no cap dims echo"
@@ -141,7 +149,7 @@ bbox="$(python3 "$here/stl_bbox.py" "$out/cap-plain-render.stl")"
 python3 - "$bbox" <<'PY' || fail cap-plain-bbox "got '$bbox'"
 import sys
 x, y, z = map(float, sys.argv[1].split())
-assert abs(x - 29) <= 0.1 and abs(y - 29) <= 0.1
+assert abs(x - 34) <= 0.1 and abs(y - 34) <= 0.1
 PY
 pass cap-plain-bbox
 
