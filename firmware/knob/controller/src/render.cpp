@@ -101,6 +101,21 @@ bool renderFlourish(Flourish kind, int8_t dir, uint32_t e, Frame& f) {
   return false;
 }
 
+Flourish feedbackFor(Out out, bool muted, bool hostUp) {
+  switch (out) {
+    case Out::Tap:
+    case Out::Double:
+      return (muted || !hostUp) ? Flourish::Refuse : Flourish::Press;
+    case Out::Hold:
+      return hostUp ? Flourish::None : Flourish::Refuse;
+    case Out::RotCW:
+    case Out::RotCCW:
+      return hostUp ? Flourish::Turn : Flourish::None;
+    default:
+      return Flourish::None;
+  }
+}
+
 uint32_t toPixel(Rgb c, float level, uint8_t masterPct, uint8_t hwCap) {
   float s = level * masterPct / 100.0f;
   if (s <= 0) return 0;

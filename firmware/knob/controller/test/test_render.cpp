@@ -119,3 +119,24 @@ TEST(toPixel_dim_keeps_hue) {
   CHECK(((p >> 8) & 0xff) == 0);
   CHECK((p & 0xff) == 0);
 }
+
+TEST(feedback_when_host_up) {
+  CHECK(feedbackFor(Out::Tap, false, true) == Flourish::Press);
+  CHECK(feedbackFor(Out::Double, false, true) == Flourish::Press);
+  CHECK(feedbackFor(Out::RotCW, false, true) == Flourish::Turn);
+  CHECK(feedbackFor(Out::Hold, false, true) == Flourish::None);
+}
+
+TEST(feedback_refuses_when_muted) {
+  CHECK(feedbackFor(Out::Tap, true, true) == Flourish::Refuse);
+  CHECK(feedbackFor(Out::Double, true, true) == Flourish::Refuse);
+  CHECK(feedbackFor(Out::Hold, true, true) == Flourish::None);  // hold unmutes
+}
+
+TEST(feedback_refuses_when_host_down) {
+  // Nobody is listening: a press must not look accepted.
+  CHECK(feedbackFor(Out::Tap, false, false) == Flourish::Refuse);
+  CHECK(feedbackFor(Out::Double, false, false) == Flourish::Refuse);
+  CHECK(feedbackFor(Out::Hold, false, false) == Flourish::Refuse);
+  CHECK(feedbackFor(Out::RotCW, false, false) == Flourish::None);
+}

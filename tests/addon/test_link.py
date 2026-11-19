@@ -4,7 +4,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from addon.link import HANDSHAKE_S, SCAN_S, Link  # noqa: E402
+from addon.link import HANDSHAKE_S, PROBE_BACKOFF_S, SCAN_S, Link  # noqa: E402
 
 HELLO = "HELLO talon-controller v1"
 
@@ -98,8 +98,15 @@ class LinkTest(unittest.TestCase):
         a = FakePort("/dev/a")
         link = self.make([a])
         self.run_ticks(link, 0.1)
-        a.inbox += ["TAP", "garbage", "ROT -1", HELLO]
+        a.inbox += ["TAP", "garbage", "ROT -1"]
         self.assertEqual(link.tick(), [("TAP", 0), ("ROT", -1)])
+
+    def test_hello_while_connected_resyncs(self):
+        a = FakePort("/dev/a")
+        link = self.make([a])
+        self.run_ticks(link, 0.1)
+        a.inbox += [HELLO]  # device rebooted (or answered a PING): resend the look
+        self.assertEqual(link.tick(), [("RESYNC", 0)])
 
     def test_read_error_drops_link(self):
         a = FakePort("/dev/a")
@@ -152,6 +159,31 @@ class LinkTest(unittest.TestCase):
         self.listing = ["/dev/busy", "/dev/b"]
         self.run_ticks(link, 0.2)
         self.assertTrue(link.connected)
+
+    def test_silent_port_backed_off(self):
+        opens = []
+
+        def open_port(path):
+            opens.append(path)
+            return FakePort(path, talks=False)
+
+        link = self.make([FakePort("/dev/printer", talks=False)], open_port)
+        self.run_ticks(link, HANDSHAKE_S + 0.1)
+        self.run_ticks(link, PROBE_BACKOFF_S - HANDSHAKE_S - 1)
+        self.assertEqual(opens, ["/dev/printer"])
+        self.run_ticks(link, SCAN_S + 1.5)
+        self.assertEqual(opens, ["/dev/printer", "/dev/printer"])
+
+    def test_retired_link_is_inert(self):
+        a = FakePort("/dev/a")
+        link = self.make([a])
+        self.run_ticks(link, 0.1)
+        link.retire()
+        self.assertTrue(a.closed)
+        self.assertFalse(link.send("PING"))
+        self.assertEqual(self.run_ticks(link, SCAN_S * 2), [])
+        self.assertFalse(link.connected)
+        self.assertEqual(link.status(), "retired")
 
 
 if __name__ == "__main__":

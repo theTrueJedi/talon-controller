@@ -11,6 +11,7 @@ from .serial_port import SerialPort, candidates
 SCAN_S = 2.0        # between scans while no device is connected
 HANDSHAKE_S = 1.5   # per candidate, waiting for HELLO
 PING_RETRY_S = 0.25  # the device may drop a reply while its TX buffer drains
+PROBE_BACKOFF_S = 60.0  # a port that never answered isn't re-probed for this long
 
 
 class Link:
@@ -25,10 +26,14 @@ class Link:
         self._reason = "no device found"
         self._dropped = False  # a send() failure, reported by the next tick()
         self._failed = False   # the candidate being probed errored out
+        self._retired = False
+        self._backoff: dict[str, float] = {}  # path -> time it may be probed again
         self.connected = False
         self.path: str | None = None
 
     def status(self) -> str:
+        if self._retired:
+            return "retired"
         if self.connected:
             return f"connected {self.path}"
         if self._port:
@@ -46,12 +51,19 @@ class Link:
             self._dropped = True
             return False
 
+    def retire(self) -> None:
+        """Close for good: a reloaded add-on retires its predecessor's link."""
+        self.close()
+        self._retired = True
+
     def close(self) -> None:
         if self._port:
             self._port.close()
         self._port, self.connected = None, False
 
     def tick(self) -> list[tuple[str, int]]:
+        if self._retired:
+            return []
         if self._dropped:
             self._dropped = False
             return [("DISCONNECTED", 0)]
@@ -76,7 +88,9 @@ class Link:
             self._drop(str(e))
             return [("DISCONNECTED", 0)]
         events = (parse_device_line(ln) for ln in lines)
-        return [e for e in events if e and e[0] != "HELLO"]
+        # HELLO while connected: a PING reply, or the device rebooted and lost
+        # its look. Either way the host resends the look.
+        return [("RESYNC", 0) if e[0] == "HELLO" else e for e in events if e]
 
     def _handshake(self) -> list[tuple[str, int]]:
         now = self._clock()
@@ -91,6 +105,7 @@ class Link:
             self.connected = True
             return [("CONNECTED", 0)] + [e for e in events[last + 1:] if e and e[0] != "HELLO"]
         if self._failed or now - self._opened_at >= HANDSHAKE_S:
+            self._backoff[self.path] = now + PROBE_BACKOFF_S  # not ours (or not answering)
             self.close()
             self._next_candidate()
         elif now - self._pinged_at >= PING_RETRY_S:
@@ -110,7 +125,7 @@ class Link:
             if self._last_scan is not None and now - self._last_scan < SCAN_S:
                 return
             self._last_scan = now
-            self._queue = self._list_ports()
+            self._queue = [p for p in self._list_ports() if self._backoff.get(p, 0) <= now]
             if not self._queue:
                 self._reason = "no device found"
                 return

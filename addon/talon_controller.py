@@ -6,6 +6,7 @@ this file only wires them to Talon. See addon/README.md.
 """
 
 import os
+import sys
 
 from talon import Module, actions, app, cron, registry, scope, settings
 
@@ -24,7 +25,17 @@ for _state, _look in DEFAULT_LOOKS.items():
 
 MIC_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), ".last_mic")
 
+# Talon doesn't cancel this file's crons on reload, so the previous load's
+# Link would keep reading the port beside the new one. Retire it through a
+# process-wide handle (sys outlives module reloads).
+_prev = getattr(sys, "_talon_controller_link", None)
+if _prev is not None:  # may be an older Link class without retire()
+    try:
+        (getattr(_prev, "retire", None) or _prev.close)()
+    except Exception as e:
+        print(f"[talon-controller] retiring previous link: {e!r}")
 link = Link()
+sys._talon_controller_link = link
 state = "other"
 last_awake = "command"
 sent_line = None
@@ -76,8 +87,11 @@ def _do(intent: Intent) -> None:
     elif intent == Intent.MUTE:
         mic = actions.sound.active_microphone()
         if mic and mic != "None":
-            with open(MIC_FILE, "w") as f:
-                f.write(mic)
+            try:  # remembering the mic must never stand in the way of muting
+                with open(MIC_FILE, "w") as f:
+                    f.write(mic)
+            except OSError as e:
+                _log_once("save mic", e)
         actions.sound.set_microphone("None")
     elif intent == Intent.UNMUTE:
         actions.sound.set_microphone(choose_restore_mic(_read_mic(), list(actions.sound.microphones())))
@@ -92,7 +106,7 @@ def tick() -> None:
         return
     for name, value in events:
         try:
-            if name == "CONNECTED":
+            if name in ("CONNECTED", "RESYNC"):
                 refresh(force=True)
             elif name == "DISCONNECTED":
                 sent_line = None
@@ -119,11 +133,7 @@ class Actions:
         app.notify("Talon controller", f"{link.status()}, ring: {state}")
 
 
-def _on_ready():
-    cron.interval("20ms", tick)
-    cron.interval("500ms", refresh)
-    cron.interval("2s", heartbeat)
-    registry.register("update_contexts", lambda *_: refresh())
-
-
-app.register("ready", _on_ready)
+cron.interval("20ms", tick)
+cron.interval("500ms", refresh)
+cron.interval("2s", heartbeat)
+registry.register("update_contexts", lambda *_: refresh())

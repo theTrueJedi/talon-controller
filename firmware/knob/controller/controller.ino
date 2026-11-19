@@ -86,24 +86,18 @@ void handle(Out out, uint32_t now, int8_t dir = 1) {
     if (out == Out::Double) demo.cycle(now);
     return;
   }
-  bool muted = current.state == State::Mute;
+  // Events are sent even with no host heard from (harmless); the ring just
+  // refuses, so a press never looks accepted when nothing will act on it.
   switch (out) {
-    case Out::Tap:
-    case Out::Double:
-      Serial.println(out == Out::Tap ? "TAP" : "DOUBLE");
-      startFlourish(muted ? Flourish::Refuse : Flourish::Press, 1, now);
-      break;
-    case Out::Hold:
-      Serial.println("HOLD");
-      break;
-    case Out::RotCW:
-    case Out::RotCCW:
-      Serial.println(out == Out::RotCW ? "ROT +1" : "ROT -1");
-      startFlourish(Flourish::Turn, dir, now);
-      break;
-    default:
-      break;
+    case Out::Tap: Serial.println("TAP"); break;
+    case Out::Double: Serial.println("DOUBLE"); break;
+    case Out::Hold: Serial.println("HOLD"); break;
+    case Out::RotCW: Serial.println("ROT +1"); break;
+    case Out::RotCCW: Serial.println("ROT -1"); break;
+    default: return;
   }
+  Flourish f = feedbackFor(out, current.state == State::Mute, !watchdog.expired(now));
+  if (f != Flourish::None) startFlourish(f, dir, now);
 }
 
 bool flourishFrame(uint32_t now, Frame& f) {
@@ -121,7 +115,7 @@ void render(uint32_t now) {
     renderGauge(master, f);
   } else if (demo.active()) {
     if (!flourishFrame(now, f)) renderDemo(demo.pattern(now), now, f);
-  } else if (p >= 0 && heldMs >= PROGRESS_DELAY_MS) {
+  } else if (p >= 0 && heldMs >= PROGRESS_DELAY_MS && !watchdog.expired(now)) {
     float fill = (float)(heldMs - PROGRESS_DELAY_MS) / (HOLD_MS - PROGRESS_DELAY_MS);
     renderHoldProgress(fill, current.state == State::Mute ? lastAwakeC1 : RED, f);
   } else if (!flourishFrame(now, f)) {

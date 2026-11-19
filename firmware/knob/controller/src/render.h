@@ -3,6 +3,7 @@
 #pragma once
 #include <stdint.h>
 
+#include "gestures.h"
 #include "protocol.h"
 
 const int N_LEDS = 12;
@@ -16,6 +17,9 @@ void renderHoldProgress(float progress, Rgb color, Frame& f);
 
 enum class Flourish : uint8_t { None, Press, Turn, Refuse, Demo };
 bool renderFlourish(Flourish kind, int8_t dir, uint32_t elapsedMs, Frame& f);  // false when finished
+// Flourish acknowledging a control-mode gesture. A press never looks accepted
+// when it won't be acted on: refused while muted (tap/double) or host down.
+Flourish feedbackFor(Out out, bool muted, bool hostUp);
 
 // Perceived fraction s = level * master/100; channel = c * s^2.6 * hwCap/255.
 // A lit LED never goes dark: if every channel rounds to 0, the brightest is 1.
