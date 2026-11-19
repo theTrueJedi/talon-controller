@@ -12,13 +12,13 @@ muted is refused, double-tap sleeps and wakes.
 | ID | Do this | Expect |
 |---|---|---|
 | T1 | Look at the ring with Talon running | Solid green (command), green not teal |
-| T2 | Say "dictation mode", then "command mode" | Blue→purple spin moving clockwise, then green, within ~0.5 s |
-| T3 | Tap the knob | ~0.2 s after release the ring fades out and back in as the new mode (400 ms) |
+| T2 | Say "dictation mode", then "command mode" | Mostly purple with a blue band, spinning clockwise, then green, within ~0.5 s |
+| T3 | Tap the knob | ~0.2 s after release the ring fades out and back in as the new mode (250 ms) |
 | T4 | Double-tap | Amber slow breathe (asleep); double-tap again → back to the prior mode |
 | T5 | Press and hold | Red fill sweeps clockwise; at 0.7 s solid red, mic is None |
 | T6 | While muted, tap | Two red blinks, nothing changes |
 | T7 | While muted, hold | Fill in green, then mic restored and ring back to the mode look |
-| T8 | Turn the knob over a long page | Scrolls the window under the pointer; purple half-ring flash in the turn direction. Direction feel right? (`scroll_invert` if not) Amount OK? (`scroll_amount`) |
+| T8 | Turn the knob over a long page | Scrolls the window under the pointer; purple half-ring flash from 12: clockwise lights 12→5, counter-clockwise 12→7. Direction feel right? (`scroll_invert` if not) Amount OK? (`scroll_amount`) |
 | T9 | Hold + turn | White gauge from 12 o'clock follows the knob; release → mode look at the new brightness |
 | T10 | Unplug and replug the USB | Brightness kept; ring back on the mode look within ~3 s; `controller status` says connected |
 | T11 | Quit Talon | After ~8 s: dim red slow breathe |

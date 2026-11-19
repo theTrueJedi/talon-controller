@@ -58,7 +58,9 @@ void renderLook(const Look& look, uint32_t now, Frame& f) {
       uint32_t T = 8000 - 70 * look.speed;
       float phase = (float)(now % T) / T;
       for (int i = 0; i < N_LEDS; i++) {
-        f.px[i] = lerp(look.c1, look.c2, tri((float)i / N_LEDS - phase));  // moves clockwise
+        // Squared, so c1 fills ~70 % of the ring and c2 is a narrower band.
+        float k = tri((float)i / N_LEDS - phase);  // moves clockwise
+        f.px[i] = lerp(look.c1, look.c2, k * k);
         f.level[i] = lvl;
       }
       break;
@@ -80,10 +82,10 @@ bool renderFlourish(Flourish kind, int8_t dir, uint32_t e, Frame& f) {
       for (int i = 0; i < N_LEDS; i++) f.level[i] *= k;
       return true;
     }
-    case Flourish::Turn:  // half ring from noon in the turn direction, fading
+    case Flourish::Turn:  // half ring from noon in the turn direction (12>5 or 12>7), fading
       if (e > 300) return false;
       for (int k = 0; k < N_LEDS / 2; k++) {
-        int i = dir > 0 ? k : N_LEDS - 1 - k;
+        int i = dir > 0 ? k : (N_LEDS - k) % N_LEDS;
         f.px[i] = TURN_PURPLE;
         f.level[i] = 0.75f * (1 - e / 300.0f);
       }

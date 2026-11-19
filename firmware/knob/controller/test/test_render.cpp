@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include "protocol.h"
 #include "render.h"
 #include "testing.h"
@@ -11,7 +13,7 @@ static int lit(const Frame& f) {
 
 static const Look CMD = {State::Command, Pat::Solid, {0x18, 0xff, 0x6a}, {0x10, 0x98, 0x47}, 15, 71};
 static const Look SLEEP = {State::Sleep, Pat::Breathe, {0xff, 0x9a, 0x1a}, {0x3a, 0x1c, 0x00}, 12, 25};
-static const Look DICT = {State::Dictation, Pat::GradSpin, {0x2f, 0x6b, 0xff}, {0x9a, 0x3b, 0xff}, 30, 83};
+static const Look DICT = {State::Dictation, Pat::GradSpin, {0x9a, 0x3b, 0xff}, {0x2f, 0x6b, 0xff}, 30, 83};
 
 TEST(solid_all_c1) {
   Frame f;
@@ -42,6 +44,19 @@ TEST(gradspin_loops) {
   CHECK(same(a.px[6], DICT.c2));
 }
 
+TEST(gradspin_mostly_first_color) {
+  // Dictation: mostly c1 with a band of c2 (about 30 % of the ring).
+  Frame f;
+  renderLook(DICT, 0, f);
+  int nearC1 = 0;
+  for (int i = 0; i < N_LEDS; i++) {
+    int d1 = std::abs(f.px[i].r - DICT.c1.r) + std::abs(f.px[i].b - DICT.c1.b);
+    int d2 = std::abs(f.px[i].r - DICT.c2.r) + std::abs(f.px[i].b - DICT.c2.b);
+    nearC1 += d1 < d2;
+  }
+  CHECK(nearC1 >= 8 && nearC1 <= 9);
+}
+
 TEST(gauge_33pct) {
   Frame f;
   renderGauge(33, f);
@@ -68,9 +83,10 @@ TEST(hold_progress_half) {
 TEST(flourish_finishes) {
   Frame f;
   fillFrame(f, Rgb{255, 255, 255}, 1);
+  CHECK(FADE_MS == 250);
   CHECK(renderFlourish(Flourish::Fade, 1, 0, f));
-  CHECK(renderFlourish(Flourish::Fade, 1, 399, f));
-  CHECK(!renderFlourish(Flourish::Fade, 1, 401, f));
+  CHECK(renderFlourish(Flourish::Fade, 1, FADE_MS - 1, f));
+  CHECK(!renderFlourish(Flourish::Fade, 1, FADE_MS + 1, f));
   CHECK(!renderFlourish(Flourish::Turn, 1, 301, f));
   CHECK(!renderFlourish(Flourish::Refuse, 1, 301, f));
   CHECK(!renderFlourish(Flourish::None, 1, 0, f));
@@ -78,9 +94,11 @@ TEST(flourish_finishes) {
 
 TEST(turn_flourish_direction) {
   Frame f;
-  renderFlourish(Flourish::Turn, -1, 10, f);
+  renderFlourish(Flourish::Turn, -1, 10, f);  // CCW: noon back to 7 o'clock
   CHECK(lit(f) == 6);
-  for (int i = 6; i < N_LEDS; i++) CHECK(f.level[i] > 0);
+  CHECK(f.level[0] > 0);
+  for (int i = 7; i < N_LEDS; i++) CHECK(f.level[i] > 0);
+  CHECK(f.level[6] == 0);
   renderFlourish(Flourish::Turn, 1, 10, f);
   for (int i = 0; i < 6; i++) CHECK(f.level[i] > 0);
   CHECK(f.level[6] == 0);
@@ -111,11 +129,11 @@ TEST(fade_dims_the_frame_out_and_in) {
   CHECK_NEAR(f.level[0], 0.8, 1e-3);
   CHECK(same(f.px[0], CMD.c1));
   fillFrame(f, CMD.c1, 0.8f);
-  renderFlourish(Flourish::Fade, 1, 200, f);
-  CHECK_NEAR(f.level[0], 0.0, 1e-3);
+  renderFlourish(Flourish::Fade, 1, FADE_MS / 2, f);
+  CHECK_NEAR(f.level[0], 0.0, 0.02);
   fillFrame(f, CMD.c1, 0.8f);
-  renderFlourish(Flourish::Fade, 1, 300, f);
-  CHECK_NEAR(f.level[5], 0.4, 1e-3);
+  renderFlourish(Flourish::Fade, 1, FADE_MS * 3 / 4, f);
+  CHECK_NEAR(f.level[5], 0.4, 0.02);
 }
 
 TEST(gradspin_moves_clockwise) {

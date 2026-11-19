@@ -18,7 +18,7 @@ void renderHoldProgress(float progress, Rgb color, Frame& f);
 // Turn and Refuse replace the frame; Fade dims the frame already in f out
 // and back in (FADE_MS), e.g. to acknowledge a tap or entering demo.
 enum class Flourish : uint8_t { None, Turn, Refuse, Fade };
-const uint32_t FADE_MS = 400;
+const uint32_t FADE_MS = 250;
 bool renderFlourish(Flourish kind, int8_t dir, uint32_t elapsedMs, Frame& f);  // false when finished
 // Flourish acknowledging a control-mode gesture. A press never looks accepted
 // when it won't be acted on: refused while muted (tap/double) or host down.

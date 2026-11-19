@@ -45,7 +45,7 @@ bash firmware/knob/controller/test/run.sh
 
 Presses count as one burst while each comes within 200 ms of the last
 release; the burst acts 200 ms after the last release. An accepted tap or
-double (and a demo pattern change) is acknowledged by a 400 ms fade out and
+double (and a demo pattern change) is acknowledged by a 250 ms fade out and
 back in; the change swaps in at the dark point. While muted, taps
 are still sent (Talon refuses them) and the ring blinks red.
 
@@ -70,7 +70,7 @@ everything before `HELLO`.
 | Constant | Where | Default |
 |---|---|---|
 | `HOLD_MS`, `DOUBLE_MS` | `src/gestures.h` | 700, 200 |
-| `FADE_MS` | `src/render.h` | 400 |
+| `FADE_MS` | `src/render.h` | 250 |
 | `DEMO_CYCLE_MS` | `src/demo.h` | 10000 |
 | `WATCHDOG_MS` | `src/protocol.h` | 8000 |
 | `RING_TOP`, `RING_CW` | `controller.ino` | 0, true |

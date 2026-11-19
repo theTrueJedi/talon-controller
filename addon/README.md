@@ -40,7 +40,7 @@ Put overrides in any `.talon` file's `settings():` block.
 | `user.talon_controller_look_mute` | `solid ff1a1a b91818 40 70` |
 | `user.talon_controller_look_sleep` | `breathe ff9a1a 3a1c00 12 25` |
 | `user.talon_controller_look_command` | `solid 18ff6a 109847 15 71` |
-| `user.talon_controller_look_dictation` | `gradspin 2f6bff 9a3bff 30 83` |
+| `user.talon_controller_look_dictation` | `gradspin 9a3bff 2f6bff 30 83` |
 | `user.talon_controller_look_mixed` | `gradspin 14e0ff 2f6bff 35 83` |
 | `user.talon_controller_look_other` | `solid ffffff 202020 0 20` |
 

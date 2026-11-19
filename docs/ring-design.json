@@ -27,8 +27,8 @@
     },
     {
       "id": "dictation",
-      "c1": "#2f6bff",
-      "c2": "#9a3bff",
+      "c1": "#9a3bff",
+      "c2": "#2f6bff",
       "pat": "gradspin",
       "speed": 30,
       "bri": 83

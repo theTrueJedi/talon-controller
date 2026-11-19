@@ -20,6 +20,10 @@ class ProtocolTest(unittest.TestCase):
             self.assertEqual(DEFAULT_LOOKS[state], want, state)
         self.assertEqual(DEFAULT_LOOKS["other"], Look("solid", "ffffff", "202020", 0, 20))
 
+    def test_dictation_mostly_purple(self):
+        self.assertEqual(DEFAULT_LOOKS["dictation"].c1, "9a3bff")  # purple leads
+        self.assertEqual(DEFAULT_LOOKS["dictation"].c2, "2f6bff")
+
     def test_format_look(self):
         self.assertEqual(format_look("command", DEFAULT_LOOKS["command"]),
                          "LOOK command solid 18ff6a 109847 15 71")

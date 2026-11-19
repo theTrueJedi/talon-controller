@@ -410,6 +410,8 @@ Meet tab, focus it, press ⌘D, and return.
 ## Amendment 2026-11-18b: ring tweaks (Evan)
 
 - Press-burst window 250 → **200 ms**.
-- The green press heartbeat and the white demo double-flash are replaced by one **400 ms fade out and back in**; the change swaps in at the dark point. Also used for demo pattern changes. The red "refused" double-blink stays.
+- The green press heartbeat and the white demo double-flash are replaced by one **250 ms fade out and back in**; the change swaps in at the dark point. Also used for demo pattern changes. The red "refused" double-blink stays.
 - Gradient spins and demo rainbow spins move **clockwise**.
 - Colors are treated as screen (sRGB) colors and decoded per channel before reaching the LEDs, so ring colors match the playground (command green had read as teal).
+- Dictation is **mostly purple with some blue**: gradspin draws c1 over ~70 % of the ring (squared gradient), and dictation's colors are now c1 purple `9a3bff`, c2 blue `2f6bff` (also in `docs/ring-design.json`). Mixed becomes mostly cyan with a blue band.
+- Turn flash: both directions start at noon; clockwise lights 12→5, counter-clockwise 12→7.
