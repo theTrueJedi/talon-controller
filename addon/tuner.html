@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ring tuner</title>
+<style>
+  :root { --bg:#f6f6f4; --card:#fff; --ink:#1d1d1b; --muted:#6b6b66; --line:#deded8; --accent:#2f6bff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141413; --card:#1e1e1c; --ink:#ececea; --muted:#9a9a94; --line:#33332f; --accent:#7aa2ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.4 -apple-system, system-ui, sans-serif; }
+  main { max-width:560px; margin:0 auto; padding:24px 16px 48px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--muted); margin:0 0 20px; font-size:13px; }
+  .tabs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+  .tabs button { border:1px solid var(--line); background:var(--card); color:var(--ink); padding:6px 12px;
+                 border-radius:999px; font:inherit; cursor:pointer; }
+  .tabs button[aria-selected="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; }
+  .ring { position:relative; width:180px; height:180px; margin:4px auto 20px; }
+  .led { position:absolute; width:22px; height:22px; border-radius:50%; left:79px; top:79px; }
+  .row { display:grid; grid-template-columns:96px 1fr 44px; align-items:center; gap:10px; margin:12px 0; }
+  .row label { color:var(--muted); font-size:13px; }
+  .row output { text-align:right; font-variant-numeric:tabular-nums; }
+  input[type=range] { width:100%; accent-color:var(--accent); }
+  input[type=color] { width:56px; height:32px; border:1px solid var(--line); border-radius:8px; background:none; padding:2px; }
+  select { font:inherit; padding:5px 8px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink); }
+  .hex { font-family:ui-monospace, monospace; font-size:13px; color:var(--muted); }
+  .actions { display:flex; gap:10px; margin-top:20px; }
+  .actions button { flex:1; padding:10px; border-radius:10px; font:inherit; font-weight:600; cursor:pointer;
+                    border:1px solid var(--line); background:var(--card); color:var(--ink); }
+  .actions .save { background:var(--accent); border-color:var(--accent); color:#fff; }
+  #status { margin-top:14px; font-size:13px; color:var(--muted); min-height:1.4em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Ring tuner</h1>
+  <p class="sub">The ring shows the selected mode live while this page is open. Close it to return to Talon's real mode.
+    Brightness on screen is approximate; judge it on the ring.</p>
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="card">
+    <div class="ring" id="ring"></div>
+    <div class="row"><label for="pat">Pattern</label><select id="pat"></select><span></span></div>
+    <div class="row"><label for="c1">Color 1</label><input type="color" id="c1"><span class="hex" id="c1hex"></span></div>
+    <div class="row"><label for="c2">Color 2</label><input type="color" id="c2"><span class="hex" id="c2hex"></span></div>
+    <div class="row"><label for="speed">Speed</label><input type="range" id="speed" min="0" max="100"><output id="speedv"></output></div>
+    <div class="row"><label for="bri">Brightness</label><input type="range" id="bri" min="0" max="100"><output id="briv"></output></div>
+    <div class="actions">
+      <button id="revert">Revert</button>
+      <button class="save" id="save">Save all</button>
+    </div>
+    <div id="status"></div>
+  </div>
+</main>
+<script>
+const STATES = ["mute", "sleep", "command", "dictation", "mixed", "other"];
+let looks = {}, saved = {}, state = "command", dirty = false;
+const $ = id => document.getElementById(id);
+
+// --- ring preview (same math as the firmware's renderLook) ---------------
+const leds = [];
+for (let i = 0; i < 12; i++) {
+  const d = document.createElement("div"), a = i / 12 * 2 * Math.PI;
+  d.className = "led";
+  d.style.transform = `translate(${Math.sin(a) * 72}px, ${-Math.cos(a) * 72}px)`;
+  $("ring").appendChild(d); leds.push(d);
+}
+const rgb = h => [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
+const tri = x => { const u = x - Math.floor(x); return u < 0.5 ? 2 * u : 2 - 2 * u; };
+function frame(t) {
+  const L = looks[state];
+  if (L) {
+    const a = rgb(L.c1), b = rgb(L.c2), lvl = 0.25 + 0.75 * L.bri / 100;
+    for (let i = 0; i < 12; i++) {
+      let c = a;
+      if (L.pat === "breathe") { const T = 10000 - 90 * L.speed; c = mix(b, a, (1 - Math.cos(2 * Math.PI * (t % T) / T)) / 2); }
+      if (L.pat === "gradspin") { const T = 8000 - 70 * L.speed; const k = tri(i / 12 - (t % T) / T); c = mix(a, b, k * k); }
+      leds[i].style.background = `rgb(${c.join(",")})`;
+      leds[i].style.opacity = lvl;
+      leds[i].style.boxShadow = `0 0 ${6 + L.bri / 6}px rgb(${c.join(",")})`;
+    }
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// --- talking to Talon -----------------------------------------------------
+async function post(path, body) {
+  const r = await fetch(path, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  if (!r.ok) throw new Error(`${path}: ${r.status}`);
+}
+let pending = false;
+function sendPreview() {  // at most one request in flight; the latest values win
+  if (pending) return;
+  pending = true;
+  post("/preview", {state, look: looks[state]})
+    .catch(e => status("Talon didn't take that: " + e.message))
+    .finally(() => { pending = false; });
+}
+setInterval(sendPreview, 1000);  // heartbeat: keeps the preview alive
+addEventListener("pagehide", () => navigator.sendBeacon("/end", "{}"));
+
+function status(text) { $("status").textContent = text; }
+
+// --- UI ---------------------------------------------------------------
+function showTabs() {
+  $("tabs").innerHTML = "";
+  for (const s of STATES) {
+    const b = document.createElement("button");
+    b.textContent = s; b.setAttribute("role", "tab"); b.setAttribute("aria-selected", s === state);
+    b.onclick = () => { state = s; showTabs(); showLook(); sendPreview(); };
+    $("tabs").appendChild(b);
+  }
+}
+function showLook() {
+  const L = looks[state];
+  $("pat").value = L.pat;
+  $("c1").value = "#" + L.c1; $("c1hex").textContent = L.c1;
+  $("c2").value = "#" + L.c2; $("c2hex").textContent = L.c2;
+  $("speed").value = L.speed; $("speedv").textContent = L.speed;
+  $("bri").value = L.bri; $("briv").textContent = L.bri;
+  $("c2").disabled = L.pat === "solid"; $("speed").disabled = L.pat === "solid";
+}
+function edit() {
+  looks[state] = {
+    pat: $("pat").value,
+    c1: $("c1").value.slice(1), c2: $("c2").value.slice(1),
+    speed: +$("speed").value, bri: +$("bri").value,
+  };
+  dirty = true; showLook(); sendPreview(); status("Unsaved changes");
+}
+for (const id of ["pat", "c1", "c2", "speed", "bri"]) $(id).addEventListener("input", edit);
+
+$("save").onclick = async () => {
+  try { await post("/save", {looks}); saved = structuredClone(looks); dirty = false; status("Saved to addon/looks.json"); }
+  catch (e) { status("Save failed: " + e.message); }
+};
+$("revert").onclick = () => { looks = structuredClone(saved); dirty = false; showLook(); sendPreview(); status("Reverted to saved"); };
+addEventListener("beforeunload", e => { if (dirty) e.preventDefault(); });
+
+fetch("/looks").then(r => r.json()).then(data => {
+  for (const p of data.patterns) { const o = document.createElement("option"); o.value = o.textContent = p; $("pat").appendChild(o); }
+  looks = data.looks; saved = structuredClone(looks);
+  showTabs(); showLook(); sendPreview();
+}).catch(() => status("Can't reach Talon. Is the add-on loaded?"));
+</script>
+</body>
+</html>
