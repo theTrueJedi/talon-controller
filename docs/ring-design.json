@@ -11,11 +11,11 @@
     },
     {
       "id": "sleep",
-      "c1": "#ff7a00",
+      "c1": "#ff8a0d",
       "c2": "#c07414",
       "pat": "solid",
       "speed": 12,
-      "bri": 60
+      "bri": 55
     },
     {
       "id": "command",

@@ -16,7 +16,7 @@ class Look:
 # docs/ring-design.json (Evan's ring playground), plus "other".
 DEFAULT_LOOKS: dict[str, Look] = {
     "mute": Look("solid", "ff1a1a", "b91818", 40, 70),
-    "sleep": Look("solid", "ff7a00", "c07414", 12, 60),
+    "sleep": Look("solid", "ff8a0d", "c07414", 12, 55),
     "command": Look("solid", "18ff6a", "109847", 15, 71),
     "dictation": Look("gradspin", "9a3bff", "2f6bff", 30, 83),
     "mixed": Look("gradspin", "14e0ff", "2f6bff", 35, 83),
