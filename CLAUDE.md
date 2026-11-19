@@ -33,7 +33,7 @@ Wiring: one right-angle header on the C3; jumpers plug in only there.
 Amended 2026-11-18: plate lip, two-tooth clip, board 0.4 mm inward, port tab with hooks (pinches the board), 2x 15x60 TPU pads.
 
 **Ring wired and passing (2026-11-18):** `firmware/knob/ring_test/` flashed via arduino-cli
-(`~/.local/bin`, esp32 core 4.0.0, port `/dev/cu.usbmodem101`); 9-pin header on, ring on GPIO0, no
+(`~/.local/bin`, esp32 core 4.0.0, port `/dev/cu.usbmodem101`); ring on GPIO0, no
 330 Ω resistor. Serial log: `stty -f <port> 115200 raw; cat <port>` (`arduino-cli monitor` exits without a TTY).
 
 **Later:** wire the knob, then write the firmware and add-on plan with superpowers:writing-plans.
