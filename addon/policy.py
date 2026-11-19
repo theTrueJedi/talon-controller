@@ -43,3 +43,11 @@ def choose_restore_mic(remembered: str | None, available: list[str]) -> str:
     if remembered and remembered != "None" and remembered in available:
         return remembered
     return "System Default"
+
+
+def scroll_delta(direction: int, amount: int, invert: bool) -> int:
+    """mouse_scroll y for one detent. Clockwise (+1) scrolls the page down,
+    which on Evan's Mac is a negative y; `invert` flips it (e.g. a machine
+    with the other macOS scroll-direction setting)."""
+    y = -direction * amount
+    return -y if invert else y

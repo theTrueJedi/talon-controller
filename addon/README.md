@@ -19,7 +19,7 @@ Talon loads it immediately. It finds the controller on its own
 | tap | command ⇄ dictation (mixed → command; asleep → wakes into the last of the two) |
 | double-tap | sleep ⇄ wake |
 | hold 0.7 s | hard mute: mic → None; hold again restores it |
-| turn | scroll the window under the pointer (also while muted or asleep) |
+| turn | scroll the window under the pointer: clockwise = down the page (also while muted or asleep) |
 
 Taps are refused while muted (the ring blinks red); only a hold unmutes.
 The mic you muted from is saved in `addon/.last_mic` (git-ignored), so it
@@ -31,7 +31,8 @@ survives a Talon restart. If that mic is gone, unmute picks `System Default`.
 
 ## Settings
 
-Put overrides in any `.talon` file's `settings():` block.
+Put overrides in any `.talon` file's `settings():` block. If clockwise scrolls
+up on a machine (macOS scroll-direction setting), set `scroll_invert` to `True` there.
 
 | Setting | Default |
 |---|---|

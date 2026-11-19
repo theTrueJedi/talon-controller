@@ -11,7 +11,7 @@ import sys
 from talon import Module, actions, app, cron, registry, scope, settings
 
 from .link import Link
-from .policy import Intent, choose_restore_mic, decide, derive_state
+from .policy import Intent, choose_restore_mic, decide, derive_state, scroll_delta
 from .protocol import DEFAULT_LOOKS, format_look, look_to_setting, parse_look_setting
 
 mod = Module()
@@ -111,9 +111,9 @@ def tick() -> None:
             elif name == "DISCONNECTED":
                 sent_line = None
             elif name == "ROT":
-                amount = settings.get("user.talon_controller_scroll_amount")
-                sign = -1 if settings.get("user.talon_controller_scroll_invert") else 1
-                actions.mouse_scroll(y=value * amount * sign)
+                actions.mouse_scroll(y=scroll_delta(
+                    value, settings.get("user.talon_controller_scroll_amount"),
+                    settings.get("user.talon_controller_scroll_invert")))
             else:
                 _do(decide(name, state, last_awake))
         except Exception as e:

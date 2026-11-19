@@ -4,7 +4,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from addon.policy import Intent, choose_restore_mic, decide, derive_state  # noqa: E402
+from addon.policy import Intent, choose_restore_mic, decide, derive_state, scroll_delta  # noqa: E402
 
 
 class DeriveStateTest(unittest.TestCase):
@@ -51,6 +51,16 @@ class DecideTest(unittest.TestCase):
 
     def test_unknown_event_is_none(self):
         self.assertEqual(decide("ROT", "command", "command"), Intent.NONE)
+
+
+class ScrollTest(unittest.TestCase):
+    def test_clockwise_scrolls_down(self):
+        # Evan's Mac: Talon's mouse_scroll(y>0) moved the page up, so clockwise sends y<0.
+        self.assertEqual(scroll_delta(1, 40, False), -40)
+        self.assertEqual(scroll_delta(-1, 40, False), 40)
+
+    def test_invert_flips(self):
+        self.assertEqual(scroll_delta(1, 40, True), 40)
 
 
 class RestoreMicTest(unittest.TestCase):
