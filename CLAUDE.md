@@ -1,7 +1,7 @@
 # talon-controller
 
 Evan's Talon hardware: the ring+knob USB controller, and later the
-room-scale WLED "on air" sign. Private.
+room-scale WLED "on air" sign. Public (MIT, since 2026-11-19).
 
 Evan's personal Talon commands and settings are NOT here. They live in the
 public, MIT-licensed repo `theTrueJedi/talon`, cloned straight into
@@ -64,7 +64,7 @@ Includes demo mode (7 presses). **Next:** Evan runs `TESTING.md` (T1-T19, J1-J5)
   - Evan sends pad listings.
   - Evan checks his company's USB keyboard policy.
   - Pick the first macro set.
-  - Decide how Talon files reach the work laptop.
+  - Work laptop: sparse clone of `addon/` only (see `addon/README.md`), decided 2026-11-19.
 
 **Separate project:** the headset mic fix. Suspected cause: Bluetooth HFP
 low-quality mic mode.
