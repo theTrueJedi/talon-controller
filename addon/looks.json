@@ -1,6 +1,6 @@
 {
   "mute": "solid ff1a1a b91818 40 50",
-  "sleep": "solid ff9500 c07414 12 50",
+  "sleep": "solid ff9500 c07414 12 60",
   "command": "gradspin 23a300 029400 11 80",
   "dictation": "gradspin 830fff 2e46ff 90 80",
   "mixed": "gradspin 14e0ff 1457ff 80 75",
