@@ -32,7 +32,9 @@ Re-export every STL in `stl/` after changing a number:
 
     bash print/tests/run.sh export
 
-Each part is saved as `stl/<part>_vN.stl`. A part gets a new number only
+Each part is saved as `stl/<part>_vN.stl`. The hood and knob are a
+matched pair named by the hood's glow gap: `hood_6mm_vN` goes with
+`cap_6mm_vN` (`hood_v1`-`v2` and `cap_v1`-`v3b` are the older 8 mm set). A part gets a new number only
 when its shape changed; old versions stay, so you can tell which file a
 print came from. Always print the highest number.
 

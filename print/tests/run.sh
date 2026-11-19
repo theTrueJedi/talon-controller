@@ -12,26 +12,34 @@ else
     OPENSCAD=/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD
 fi
 
-# `run.sh export`: render every part; save it as print/stl/<part>_v<N+1>.stl only
+# `run.sh export`: render every part; save it as print/stl/<part>_v<N+1>.stl
+# (hood and cap: <part>_<glow_gap>mm_v<N+1>.stl) only
 # when its geometry differs from the newest <part>_v<N>.stl. Old revisions stay.
 if [ "${1:-}" = export ]; then
     stl="$here/../stl"
+    gap="$(sed -n 's/^glow_gap = \([0-9.]*\);.*/\1/p' "$here/../lib/params.scad")"
+    [ -n "$gap" ] || { echo "FAIL export: no glow_gap in params.scad"; exit 1; }
     for p in shell hood cap bottom nut_driver fit_test frame_test glow_test halo c3_clip; do
         extra=(); [ "$p" = halo ] && extra=(-D halo_block=true)
         "$OPENSCAD" --backend=manifold --export-format binstl -o "$out/$p.stl" \
             -D "part=\"$p\"" ${extra[@]+"${extra[@]}"} "$src" >/dev/null 2>"$out/export.err" \
             || { echo "FAIL export $p"; tail -5 "$out/export.err"; exit 1; }
+        # Hood and cap are a matched pair, named by the hood's glow gap
+        # (hood_6mm_vN + cap_6mm_vN), so a knob is printed with its hood.
+        name="$p"
+        case "$p" in hood|cap) name="${p}_${gap}mm" ;; esac
         n=0
-        for f in "$stl/${p}"_v*.stl; do
+        for f in "$stl/${name}"_v*.stl; do
             [ -e "$f" ] || continue
             v="${f##*_v}"; v="${v%.stl}"
+            case "$v" in *[!0-9]*) continue ;; esac   # skip hand exports like cap_v3b
             [ "$v" -gt "$n" ] && n="$v"
         done
-        if [ "$n" -gt 0 ] && [ "$(PYTHONDONTWRITEBYTECODE=1 python3 "$here/stl_same.py" "$here" "$out/$p.stl" "$stl/${p}_v$n.stl")" = same ]; then
-            echo "SAME   $p (stl/${p}_v$n.stl)"
+        if [ "$n" -gt 0 ] && [ "$(PYTHONDONTWRITEBYTECODE=1 python3 "$here/stl_same.py" "$here" "$out/$p.stl" "$stl/${name}_v$n.stl")" = same ]; then
+            echo "SAME   $p (stl/${name}_v$n.stl)"
         else
-            cp "$out/$p.stl" "$stl/${p}_v$((n + 1)).stl"
-            echo "NEW    $p -> stl/${p}_v$((n + 1)).stl"
+            cp "$out/$p.stl" "$stl/${name}_v$((n + 1)).stl"
+            echo "NEW    $p -> stl/${name}_v$((n + 1)).stl"
         fi
     done
     exit 0
