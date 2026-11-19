@@ -5,8 +5,9 @@ TEST(tap_after_window) {
   Gestures g;
   CHECK(g.onButton(0, true) == Out::None);
   CHECK(g.onButton(100, false) == Out::None);
-  CHECK(g.onTick(349) == Out::None);
-  CHECK(g.onTick(351) == Out::Tap);
+  CHECK(DOUBLE_MS == 200);
+  CHECK(g.onTick(100 + DOUBLE_MS - 1) == Out::None);
+  CHECK(g.onTick(100 + DOUBLE_MS + 1) == Out::Tap);
   CHECK(g.onTick(400) == Out::None);
 }
 
@@ -16,8 +17,8 @@ TEST(double_after_window) {
   g.onButton(100, false);
   CHECK(g.onButton(300, true) == Out::None);
   CHECK(g.onButton(400, false) == Out::None);
-  CHECK(g.onTick(649) == Out::None);
-  CHECK(g.onTick(651) == Out::Double);
+  CHECK(g.onTick(400 + DOUBLE_MS - 1) == Out::None);
+  CHECK(g.onTick(400 + DOUBLE_MS + 1) == Out::Double);
   CHECK(g.onTick(1000) == Out::None);
 }
 
@@ -37,8 +38,8 @@ TEST(seven_presses) {
   Gestures g;
   uint32_t last = 0;
   CHECK(pressBurst(g, 7, &last) == Out::None);
-  CHECK(g.onTick(last + 249) == Out::None);
-  CHECK(g.onTick(last + 251) == Out::Seven);
+  CHECK(g.onTick(last + DOUBLE_MS - 1) == Out::None);
+  CHECK(g.onTick(last + DOUBLE_MS + 1) == Out::Seven);
   CHECK(g.onTick(last + 500) == Out::None);
 }
 
@@ -46,7 +47,7 @@ TEST(three_presses_refused) {
   Gestures g;
   uint32_t last = 0;
   pressBurst(g, 3, &last);
-  CHECK(g.onTick(last + 251) == Out::Refuse);
+  CHECK(g.onTick(last + DOUBLE_MS + 1) == Out::Refuse);
 }
 
 TEST(second_press_cannot_hold) {
@@ -58,7 +59,7 @@ TEST(second_press_cannot_hold) {
   CHECK(g.holdProgress(1100) < 0);
   CHECK(g.onDetent(1150, 1) == Out::None);
   CHECK(g.onButton(1200, false) == Out::None);
-  CHECK(g.onTick(1451) == Out::Double);
+  CHECK(g.onTick(1200 + DOUBLE_MS + 1) == Out::Double);
 }
 
 TEST(hold_fires_at_threshold_while_held) {
@@ -111,7 +112,7 @@ TEST(rotation_during_window_keeps_tap) {
   g.onButton(0, true);
   g.onButton(100, false);
   CHECK(g.onDetent(200, 1) == Out::RotCW);
-  CHECK(g.onTick(351) == Out::Tap);
+  CHECK(g.onTick(100 + DOUBLE_MS + 1) == Out::Tap);
 }
 
 TEST(long_release_no_tap) {
@@ -125,7 +126,7 @@ TEST(stale_burst_flushed_by_next_press) {
   Gestures g;
   g.onButton(0, true);
   g.onButton(100, false);
-  CHECK(g.onButton(600, true) == Out::Tap);  // no tick ran in between
-  g.onButton(700, false);
-  CHECK(g.onTick(951) == Out::Tap);
+  CHECK(g.onButton(100 + DOUBLE_MS + 50, true) == Out::Tap);  // no tick ran in between
+  g.onButton(700, false);  // second burst
+  CHECK(g.onTick(700 + DOUBLE_MS + 1) == Out::Tap);
 }

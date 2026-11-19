@@ -37,14 +37,16 @@ bash firmware/knob/controller/test/run.sh
 |---|---|---|
 | 1 press | `TAP` (command ⇄ dictation) | next pattern, stay on it |
 | 2 presses | `DOUBLE` (sleep ⇄ wake) | back to cycling |
-| 7 presses | enter demo (white double-flash) | leave demo |
+| 7 presses | enter demo (quick fade out/in) | leave demo |
 | other counts | red blink, nothing sent | red blink |
 | hold 0.7 s | `HOLD` (hard mute toggle), ring fills first | nothing |
 | hold + turn | brightness gauge (saved on release) | same |
 | turn | `ROT +1` / `ROT -1` (scroll) | nothing |
 
-Presses count as one burst while each comes within 250 ms of the last
-release; the burst acts 250 ms after the last release. While muted, taps
+Presses count as one burst while each comes within 200 ms of the last
+release; the burst acts 200 ms after the last release. An accepted tap or
+double (and a demo pattern change) is acknowledged by a 400 ms fade out and
+back in; the change swaps in at the dark point. While muted, taps
 are still sent (Talon refuses them) and the ring blinks red.
 
 ## Protocol
@@ -67,7 +69,8 @@ everything before `HELLO`.
 
 | Constant | Where | Default |
 |---|---|---|
-| `HOLD_MS`, `DOUBLE_MS` | `src/gestures.h` | 700, 250 |
+| `HOLD_MS`, `DOUBLE_MS` | `src/gestures.h` | 700, 200 |
+| `FADE_MS` | `src/render.h` | 400 |
 | `DEMO_CYCLE_MS` | `src/demo.h` | 10000 |
 | `WATCHDOG_MS` | `src/protocol.h` | 8000 |
 | `RING_TOP`, `RING_CW` | `controller.ino` | 0, true |

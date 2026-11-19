@@ -37,10 +37,13 @@ uint8_t master = MASTER_DEFAULT;
 Flourish flourish = Flourish::None;
 int8_t flourishDir = 1;
 uint32_t flourishAt = 0, lastShow = 0;
+Frame shown;     // the frame last sent to the ring
+Frame fadeFrom;  // frozen during a fade's dark-going half, so changes swap in the dark
 
 uint8_t readAB() { return (digitalRead(CLK) << 1) | digitalRead(DT); }
 
 void startFlourish(Flourish f, int8_t dir, uint32_t now) {
+  if (f == Flourish::Fade) fadeFrom = shown;
   flourish = f;
   flourishDir = dir;
   flourishAt = now;
@@ -64,7 +67,7 @@ void handle(Out out, uint32_t now, int8_t dir = 1) {
   switch (out) {
     case Out::Seven:
       demo.toggle(now);
-      startFlourish(Flourish::Demo, 1, now);
+      startFlourish(Flourish::Fade, 1, now);
       return;
     case Out::Refuse:
       startFlourish(Flourish::Refuse, 1, now);
@@ -84,6 +87,7 @@ void handle(Out out, uint32_t now, int8_t dir = 1) {
   if (demo.active()) {  // lights only: nothing goes to the host
     if (out == Out::Tap) demo.next(now);
     if (out == Out::Double) demo.cycle(now);
+    if (out == Out::Tap || out == Out::Double) startFlourish(Flourish::Fade, 1, now);
     return;
   }
   // Events are sent even with no host heard from (harmless); the ring just
@@ -100,11 +104,10 @@ void handle(Out out, uint32_t now, int8_t dir = 1) {
   if (f != Flourish::None) startFlourish(f, dir, now);
 }
 
-bool flourishFrame(uint32_t now, Frame& f) {
-  if (flourish == Flourish::None) return false;
-  if (renderFlourish(flourish, flourishDir, now - flourishAt, f)) return true;
-  flourish = Flourish::None;
-  return false;
+// Applies the active flourish on top of the base frame already in f.
+void applyFlourish(uint32_t now, Frame& f) {
+  if (flourish == Flourish::None) return;
+  if (!renderFlourish(flourish, flourishDir, now - flourishAt, f)) flourish = Flourish::None;
 }
 
 void render(uint32_t now) {
@@ -113,14 +116,16 @@ void render(uint32_t now) {
   uint32_t heldMs = p >= 0 ? (uint32_t)(p * HOLD_MS) : 0;
   if (gestures.adjusting()) {
     renderGauge(master, f);
-  } else if (demo.active()) {
-    if (!flourishFrame(now, f)) renderDemo(demo.pattern(now), now, f);
-  } else if (p >= 0 && heldMs >= PROGRESS_DELAY_MS && !watchdog.expired(now)) {
+  } else if (!demo.active() && p >= 0 && heldMs >= PROGRESS_DELAY_MS && !watchdog.expired(now)) {
     float fill = (float)(heldMs - PROGRESS_DELAY_MS) / (HOLD_MS - PROGRESS_DELAY_MS);
     renderHoldProgress(fill, current.state == State::Mute ? lastAwakeC1 : RED, f);
-  } else if (!flourishFrame(now, f)) {
-    renderLook(watchdog.expired(now) ? LOOK_DISCONNECTED : current, now, f);
+  } else {
+    if (flourish == Flourish::Fade && now - flourishAt < FADE_MS / 2) f = fadeFrom;
+    else if (demo.active()) renderDemo(demo.pattern(now), now, f);
+    else renderLook(watchdog.expired(now) ? LOOK_DISCONNECTED : current, now, f);
+    applyFlourish(now, f);
   }
+  shown = f;
   for (int i = 0; i < N_LEDS; i++)
     ring.setPixelColor(physIndex(i, RING_TOP, RING_CW), toPixel(f.px[i], f.level[i], master, HW_CAP));
   ring.show();

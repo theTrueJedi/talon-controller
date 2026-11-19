@@ -10,7 +10,8 @@ Rgb hsv(uint16_t hue16) {
   return Rgb{255, 0, 0};
 }
 
-static uint16_t ledHue(uint32_t base, int i) { return (uint16_t)(base + i * 65536L / N_LEDS); }
+// Hue falls with the LED index, so the rainbow moves clockwise as base grows.
+static uint16_t ledHue(uint32_t base, int i) { return (uint16_t)(base - i * 65536L / N_LEDS); }
 
 void renderDemo(int pattern, uint32_t t, Frame& f) {
   clearFrame(f);

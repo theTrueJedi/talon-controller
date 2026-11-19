@@ -11,9 +11,9 @@ muted is refused, double-tap sleeps and wakes.
 
 | ID | Do this | Expect |
 |---|---|---|
-| T1 | Look at the ring with Talon running | Solid green (command) |
-| T2 | Say "dictation mode", then "command mode" | Blue→purple spin, then green, within ~0.5 s |
-| T3 | Tap the knob | Green double-beat, then mode flips ~¼ s after release |
+| T1 | Look at the ring with Talon running | Solid green (command), green not teal |
+| T2 | Say "dictation mode", then "command mode" | Blue→purple spin moving clockwise, then green, within ~0.5 s |
+| T3 | Tap the knob | ~0.2 s after release the ring fades out and back in as the new mode (400 ms) |
 | T4 | Double-tap | Amber slow breathe (asleep); double-tap again → back to the prior mode |
 | T5 | Press and hold | Red fill sweeps clockwise; at 0.7 s solid red, mic is None |
 | T6 | While muted, tap | Two red blinks, nothing changes |
@@ -23,12 +23,12 @@ muted is refused, double-tap sleeps and wakes.
 | T10 | Unplug and replug the USB | Brightness kept; ring back on the mode look within ~3 s; `controller status` says connected |
 | T11 | Quit Talon | After ~8 s: dim red slow breathe |
 | T12 | Restart Talon while muted, then hold | Your previous mic comes back |
-| T13 | Press 7 times quickly | White double-flash, rainbow spin; Talon untouched |
+| T13 | Press 7 times quickly | Fade out/in into the rainbow spin (moving clockwise); Talon untouched |
 | T14 | Wait 10 s each | spin → wash → comet → breathing rainbow, repeating |
-| T15 | In demo: tap | Next pattern, and it stays |
+| T15 | In demo: tap | Fade into the next pattern, and it stays |
 | T16 | In demo: double-tap | Back to cycling |
 | T17 | In demo: turn, hold | Nothing (no scroll, no mute); hold + turn still sets brightness |
-| T18 | Press 7 times again | White double-flash, back to the mode look |
+| T18 | Press 7 times again | Fade back to the mode look |
 | T19 | Press 3 times | Red blink, nothing happens |
 
 **Judgment calls to report back:**
@@ -36,7 +36,7 @@ muted is refused, double-tap sleeps and wakes.
 | ID | Question |
 |---|---|
 | J1 | Solid red (muted) vs dim red breathe (Talon down): can you tell them apart across the room? |
-| J2 | Tap latency (~¼ s): acceptable? |
+| J2 | Tap latency (~0.2 s): acceptable? |
 | J3 | Dim looks (sleep, disconnected) at the default 60 % brightness: visible enough, or too dim? |
 | J4 | 43 % power cap (`HW_CAP`): bright enough at 100 %? |
 | J5 | Does LED 0 sit at 12 o'clock? (else `RING_TOP` in `controller.ino`) |

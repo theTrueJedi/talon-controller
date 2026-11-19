@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include "demo.h"
 #include "testing.h"
 
@@ -95,6 +97,15 @@ TEST(spin_hues_distinct) {
   renderDemo(0, 0, f);
   CHECK(!same(f.px[0], f.px[6]));
   CHECK(f.level[0] == 1);
+}
+
+TEST(demo_spin_moves_clockwise) {
+  Frame a, b;
+  renderDemo(0, 0, a);
+  renderDemo(0, 137, b);  // ~1/12 of the hue wheel at 40 hue units per ms
+  CHECK(std::abs(b.px[1].r - a.px[0].r) <= 8);
+  CHECK(std::abs(b.px[1].g - a.px[0].g) <= 8);
+  CHECK(std::abs(b.px[1].b - a.px[0].b) <= 8);
 }
 
 TEST(breathe_pulses) {

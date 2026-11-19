@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 const uint32_t HOLD_MS = 700;    // hold threshold (fires while still held)
-const uint32_t DOUBLE_MS = 250;  // max gap between presses in one burst
+const uint32_t DOUBLE_MS = 200;  // max gap between presses in one burst
 
 enum class Out : uint8_t {
   None, Tap, Double, Seven, Refuse, Hold, RotCW, RotCCW, BrightUp, BrightDown, AdjustEnd

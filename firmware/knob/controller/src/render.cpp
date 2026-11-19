@@ -16,10 +16,8 @@ float tri(float x) {  // 0 -> 1 -> 0 over one unit
   float u = frac(x);
   return u < 0.5f ? 2 * u : 2 - 2 * u;
 }
-float bump(uint32_t t, uint32_t len) { return t < len ? sinf(PI_F * t / len) : 0; }
 
 const Rgb WHITE = {255, 255, 255};
-const Rgb PRESS_GREEN = {0x18, 0xff, 0x6a};
 const Rgb TURN_PURPLE = {0xc0, 0x3b, 0xff};
 const Rgb REFUSE_RED = {0xff, 0x1a, 0x1a};
 
@@ -60,7 +58,7 @@ void renderLook(const Look& look, uint32_t now, Frame& f) {
       uint32_t T = 8000 - 70 * look.speed;
       float phase = (float)(now % T) / T;
       for (int i = 0; i < N_LEDS; i++) {
-        f.px[i] = lerp(look.c1, look.c2, tri((float)i / N_LEDS + phase));
+        f.px[i] = lerp(look.c1, look.c2, tri((float)i / N_LEDS - phase));  // moves clockwise
         f.level[i] = lvl;
       }
       break;
@@ -73,12 +71,15 @@ void renderGauge(uint8_t masterPct, Frame& f) { fillArc(f, masterPct / 100.0f * 
 void renderHoldProgress(float progress, Rgb color, Frame& f) { fillArc(f, progress * N_LEDS, color, 1); }
 
 bool renderFlourish(Flourish kind, int8_t dir, uint32_t e, Frame& f) {
-  clearFrame(f);
+  if (kind != Flourish::Fade) clearFrame(f);
   switch (kind) {
-    case Flourish::Press:  // heartbeat: two 120 ms bumps, 80 ms apart
-      if (e > 400) return false;
-      fillFrame(f, PRESS_GREEN, 0.36f * (e < 200 ? bump(e, 120) : bump(e - 200, 120)));
+    case Flourish::Fade: {  // out to dark and back in
+      if (e > FADE_MS) return false;
+      float half = FADE_MS / 2.0f;
+      float k = fabsf(1 - e / half);
+      for (int i = 0; i < N_LEDS; i++) f.level[i] *= k;
       return true;
+    }
     case Flourish::Turn:  // half ring from noon in the turn direction, fading
       if (e > 300) return false;
       for (int k = 0; k < N_LEDS / 2; k++) {
@@ -91,10 +92,6 @@ bool renderFlourish(Flourish kind, int8_t dir, uint32_t e, Frame& f) {
       if (e > 300) return false;
       if (e < 100 || e >= 200) fillFrame(f, REFUSE_RED, 0.70f);
       return true;
-    case Flourish::Demo:  // two 100 ms white flashes
-      if (e > 300) return false;
-      if (e < 100 || e >= 200) fillFrame(f, WHITE, 0.60f);
-      return true;
     case Flourish::None:
       break;
   }
@@ -105,7 +102,7 @@ Flourish feedbackFor(Out out, bool muted, bool hostUp) {
   switch (out) {
     case Out::Tap:
     case Out::Double:
-      return (muted || !hostUp) ? Flourish::Refuse : Flourish::Press;
+      return (muted || !hostUp) ? Flourish::Refuse : Flourish::Fade;
     case Out::Hold:
       return hostUp ? Flourish::None : Flourish::Refuse;
     case Out::RotCW:
@@ -120,8 +117,9 @@ uint32_t toPixel(Rgb c, float level, uint8_t masterPct, uint8_t hwCap) {
   float s = level * masterPct / 100.0f;
   if (s <= 0) return 0;
   if (s > 1) s = 1;
-  float g = powf(s, 2.6f) * hwCap / 255.0f;
-  uint32_t r = lroundf(c.r * g), gr = lroundf(c.g * g), b = lroundf(c.b * g);
+  float g = powf(s, 2.6f) * hwCap;
+  auto lin = [](uint8_t v) { return powf(v / 255.0f, 2.2f); };
+  uint32_t r = lroundf(lin(c.r) * g), gr = lroundf(lin(c.g) * g), b = lroundf(lin(c.b) * g);
   if (!r && !gr && !b) {  // too dim to show: light only the brightest channel(s) at 1
     uint8_t m = c.r > c.g ? (c.r > c.b ? c.r : c.b) : (c.g > c.b ? c.g : c.b);
     if (!m) return 0;

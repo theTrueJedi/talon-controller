@@ -67,9 +67,10 @@ TEST(hold_progress_half) {
 
 TEST(flourish_finishes) {
   Frame f;
-  CHECK(renderFlourish(Flourish::Press, 1, 0, f));
-  CHECK(renderFlourish(Flourish::Press, 1, 399, f));
-  CHECK(!renderFlourish(Flourish::Press, 1, 401, f));
+  fillFrame(f, Rgb{255, 255, 255}, 1);
+  CHECK(renderFlourish(Flourish::Fade, 1, 0, f));
+  CHECK(renderFlourish(Flourish::Fade, 1, 399, f));
+  CHECK(!renderFlourish(Flourish::Fade, 1, 401, f));
   CHECK(!renderFlourish(Flourish::Turn, 1, 301, f));
   CHECK(!renderFlourish(Flourish::Refuse, 1, 301, f));
   CHECK(!renderFlourish(Flourish::None, 1, 0, f));
@@ -103,13 +104,36 @@ TEST(toPixel_gamma_monotonic) {
   CHECK(toPixel(Rgb{255, 0, 0}, 1.0f, 100, 110) == (110u << 16));
 }
 
-TEST(demo_flourish_finishes) {
+TEST(fade_dims_the_frame_out_and_in) {
   Frame f;
-  CHECK(renderFlourish(Flourish::Demo, 1, 50, f));
-  CHECK(f.level[0] > 0);
-  CHECK(renderFlourish(Flourish::Demo, 1, 150, f));
-  CHECK(f.level[0] == 0);
-  CHECK(!renderFlourish(Flourish::Demo, 1, 301, f));
+  fillFrame(f, CMD.c1, 0.8f);
+  renderFlourish(Flourish::Fade, 1, 0, f);
+  CHECK_NEAR(f.level[0], 0.8, 1e-3);
+  CHECK(same(f.px[0], CMD.c1));
+  fillFrame(f, CMD.c1, 0.8f);
+  renderFlourish(Flourish::Fade, 1, 200, f);
+  CHECK_NEAR(f.level[0], 0.0, 1e-3);
+  fillFrame(f, CMD.c1, 0.8f);
+  renderFlourish(Flourish::Fade, 1, 300, f);
+  CHECK_NEAR(f.level[5], 0.4, 1e-3);
+}
+
+TEST(gradspin_moves_clockwise) {
+  Frame a, b;
+  uint32_t T = 8000 - 70 * 30;
+  renderLook(DICT, 0, a);
+  renderLook(DICT, T / N_LEDS, b);
+  CHECK(same(b.px[1], a.px[0]));  // what LED 0 showed has moved to LED 1
+  CHECK(same(b.px[6], a.px[5]));
+}
+
+TEST(toPixel_decodes_screen_colors) {
+  // Playground colors are sRGB: 18ff6a must light as green, not teal.
+  uint32_t p = toPixel(Rgb{0x18, 0xff, 0x6a}, 1.0f, 100, 255);
+  CHECK(((p >> 8) & 0xff) == 255);
+  uint32_t b = p & 0xff;
+  CHECK(b >= 30 && b <= 45);
+  CHECK((p >> 16) <= 1);
 }
 
 TEST(toPixel_dim_keeps_hue) {
@@ -121,8 +145,8 @@ TEST(toPixel_dim_keeps_hue) {
 }
 
 TEST(feedback_when_host_up) {
-  CHECK(feedbackFor(Out::Tap, false, true) == Flourish::Press);
-  CHECK(feedbackFor(Out::Double, false, true) == Flourish::Press);
+  CHECK(feedbackFor(Out::Tap, false, true) == Flourish::Fade);
+  CHECK(feedbackFor(Out::Double, false, true) == Flourish::Fade);
   CHECK(feedbackFor(Out::RotCW, false, true) == Flourish::Turn);
   CHECK(feedbackFor(Out::Hold, false, true) == Flourish::None);
 }

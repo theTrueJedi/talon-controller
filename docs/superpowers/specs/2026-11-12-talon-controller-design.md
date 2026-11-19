@@ -406,3 +406,10 @@ Meet tab, focus it, press ⌘D, and return.
   - Always boots into control mode, never demo (my call).
 - **Accepted by Evan:** demo deliberately breaks the "never stale" anti-goal (the ring no longer shows Talon's state), no mute on entering demo.
 - **Approaches:** device-side (chosen); Talon-driven demo (rejected: dies when Talon is down, and demo needs no PC).
+
+## Amendment 2026-11-18b: ring tweaks (Evan)
+
+- Press-burst window 250 → **200 ms**.
+- The green press heartbeat and the white demo double-flash are replaced by one **400 ms fade out and back in**; the change swaps in at the dark point. Also used for demo pattern changes. The red "refused" double-blink stays.
+- Gradient spins and demo rainbow spins move **clockwise**.
+- Colors are treated as screen (sRGB) colors and decoded per channel before reaching the LEDs, so ring colors match the playground (command green had read as teal).
