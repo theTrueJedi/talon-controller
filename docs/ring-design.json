@@ -12,10 +12,10 @@
     {
       "id": "sleep",
       "c1": "#ff9a1a",
-      "c2": "#3a1c00",
+      "c2": "#c07414",
       "pat": "breathe",
       "speed": 12,
-      "bri": 50
+      "bri": 60
     },
     {
       "id": "command",
