@@ -65,9 +65,9 @@ Studio and do not rotate them. Only the shell needs support, and only on one edg
 
 `stl/cap_v3b.stl` is a shorter knob to compare: 10 mm disc instead of 14
 (exported by hand with `-D cap_disc_t=10`; same 29 mm knurl and bore).
-`cap_v4` (2026-11-18) is 34 mm across, 8.5 mm disc, for the `hood_v3`
+`cap_6mm_v1` (2026-11-18) is 34 mm across, 8.5 mm disc, for the `hood_6mm_v1`
 white-PLA diffuser (6 mm glow gap, 0.8 mm top, 1.0 mm wall; same outside
-diameter, so `shell_v6` still fits). Print `cap_v4` and `hood_v3` together:
+diameter, so `shell_v6` still fits). Print `cap_6mm_v1` and `hood_6mm_v1` together:
 the new knob sits lower and only fits over the shorter hood.
 
 "None" means the part was shaped to print without supports: the shell's
@@ -102,7 +102,7 @@ them.
 its weight.
 
 The hood is the only part the light shines through, so it is the only big
-part in a light-passing material (white PLA from `hood_v3`). Everything else is opaque so light does not leak.
+part in a light-passing material (white PLA from `hood_6mm_v1`). Everything else is opaque so light does not leak.
 
 The C3-Zero sits face-up in a cradle on the bottom plate, 11.5 mm off
 centre (`c3_x`), away from its wired row. Its USB-C port sits about 1.4 mm
