@@ -1,7 +1,8 @@
 # Controller: hands-on checks
 
 Firmware `firmware/knob/controller` is flashed and the add-on is live.
-Mark each row ✅ / ❌ and note what you saw.
+Mark each row ✅ / ❌ and note what you saw. **Quit and reopen Talon once
+first**: it clears leftovers from the build's add-on reloads.
 
 **Already verified by Claude (serial + Talon REPL, 2026-11-18):** PING/HELLO,
 garbage lines ignored, knob events reach the Mac; in Talon: tap flips
