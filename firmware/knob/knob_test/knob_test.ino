@@ -16,6 +16,7 @@ Adafruit_NeoPixel ring(N, RING_PIN, NEO_GRB + NEO_KHZ800);
 const int8_t QDEC[16] = {0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0};
 
 uint8_t ab;          // last 2-bit state (CLK<<1 | DT)
+uint8_t restAB;      // state at a click (read at boot)
 int accum = 0;       // edges since the last detent
 int edgesSeen = 0;   // raw edges since the last detent (for the log)
 long pos = 0;        // detent count
@@ -40,7 +41,7 @@ void setup() {
   pinMode(CLK, INPUT_PULLUP);
   pinMode(DT, INPUT_PULLUP);
   pinMode(SW, INPUT_PULLUP);  // KY-040 boards often lack a pull-up on SW
-  ab = readAB();
+  ab = restAB = readAB();
   ring.begin();
   ring.setBrightness(MAX_BRIGHT);
   draw();
@@ -49,7 +50,7 @@ void setup() {
 }
 
 void loop() {
-  // Rotation: poll fast; count a detent at 4 edges, or 2 edges on reaching a rest state.
+  // Rotation: poll fast; count a detent on returning to the rest state.
   uint8_t now = readAB();
   if (now != ab) {
     int8_t d = QDEC[(ab << 2) | now];
@@ -57,8 +58,11 @@ void loop() {
     accum += d;
     edgesSeen++;
     ab = now;
-    bool rest = (now == 0b11 || now == 0b00);
-    if (abs(accum) >= 4 || (rest && abs(accum) >= 2)) {
+    // Full-step encoder: 4 edges per click, passing through the opposite
+    // state halfway. Count only on returning to the true rest state;
+    // >= 3 tolerates one skipped edge on fast spins.
+    bool rest = (now == restAB);
+    if (rest && abs(accum) >= 3) {
       int step = accum > 0 ? 1 : -1;
       pos += step;
       Serial.printf("[knob-test] turn %s  pos=%ld  (edges this click: %d)\n",
@@ -66,7 +70,8 @@ void loop() {
       accum = 0;
       edgesSeen = 0;
       draw();
-    } else if (rest && accum == 0) {
+    } else if (rest) {
+      accum = 0;  // wiggled back to the same click: no step
       edgesSeen = 0;
     }
   }
