@@ -69,6 +69,9 @@ Studio and do not rotate them. Only the shell needs support, and only on one edg
 white-PLA diffuser (6 mm glow gap, 0.8 mm top, 1.0 mm wall; same outside
 diameter, so `shell_v6` still fits). Print `cap_6mm_v1` and `hood_6mm_v1` together:
 the new knob sits lower and only fits over the shorter hood.
+`hood_6mm_v2` thins the wall to 0.84 mm (two 0.42 mm loops, close to the
+0.8 mm top) and rounds the hood with 720 segments instead of 180; same
+knob (`cap_6mm_v1`), same fit.
 
 "None" means the part was shaped to print without supports: the shell's
 inside front is a 45 degree ramp and its front screw posts are teardrops;

@@ -3,6 +3,7 @@
 // Expects lib/params.scad and parts/face.scad (radial_box) included first.
 
 module hood() {
+    $fa = hood_fa;
     difference() {
         union() {
             // Outer wall.

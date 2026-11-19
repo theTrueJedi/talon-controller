@@ -453,3 +453,6 @@ denser and needs thinner walls:
   so with a 6 mm gap and 1.5 mm float the knob must be at least 7.95 mm tall.
 - The "covers LEDs" limit is now `cap_d <= ring_id - 2` (35) instead of a
   fixed 32; a 34 mm knob still sits 1.5 mm inside the ring's inner edge.
+- Follow-up (`hood_6mm_v2`): `hood_wall` 1.0 -> 0.84 (two 0.42 mm loops,
+  matching the 0.8 top), `hood_id` -> 53.52 (OD still 55.2); `hood_fa` 0.5 gives
+  the hood 720 segments round (global `$fa` 2 gave 180). Well wall stays 1.6.

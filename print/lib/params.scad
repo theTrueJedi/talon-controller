@@ -66,9 +66,10 @@ weight_roof = 1.2;                      // plate over the sealed weight pockets
 // ---- Face and hood ----
 face_t = 1.5;
 floor_t = 1.5;
-hood_id = 53.2;                         // 52 + 2 x 0.6: wall thinned inward, hood OD (and the shell's seat lip) unchanged
-hood_wall = 1.0;                        // white PLA diffuser (2026-11-18; was 1.6 clear PETG)
+hood_id = 53.52;                        // hood OD 55.2 - 2 x hood_wall: wall thinned inward, hood OD (and the shell's seat lip) unchanged
+hood_wall = 0.84;                       // 2 perimeters, ~ the 0.8 top (2026-11-18; 1.0 in hood_6mm_v1, 1.6 clear PETG)
 hood_top_t = 0.8;                       // 4 layers, printed on the bed (was 2)
+hood_fa = 0.5;                          // hood facet angle: 720 segments round (global $fa 2 gives 180)
 glow_gap = 6;                           // was 8
 well_id = 16;
 collar_hole_d = 7.2;
