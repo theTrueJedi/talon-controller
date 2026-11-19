@@ -72,6 +72,10 @@ the new knob sits lower and only fits over the shorter hood.
 `hood_6mm_v2` thins the wall to 0.84 mm (two 0.42 mm loops, close to the
 0.8 mm top) and rounds the hood with 720 segments instead of 180; same
 knob (`cap_6mm_v1`), same fit.
+`stl/hood_6mm_v2b.stl` is a thinner diffuser to compare: 0.4 mm top (2 layers),
+0.42 mm wall (1 loop), glow gap 6.4 so the outside stays 9.9 mm tall and
+`cap_6mm_v1` sits the same 1.5 mm above it (exported by hand with
+`-D hood_wall=0.42 -D hood_id=54.36 -D hood_top_t=0.4 -D glow_gap=6.4`).
 
 "None" means the part was shaped to print without supports: the shell's
 inside front is a 45 degree ramp and its front screw posts are teardrops;
