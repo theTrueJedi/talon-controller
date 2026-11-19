@@ -13,7 +13,7 @@
       "id": "sleep",
       "c1": "#ff9a1a",
       "c2": "#c07414",
-      "pat": "breathe",
+      "pat": "solid",
       "speed": 12,
       "bri": 60
     },

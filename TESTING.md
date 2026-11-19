@@ -14,7 +14,7 @@ muted is refused, double-tap sleeps and wakes.
 | T1 | Look at the ring with Talon running | Solid green (command), green not teal |
 | T2 | Say "dictation mode", then "command mode" | Mostly purple with a blue band, spinning clockwise, then green, within ~0.5 s |
 | T3 | Tap the knob | ~0.2 s after release the ring fades out and back in as the new mode (250 ms) |
-| T4 | Double-tap | Amber slow breathe (asleep); double-tap again → back to the prior mode |
+| T4 | Double-tap | Solid orange (asleep); double-tap again → back to the prior mode |
 | T5 | Press and hold | Red fill sweeps clockwise; at 0.7 s solid red, mic is None |
 | T6 | While muted, tap | Two red blinks, nothing changes |
 | T7 | While muted, hold | Fill in green, then mic restored and ring back to the mode look |

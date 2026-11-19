@@ -416,3 +416,4 @@ Meet tab, focus it, press ⌘D, and return.
 - Dictation is **mostly purple with some blue**: gradspin draws c1 over ~70 % of the ring (squared gradient), and dictation's colors are now c1 purple `9a3bff`, c2 blue `2f6bff` (also in `docs/ring-design.json`). Mixed becomes mostly cyan with a blue band.
 - Turn flash: both directions start at noon; clockwise lights 12→5, counter-clockwise 12→7.
 - Sleep: brightness 25 → 60 and breathe low point 3a1c00 → c07414 (same orange at 75 %). At the old settings the LEDs rounded to one step of pure red.
+- Sleep is now **solid** orange at 60: the breathe visibly stepped (too few LED levels at that brightness).
