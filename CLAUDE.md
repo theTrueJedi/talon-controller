@@ -32,7 +32,11 @@ Wiring: one right-angle header on the C3; jumpers plug in only there.
 **Next (2026-11-18):** print `bottom_v9` and `c3_clip_v3` (shell stays v6), check (i)-(l) in `print/README.md`, glue the 15 x 60 TPU pads. Guide: `print/guide/talon-housing-guide.pdf`. Header legs still to measure (checkpoint h).
 Amended 2026-11-18: plate lip, two-tooth clip, board 0.4 mm inward, port tab with hooks (pinches the board), 2x 15x60 TPU pads.
 
-**Later:** write the firmware and add-on plan with superpowers:writing-plans.
+**Ring wired and passing (2026-11-18):** `firmware/knob/ring_test/` flashed via arduino-cli
+(`~/.local/bin`, esp32 core 4.0.0, port `/dev/cu.usbmodem101`); 9-pin header on, ring on GPIO0, no
+330 Ω resistor. Serial log: `stty -f <port> 115200 raw; cat <port>` (`arduino-cli monitor` exits without a TTY).
+
+**Later:** wire the knob, then write the firmware and add-on plan with superpowers:writing-plans.
 Its first task: confirm standard-library serial (no pyserial) can open,
 read, and write the device from Talon 1.0.
 
