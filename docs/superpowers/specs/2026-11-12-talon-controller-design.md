@@ -417,3 +417,4 @@ Meet tab, focus it, press ⌘D, and return.
 - Turn flash: both directions start at noon; clockwise lights 12→5, counter-clockwise 12→7.
 - Sleep: brightness 25 → 60 and breathe low point 3a1c00 → c07414 (same orange at 75 %). At the old settings the LEDs rounded to one step of pure red.
 - Sleep is now **solid** orange at 60: the breathe visibly stepped (too few LED levels at that brightness).
+- Sleep orange deepened ff9a1a → ff7a00.
