@@ -25,9 +25,23 @@ Taps are refused while muted (the ring blinks red); only a hold unmutes.
 The mic you muted from is saved in `addon/.last_mic` (git-ignored), so it
 survives a Talon restart. If that mic is gone, unmute picks `System Default`.
 
-## Voice command
+## Voice commands
 
-`controller status` shows the connection and the ring's current state.
+- `controller status` shows the connection and the ring's current state.
+- `controller tuner` opens the look tuner at `http://127.0.0.1:8737`
+  (this Mac only).
+
+## Look tuner
+
+One tab per mode with pattern, two colors, speed and brightness. The ring
+shows the selected tab live (the knob keeps working); close the page, or
+leave it 3 s without contact, and the ring returns to Talon's real mode.
+**Save all** writes `addon/looks.json`, which Talon uses at once. Commit it
+to carry your looks to another machine. Brightness on screen is approximate;
+judge it on the ring.
+
+Which look wins: a `settings():` override, then `looks.json`, then the
+defaults below.
 
 ## Settings
 

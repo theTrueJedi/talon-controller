@@ -31,6 +31,11 @@ muted is refused, double-tap sleeps and wakes.
 | T18 | Press 7 times again | Fade back to the mode look |
 | T19 | Press 3 times | Red blink, nothing happens |
 
+| T20 | Say "controller tuner" | Browser opens the Ring tuner page |
+| T21 | Pick a tab, drag a slider or color | Ring follows within a blink |
+| T22 | Close the tab | Within ~3 s the ring is back on Talon's real mode |
+| T23 | Change a look, Save all, say "command mode" | Ring uses the saved look |
+
 **Judgment calls to report back:**
 
 | ID | Question |
