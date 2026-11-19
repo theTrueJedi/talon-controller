@@ -18,6 +18,7 @@ enum class Flourish : uint8_t { None, Press, Turn, Refuse, Demo };
 bool renderFlourish(Flourish kind, int8_t dir, uint32_t elapsedMs, Frame& f);  // false when finished
 
 // Perceived fraction s = level * master/100; channel = c * s^2.6 * hwCap/255.
+// A lit LED never goes dark: if every channel rounds to 0, the brightest is 1.
 uint32_t toPixel(Rgb c, float level, uint8_t masterPct, uint8_t hwCap);  // 0x00RRGGBB
 int physIndex(int logical, int topIndex, bool cw);
 

@@ -106,12 +106,13 @@ uint32_t toPixel(Rgb c, float level, uint8_t masterPct, uint8_t hwCap) {
   if (s <= 0) return 0;
   if (s > 1) s = 1;
   float g = powf(s, 2.6f) * hwCap / 255.0f;
-  auto ch = [&](uint8_t v) -> uint32_t {
-    if (!v) return 0;
-    long out = lroundf(v * g);
-    return out < 1 ? 1 : (uint32_t)out;
-  };
-  return (ch(c.r) << 16) | (ch(c.g) << 8) | ch(c.b);
+  uint32_t r = lroundf(c.r * g), gr = lroundf(c.g * g), b = lroundf(c.b * g);
+  if (!r && !gr && !b) {  // too dim to show: light only the brightest channel(s) at 1
+    uint8_t m = c.r > c.g ? (c.r > c.b ? c.r : c.b) : (c.g > c.b ? c.g : c.b);
+    if (!m) return 0;
+    r = c.r == m, gr = c.g == m, b = c.b == m;
+  }
+  return (r << 16) | (gr << 8) | b;
 }
 
 int physIndex(int logical, int top, bool cw) {

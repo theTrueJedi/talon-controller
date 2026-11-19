@@ -111,3 +111,11 @@ TEST(demo_flourish_finishes) {
   CHECK(f.level[0] == 0);
   CHECK(!renderFlourish(Flourish::Demo, 1, 301, f));
 }
+
+TEST(toPixel_dim_keeps_hue) {
+  // Disconnected look at default master: must stay red, never grey.
+  uint32_t p = toPixel(Rgb{0xff, 0x1a, 0x1a}, 0.17f, 60, 110);
+  CHECK((p >> 16) >= 1);
+  CHECK(((p >> 8) & 0xff) == 0);
+  CHECK((p & 0xff) == 0);
+}
