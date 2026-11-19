@@ -90,12 +90,12 @@ pass checks-bbox
 
 expect_ok   glow-gap-12 -D 'part="cap"' -D glow_gap=12
 expect_fail checks-fail-roof "cap roof over bore too thin" -D cap_disc_t=2
-expect_fail checks-fail-cap  "cap covers LEDs"    -D cap_d=34
+expect_fail checks-fail-cap  "cap covers LEDs"    -D cap_d=36
 expect_fail checks-fail-tab  "key tab on wire slot" -D 'key_tab_angles=[350]'
-expect_fail checks-fail-float "cap_float gap" -D cap_float=0.4
+expect_fail checks-fail-float "cap_float gap" -D cap_float=0.4 -D cap_roof_min=0
 expect_fail checks-fail-cbore "collar counterbore gap" -D collar_clr_h=-0.1
 # press_travel is the measured shaft gap: one source, so raising shaft_gap trips it.
-expect_fail checks-fail-stem  "stem-to-nut gap" -D shaft_gap=1.1
+expect_fail checks-fail-stem  "stem-to-nut gap" -D shaft_gap=1.1 -D cap_roof_min=0
 # Per-feature fits: each one reaches its own check.
 expect_fail checks-fail-socket-fit "driver socket wall too thin" -D socket_fit=2
 expect_fail checks-fail-c3-loose   "C3 front stop gap" -D c3_pinch_fit=0.5
@@ -103,7 +103,7 @@ expect_fail checks-fail-c3-tight   "C3 front stop gap" -D c3_pinch_fit=0
 expect_fail checks-fail-nut-t      "M3 nut thicker than its slot" -D m3_nut_t=2.7
 
 expect_ok   hood-render -D 'part="hood"'
-# ECHO: hood_top_z = 13.1, hood_od = 55.2, key_tab_len = 1.6
+# ECHO: hood_top_z = 9.9, hood_od = 55.2, key_tab_len = 1.6
 dims="$(echo "$err" | sed -n 's/^ECHO: hood_top_z = \([0-9.]*\), hood_od = \([0-9.]*\), key_tab_len = \([0-9.]*\)$/\1 \2 \3/p' | head -1)"
 [ -n "$dims" ] || fail hood-bbox "no hood dims echo"
 bbox="$(python3 "$here/stl_bbox.py" "$out/hood-render.stl")"
@@ -124,7 +124,7 @@ expect_fail halo-off           "part halo needs" -D 'part="halo"'
 
 expect_ok   cap-render -D 'part="cap"'
 # ECHO: cap_d = 29, cap_h = ..., cap_disc = 14
-echo "$err" | grep -q '^ECHO: cap_d = 29, .*cap_disc = 14$' || fail cap-dims "want cap_d 29, cap_disc 14"
+echo "$err" | grep -q '^ECHO: cap_d = 34, .*cap_disc = 8.5$' || fail cap-dims "want cap_d 34, cap_disc 8.5"
 pass cap-dims
 dims="$(echo "$err" | sed -n 's/^ECHO: cap_d = \([0-9.]*\), cap_h = \([0-9.]*\), cap_disc = [0-9.]*$/\1 \2/p' | head -1)"
 [ -n "$dims" ] || fail cap-bbox "no cap dims echo"
@@ -141,7 +141,7 @@ bbox="$(python3 "$here/stl_bbox.py" "$out/cap-plain-render.stl")"
 python3 - "$bbox" <<'PY' || fail cap-plain-bbox "got '$bbox'"
 import sys
 x, y, z = map(float, sys.argv[1].split())
-assert abs(x - 29) <= 0.1 and abs(y - 29) <= 0.1
+assert abs(x - 34) <= 0.1 and abs(y - 34) <= 0.1
 PY
 pass cap-plain-bbox
 

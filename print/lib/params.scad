@@ -66,10 +66,10 @@ weight_roof = 1.2;                      // plate over the sealed weight pockets
 // ---- Face and hood ----
 face_t = 1.5;
 floor_t = 1.5;
-hood_id = 52;
-hood_wall = 1.6;
-hood_top_t = 2;
-glow_gap = 8;
+hood_id = 53.2;                         // 52 + 2 x 0.6: wall thinned inward, hood OD (and the shell's seat lip) unchanged
+hood_wall = 1.0;                        // white PLA diffuser (2026-11-18; was 1.6 clear PETG)
+hood_top_t = 0.8;                       // 4 layers, printed on the bed (was 2)
+glow_gap = 6;                           // was 8
 well_id = 16;
 collar_hole_d = 7.2;
 well_wall = 1.6;                        // hood inner (well) wall thickness
@@ -92,9 +92,9 @@ hood_screw_angles = [45, 225];          // about +Z; 0 = +Y
 halo_t = 0.8;
 
 // ---- Cap ----
-cap_d = 29;
+cap_d = 34;                             // 2026-11-18: was 29
 cap_float = 1.5;
-cap_disc_t = 14;                        // disc thickness, cap underside to top
+cap_disc_t = 8.5;                       // disc thickness, cap underside to top
 stem_od = 15;
 cap_chamfer = 0.8;                      // disc top and bottom edge chamfer
 shaft_clr = 0.6;                        // diametral clearance on the round shaft
@@ -104,7 +104,7 @@ cap_roof_min = 1.2;                     // material over the blind bore
 knurl_n = 36;                           // flutes round a knurled grip
 knurl_flute_d = 1.2;                    // flute cutter diameter
 knurl_depth = 0.4;                      // flute depth into the grip
-dknurl_n = 40;                          // cap diamond knurl: pyramids round
+dknurl_n = 46;                          // cap diamond knurl: pyramids round
 dknurl_depth = 0.7;                     // peak-to-valley depth
 dknurl_angle = 45;                      // helix angle from vertical
 

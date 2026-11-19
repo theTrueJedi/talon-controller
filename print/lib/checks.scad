@@ -4,7 +4,7 @@
 collar_spare = collar_h - (face_t + floor_t + washer_t + nut_t);
 assert(collar_spare >= 1.0, "collar thread: nut has <1mm engagement");
 
-assert(cap_d <= 32, "cap covers LEDs");
+assert(cap_d <= ring_id - 2, "cap covers LEDs");    // disc edge stays 1 mm inside the ring ID
 
 assert(well_id >= nut_corner + 3, "well too narrow for nut driver");
 

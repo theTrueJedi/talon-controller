@@ -439,3 +439,17 @@ the board in, port end under the hooks, lower the inner end, clip on. The
 v6 filler's low step under the plug is gone: with the overhang the plug
 barely enters the wall. Options rejected: a bigger clip (holds only the
 inner end) and foam tape (blocks lifting the board out for BOOT).
+
+## Amendment 2026-11-18 (white PLA diffuser, flatter knob)
+
+Clear PETG showed the LED dots, so the hood moves to white PLA, which is
+denser and needs thinner walls:
+- `glow_gap` 8 -> 6, `hood_top_t` 2 -> 0.8 (top face on the bed),
+  `hood_wall` 1.6 -> 1.0. The wall thins inward (`hood_id` 52 -> 53.2) so
+  `hood_od` (55.2) and the shell's seat lip stay as they are; `shell_v6` still fits.
+- Knob: `cap_d` 29 -> 34, `cap_disc_t` 14 -> 8.5, `dknurl_n` 40 -> 46 (same
+  knurl pitch). `cap_float` stays 1.5 (Evan: no added gap under the knob).
+  Top over the encoder shaft tip: 1.75 mm (min 1.2). The shaft length is fixed,
+  so with a 6 mm gap and 1.5 mm float the knob must be at least 7.95 mm tall.
+- The "covers LEDs" limit is now `cap_d <= ring_id - 2` (35) instead of a
+  fixed 32; a 34 mm knob still sits 1.5 mm inside the ring's inner edge.
