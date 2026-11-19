@@ -140,3 +140,13 @@ for (s = [-1, 1]) let(r = pad_rect(s)) {
     for (p = boss_xy) assert(rect_pt_dist(r, p) >= m3_cbore_d / 2 + clr - 1e-6,
                              "pad recess cuts an M3 counterbore");
 }
+
+// Rounded hood corner: the inner curve must stay inside the cavity, under the
+// top and above the seat lip / key tabs.
+if (hood_round_r > 0) {
+    assert(hood_round_r > hood_wall + 0.5, "hood_round_r too small for hood_wall");
+    assert(hood_round_r - (hood_round_r - hood_wall) * sin(hood_round_angle) >= hood_top_t,
+           "hood round: top thinner than hood_top_t at the corner");
+    assert(hood_top_z - hood_round_r >= lip_h + 1, "hood round reaches the seat lip");
+    assert(hood_round_angle <= 55, "hood round flatter than 55 degrees from vertical: needs support");
+}

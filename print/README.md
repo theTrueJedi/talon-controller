@@ -76,6 +76,13 @@ knob (`cap_6mm_v1`), same fit.
 0.42 mm wall (1 loop), glow gap 6.4 so the outside stays 9.9 mm tall and
 `cap_6mm_v1` sits the same 1.5 mm above it (exported by hand with
 `-D hood_wall=0.42 -D hood_id=54.36 -D hood_top_t=0.4 -D glow_gap=6.4`).
+`stl/hood_6mm_v2r.stl` is `hood_6mm_v2` with a rounded top outer corner: a
+3 mm arc that eases out to 50 degrees from vertical, then a straight run at
+50 degrees to the top face. It prints face down, so that run starts on the
+bed and needs no support; the inside follows the curve, so the wall stays
+0.84 mm. Same footprint, same knob (exported by hand with `-D hood_round_r=3`).
+Print diffusers at **100% infill**: the well floor under the nut is only
+1.5 mm, and sparse infill leaves it feeling thin.
 
 "None" means the part was shaped to print without supports: the shell's
 inside front is a 45 degree ramp and its front screw posts are teardrops;

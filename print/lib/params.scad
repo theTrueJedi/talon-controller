@@ -70,6 +70,8 @@ hood_id = 53.52;                        // hood OD 55.2 - 2 x hood_wall: wall th
 hood_wall = 0.84;                       // 2 perimeters, ~ the 0.8 top (2026-11-18; 1.0 in hood_6mm_v1, 1.6 clear PETG)
 hood_top_t = 0.8;                       // 4 layers, printed on the bed (was 2)
 hood_fa = 0.5;                          // hood facet angle: 720 segments round (global $fa 2 gives 180)
+hood_round_r = 0;                       // top outer corner radius; 0 = square (hood_6mm_v2r: 3)
+hood_round_angle = 50;                  // flattest the rounded corner gets, from vertical (= 40 from the bed; prints face down, rooted on the bed)
 glow_gap = 6;                           // was 8
 well_id = 16;
 collar_hole_d = 7.2;

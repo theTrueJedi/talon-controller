@@ -110,6 +110,13 @@ expect_fail checks-fail-c3-loose   "C3 front stop gap" -D c3_pinch_fit=0.5
 expect_fail checks-fail-c3-tight   "C3 front stop gap" -D c3_pinch_fit=0
 expect_fail checks-fail-nut-t      "M3 nut thicker than its slot" -D m3_nut_t=2.7
 
+# Rounded hood corner (hood_6mm_v2r): renders, same footprint, no collisions; flatter than 55 is refused.
+expect_ok   hood-round -D 'part="hood"' -D hood_round_r=3
+bbox="$(python3 "$here/stl_bbox.py" "$out/hood-round.stl")"
+[ "$bbox" = "58.40 55.20 9.90" ] || fail hood-round-bbox "got '$bbox'"
+pass hood-round-bbox
+expect_empty hood-round-interference -D 'part="interference"' -D hood_round_r=3
+expect_fail checks-fail-round-angle "needs support" -D hood_round_r=3 -D hood_round_angle=60
 expect_ok   hood-render -D 'part="hood"'
 # ECHO: hood_top_z = 9.9, hood_od = 55.2, key_tab_len = 1.6
 dims="$(echo "$err" | sed -n 's/^ECHO: hood_top_z = \([0-9.]*\), hood_od = \([0-9.]*\), key_tab_len = \([0-9.]*\)$/\1 \2 \3/p' | head -1)"
