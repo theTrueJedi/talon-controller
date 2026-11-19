@@ -5,9 +5,17 @@ Talon actions. Standard library only (no pyserial, nothing to install).
 
 ## Install
 
+Clone only the add-on (skips the STLs, print files and firmware), then link it
+into Talon:
+
 ```
-ln -s /Users/evan/git/talon-controller/addon ~/.talon/user/talon-controller
+git clone --filter=blob:none --sparse https://github.com/theTrueJedi/talon-controller.git ~/git/talon-controller
+cd ~/git/talon-controller && git sparse-checkout set addon
+ln -s ~/git/talon-controller/addon ~/.talon/user/talon-controller
 ```
+
+Update with `cd ~/git/talon-controller && git pull`. On a machine with the full
+clone, only the `ln -s` line is needed.
 
 Talon loads it immediately. It finds the controller on its own
 (`/dev/cu.usbmodem*` + a `HELLO` handshake) and reconnects after a replug.
