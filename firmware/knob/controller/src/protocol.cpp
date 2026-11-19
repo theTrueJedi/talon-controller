@@ -71,8 +71,8 @@ HostMsg parseHostLine(const char* line) {
     m.kind = MsgKind::Ping;
     return m;
   }
-  char buf[LINE_MAX + 1];
-  if (strlen(line) > LINE_MAX) return m;
+  char buf[HOST_LINE_MAX + 1];
+  if (strlen(line) > HOST_LINE_MAX) return m;
   strcpy(buf, line);
   char* t[8];
   if (split(buf, t, 7) != 7 || strcmp(t[0], "LOOK")) return m;
@@ -94,7 +94,7 @@ bool LineReader::feed(char c) {
     overflow_ = false;
     return ok;
   }
-  if (len_ >= LINE_MAX) {
+  if (len_ >= HOST_LINE_MAX) {
     overflow_ = true;
     return false;
   }

@@ -13,14 +13,14 @@ struct HostMsg { MsgKind kind; Look look; };
 HostMsg parseHostLine(const char* line);
 inline bool shouldKick(const HostMsg& m) { return m.kind != MsgKind::Invalid; }
 
-const int LINE_MAX = 95;
+const int HOST_LINE_MAX = 95;
 
 class LineReader {
  public:
   bool feed(char c);  // true when a complete line is ready in line()
   const char* line() const { return buf_; }
  private:
-  char buf_[LINE_MAX + 1] = {0};
+  char buf_[HOST_LINE_MAX + 1] = {0};
   int len_ = 0;
   bool overflow_ = false;
 };
