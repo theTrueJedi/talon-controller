@@ -8,11 +8,15 @@ public, MIT-licensed repo `theTrueJedi/talon`, cloned straight into
 `~/.talon/user/personal` (same on the work machine, beside an unversioned
 `work/` folder). Keep anything controller-related out of that repo.
 
-## Layout (planned)
+## Layout
 
-- `addon/` (future): the controller's Talon add-on, symlinked into
+- `addon/`: the controller's Talon add-on (stdlib only), symlinked into
   `~/.talon/user/talon-controller`. Never edit `~/.talon/user/community`.
+  Tests: `python3 -m unittest discover -s tests -t .` (tests live in `tests/`,
+  outside `addon/`, so Talon never loads them).
 - `firmware/knob/`: ESP32-C3-Zero firmware (Arduino) for the controller.
+  The real one is `firmware/knob/controller/` (logic in `src/`, host tests
+  `bash firmware/knob/controller/test/run.sh`); the rest are hardware tests.
 - `firmware/sign/`: future WLED sign.
 - `print/`: 3D-print files (housing, translucent cap).
 - `docs/`
@@ -38,13 +42,13 @@ Amended 2026-11-18: plate lip, two-tooth clip, board 0.4 mm inward, port tab wit
 
 **Knob wired and passing (2026-11-18):** `firmware/knob/knob_test/`. KY-040 is **full-step: 4 edges
 per detent**, passing through the opposite state mid-click. Count one step only on returning to the
-rest state read at boot (|accum| >= 3 tolerates a skipped edge); counting at the mid-click state
+rest state read at boot (|accum| >= 3 tolerates bounce; a truly skipped edge loses that click); counting at the mid-click state
 double-fired (2 LEDs per click, fixed 2026-11-18); button clean with INPUT_PULLUP + 25 ms debounce. Direction confirmed: knob clockwise =
 ring clockwise (pos++ with CLK=GPIO3, DT=GPIO4). The USB port name changes on replug (`ls /dev/cu.usbmodem*`).
 
-**Later:** write the firmware and add-on plan with superpowers:writing-plans.
-Its first task: confirm standard-library serial (no pyserial) can open,
-read, and write the device from Talon 1.0.
+**Firmware + add-on built (2026-11-18):** plan `docs/superpowers/plans/2026-11-18-firmware-and-addon.md`.
+Controller firmware flashed; add-on live and verified in Talon (tap/double/hold/mute restore).
+Includes demo mode (7 presses). **Next:** Evan runs `TESTING.md` (T1-T19, J1-J5).
 
 **Amended 2026-11-16** (see the spec's amendment section):
 - Work-laptop constraint: prefer no installs beyond Talon files.
