@@ -29,6 +29,8 @@ on the bottom plate, the base is 5 mm taller, four weights are sealed in the
 plate (print pause), and the knob is 29 mm, 14 mm thick, diamond-knurled.
 Wiring: one right-angle header on the C3; jumpers plug in only there.
 
+**Also 2026-11-18:** white-PLA diffuser `hood_v3` (6 mm gap, 0.8 top, 1.0 wall) + knob `cap_v4` (34 x 8.5 mm); print as a pair.
+
 **Next (2026-11-18):** print `bottom_v9` and `c3_clip_v3` (shell stays v6), check (i)-(l) in `print/README.md`, glue the 15 x 60 TPU pads. Guide: `print/guide/talon-housing-guide.pdf`. Header legs still to measure (checkpoint h).
 Amended 2026-11-18: plate lip, two-tooth clip, board 0.4 mm inward, port tab with hooks (pinches the board), 2x 15x60 TPU pads.
 
