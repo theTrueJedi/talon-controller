@@ -38,8 +38,8 @@ Amended 2026-11-18: plate lip, two-tooth clip, board 0.4 mm inward, port tab wit
 
 **Knob wired and passing (2026-11-18):** `firmware/knob/knob_test/`. KY-040 is a half-step
 encoder: **2 edges per detent** (rest states alternate 00/11); 1 skipped edge in 311 clicks on fast
-spins; button clean with INPUT_PULLUP + 25 ms debounce. Open: does "CW" in the log match clockwise
-on the ring? The USB port name changes on replug (`ls /dev/cu.usbmodem*`).
+spins; button clean with INPUT_PULLUP + 25 ms debounce. Direction confirmed: knob clockwise =
+ring clockwise (pos++ with CLK=GPIO3, DT=GPIO4). The USB port name changes on replug (`ls /dev/cu.usbmodem*`).
 
 **Later:** write the firmware and add-on plan with superpowers:writing-plans.
 Its first task: confirm standard-library serial (no pyserial) can open,
