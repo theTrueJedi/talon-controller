@@ -78,3 +78,6 @@ class SerialPort:
             except OSError:
                 pass
             self._fd = None
+
+    def __del__(self):  # a reloaded add-on must not leave the old port open
+        self.close()

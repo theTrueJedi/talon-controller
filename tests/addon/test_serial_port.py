@@ -40,6 +40,12 @@ class SerialPortTest(unittest.TestCase):
         self.port.write_line("PING")
         self.assertEqual(os.read(self.master, 64), b"PING\n")
 
+    def test_garbage_collected_port_closes_fd(self):
+        fd = self.port._fd
+        self.port = SerialPort.open(self.path)  # drop the only reference to the first
+        with self.assertRaises(OSError):
+            os.fstat(fd)
+
     def test_close_idempotent(self):
         self.port.close()
         self.port.close()

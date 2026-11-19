@@ -2,3 +2,4 @@
 .DS_Store
 *.3mf
 __pycache__/
+addon/.last_mic
