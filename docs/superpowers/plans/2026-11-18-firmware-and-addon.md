@@ -30,10 +30,10 @@
 ## Review Focus
 
 1. **Port open resets or wedges the C3.** macOS asserts DTR on open; ESP32-C3 USB-Serial/JTAG resets on certain DTR/RTS sequences. Expected: opening/closing from Talon never reboots the device. Pinned by Task 1's live spike (log shows exactly one `HELLO` per open, from `PING`, not a boot banner twice).
-2. **Unplug/replug while Talon runs** (port name changes, reads raise `OSError` EIO). Expected: no traceback spam, `controller status` says disconnected, reconnects within ~3 s of replug. Pinned by Task 8 (`test_read_error_drops_link`, `test_rescan_after_drop`) and Task 9 live check.
-3. **Host silent while knob used** (Talon quit). Expected: ring goes red-breathe after 8 s, knob turns don't stall the render (non-blocking TX), brightness gauge still works. Pinned by Task 4 (`watchdog_*`) and Task 6 live check.
-4. **Garbage / partial / overlong lines** in either direction (boot noise, a half line at connect). Expected: ignored, never crash, never refresh the watchdog. Pinned by Task 4 (`parse_rejects_*`, `overlong_line_dropped`) and Task 7 (`test_parse_device_garbage`).
-5. **Mute fails or mic list changes** (remembered mic unplugged; `set_microphone` didn't take). Expected: ring shows what Talon actually reports afterwards; restore falls back to `System Default`. Pinned by Task 7 (`test_restore_mic_*`) and Task 9's re-read-after-action rule.
+2. **Unplug/replug while Talon runs** (port name changes, reads raise `OSError` EIO). Expected: no traceback spam, `controller status` says disconnected, reconnects within ~3 s of replug. Pinned by Task 9 (`test_read_error_drops_link`, `test_rescan_after_drop`) and Task 10 live check.
+3. **Host silent while knob used** (Talon quit). Expected: ring goes red-breathe after 8 s, knob turns don't stall the render (non-blocking TX), brightness gauge still works. Pinned by Task 4 (`watchdog_*`) and Task 7 live check.
+4. **Garbage / partial / overlong lines** in either direction (boot noise, a half line at connect). Expected: ignored, never crash, never refresh the watchdog. Pinned by Task 4 (`parse_rejects_*`, `overlong_line_dropped`) and Task 8 (`test_parse_device_garbage`).
+5. **Mute fails or mic list changes** (remembered mic unplugged; `set_microphone` didn't take). Expected: ring shows what Talon actually reports afterwards; restore falls back to `System Default`. Pinned by Task 8 (`test_restore_mic_*`) and Task 10's re-read-after-action rule.
 
 ---
 
@@ -44,7 +44,7 @@ Retires the spec's open risk before anything else is built.
 **Files:**
 - Create: `firmware/knob/serial_echo/serial_echo.ino`
 - Create: `addon/serial_port.py`
-- Create: `addon/talon_controller.py` (stub, replaced in Task 9)
+- Create: `addon/talon_controller.py` (stub, replaced in Task 10)
 - Test: `tests/addon/test_serial_port.py`
 
 **Interfaces:**
@@ -100,7 +100,7 @@ Retires the spec's open risk before anything else is built.
 - Consumes: debounced button edges and detents from Task 2 (the sketch passes them in).
 - Produces:
   ```cpp
-  enum class Out : uint8_t { None, Tap, Double, Hold, RotCW, RotCCW, BrightUp, BrightDown, AdjustEnd };
+  enum class Out : uint8_t { None, Tap, Double, Seven, Refuse, Hold, RotCW, RotCCW, BrightUp, BrightDown, AdjustEnd };
   class Gestures {
    public:
     Out onButton(uint32_t nowMs, bool pressed);
@@ -111,15 +111,15 @@ Retires the spec's open risk before anything else is built.
   };
   ```
 - Rules (spec "Knob gestures"):
-  - Release under `HOLD_MS` with no detent → pending tap; `onTick` emits `Tap` once `DOUBLE_MS` passes after release with no second press.
-  - Second press within `DOUBLE_MS` of first release → `Double` **on that press**; the rest of that press is swallowed (no hold, no adjust, release emits nothing).
+  - **Press bursts (demo-mode amendment):** a release under `HOLD_MS` with no detent adds 1 to a burst count; a press within `DOUBLE_MS` of the last release continues the burst. `onTick` emits once `DOUBLE_MS` passes after the last release with no new press: count 1 → `Tap`, 2 → `Double`, 7 → `Seven`, any other count → `Refuse`.
+  - Only the burst's **first** press can hold or adjust; on later presses the hold timer doesn't run (`holdProgress` = -1) and detents are ignored.
   - Held `HOLD_MS` with no detent → `Hold` from `onTick` at the threshold while still held; then detents return `None` until release; release emits `None`.
   - Detent while held before the threshold → enters adjust: returns `BrightUp`/`BrightDown` for that and each later detent; no tap/hold for this press; release returns `AdjustEnd`.
   - Detent while not pressed → `RotCW`/`RotCCW`. A detent during a pending tap's window passes through as rotation and does not cancel the tap.
 
-- [ ] **Step 1: Failing tests** (each drives explicit timestamps): `tap_after_window` (press 0, release 100 → `onTick(349)` None, `onTick(351)` Tap), `double_on_second_press` (press 0/rel 100/press 300 → Double; release 400 → None; `onTick(1000)` None), `hold_fires_at_threshold_while_held` (press 0, `onTick(699)` None, `onTick(700)` Hold, release 900 → None, no Tap later), `hold_progress` (press 0 → `holdProgress(350)≈0.5`; after a detent → -1), `turn_while_held_adjusts` (press 0, detent +1 at 200 → BrightUp; `onTick(800)` None; release → AdjustEnd; no Tap), `rotation_ignored_after_hold`, `plain_rotation` (RotCW/RotCCW), `long_release_no_tap` (press 0 / release 800 after Hold → no Tap).
+- [ ] **Step 1: Failing tests** (each drives explicit timestamps): `tap_after_window` (press 0, release 100 → `onTick(349)` None, `onTick(351)` Tap), `double_after_window` (press 0/rel 100/press 300 → None; release 400 → None; `onTick(649)` None, `onTick(651)` Double, `onTick(1000)` None), `seven_presses` (7 press/release pairs 150 ms apart → only `Seven`, once, 250 ms after the last release), `three_presses_refused` (→ `Refuse`), `second_press_cannot_hold` (press 0/rel 100/press 300, `onTick(1100)` still held → no Hold; release → Double after window), `hold_fires_at_threshold_while_held` (press 0, `onTick(699)` None, `onTick(700)` Hold, release 900 → None, no Tap later), `hold_progress` (press 0 → `holdProgress(350)≈0.5`; after a detent → -1), `turn_while_held_adjusts` (press 0, detent +1 at 200 → BrightUp; `onTick(800)` None; release → AdjustEnd; no Tap), `rotation_ignored_after_hold`, `plain_rotation` (RotCW/RotCCW), `long_release_no_tap` (press 0 / release 800 after Hold → no Tap).
 - [ ] **Step 2:** run.sh → FAIL. **Step 3:** implement. **Step 4:** run.sh → PASS.
-- [ ] **Step 5: Commit** `"Firmware: gesture state machine (tap/double/hold/adjust)"`, push.
+- [ ] **Step 5: Commit** `"Firmware: gesture state machine (press bursts, hold, adjust)"`, push.
 
 ### Task 4: Protocol parsing + watchdog
 
@@ -157,7 +157,7 @@ Retires the spec's open risk before anything else is built.
   void renderLook(const Look&, uint32_t nowMs, Frame&);
   void renderGauge(uint8_t masterPct, Frame&);                 // white, fill noon→CW, leading LED fractional
   void renderHoldProgress(float progress, Rgb color, Frame&);   // fill CW, leading LED fractional
-  enum class Flourish : uint8_t { None, Press, Turn, Refuse };
+  enum class Flourish : uint8_t { None, Press, Turn, Refuse, Demo };  // Demo rendered in Task 6
   bool renderFlourish(Flourish, int8_t dir, uint32_t elapsedMs, Frame&);  // false when finished
   uint32_t toPixel(Rgb c, float level, uint8_t masterPct, uint8_t hwCap);  // gamma 2.6 on the final channel, returns 0x00RRGGBB
   int physIndex(int logical, int topIndex, bool cw);           // orientation; constants RING_TOP=0, RING_CW=true in the sketch
@@ -175,17 +175,48 @@ Retires the spec's open risk before anything else is built.
 - [ ] **Step 2–4:** run.sh FAIL → implement → PASS.
 - [ ] **Step 5: Commit** `"Firmware: looks, gauge, hold progress, flourishes, gamma/cap"`, push.
 
-### Task 6: Firmware sketch integration + flash
+### Task 6: Demo mode (patterns + state)
+
+Spec: "Amendment 2026-11-18: demo mode" in the design spec.
+
+**Files:** Create `src/demo.h`, `src/demo.cpp`, `test/test_demo.cpp`
+
+**Interfaces:**
+- Consumes: `Frame`, `N_LEDS` (Task 5).
+- Produces:
+  ```cpp
+  const int DEMO_PATTERNS = 4;          // spin, wash, comet, rainbow breathe
+  const uint32_t DEMO_CYCLE_MS = 10000;
+  void renderDemo(int pattern, uint32_t nowMs, Frame&);   // level is per-LED; master/cap applied by toPixel
+  Rgb hsv(uint16_t hue, uint8_t val);                     // Adafruit ColorHSV-compatible, no gamma (toPixel does gamma)
+  class Demo {
+   public:
+    bool active() const;
+    void toggle(uint32_t nowMs);   // enter → cycling from pattern 0; exit → inactive
+    void next(uint32_t nowMs);     // cycling → hold the currently shown pattern+1; holding → +1 (wraps)
+    void cycle(uint32_t nowMs);    // back to cycling, restart timer at the shown pattern
+    int pattern(uint32_t nowMs) const;
+  };
+  ```
+- Patterns: port of `firmware/knob/rainbow/rainbow.ino` with the same hue rates (spin `t*40 + i*65536/12`, wash `t*20`, comet head every 70 ms with a 6-LED tail fading by 42/255 per LED and hue `t*30 + k*3000`, breathe 3000 ms with val `40 + 215·(0.5 − 0.5cos)`). Express val as `level` = val/255 and the color at full value.
+- `Flourish::Demo` added to Task 5's enum: white `ffffff` bri 60, two 100 ms flashes with a 100 ms gap (300 ms total), played on entering and leaving demo.
+
+- [ ] **Step 1: Failing tests:** `demo_inactive_at_boot`, `toggle_enters_cycling` (pattern 0 at t, 1 at t+10000, 0 again at t+40000), `next_while_cycling_holds_next` (at t+12000 shown 1 → `next` → 2, still 2 at t+60000), `next_wraps` (3 → 0), `cycle_resumes_rotation` (after `cycle` at 70000 from held 2 → 2 now, 3 at 80000), `toggle_exits`, `wash_all_same_color`, `comet_six_lit` (exactly 6 LEDs with level > 0, head level 1), `spin_hues_distinct` (LED 0 ≠ LED 6), `demo_flourish_finishes` (`renderFlourish(Flourish::Demo, …, 301)` → false).
+- [ ] **Step 2–4:** run.sh FAIL → implement → PASS.
+- [ ] **Step 5: Commit** `"Firmware: demo mode state + four rainbow patterns"`, push.
+
+### Task 7: Firmware sketch integration + flash
 
 **Files:** Modify `firmware/knob/controller/controller.ino`; create `firmware/knob/controller/README.md`
 
 **Interfaces:**
-- Consumes everything in Tasks 2–5. Includes as `#include "src/input.h"` etc.
+- Consumes everything in Tasks 2–6. Includes as `#include "src/input.h"` etc.
 
 - [ ] **Step 1: Write the sketch.** `setup`: `Serial.begin(115200); Serial.setTxTimeoutMs(0);` pins per Global Constraints; `QuadDecoder.begin(readAB())`; load master from `Preferences` (`ctl`/`master`, default 60, clamp 5–100); print `HELLO talon-controller v1`. `loop` (no `delay`):
   1. Read serial bytes into `LineReader`; on a line: `PING` → reply HELLO + kick; `Look` → store as current (also store `lastAwake` when state ≠ Mute) + kick; Invalid → ignore.
   2. Feed debounce + decoder → `Gestures`; map `Out`: Tap/Double → `Serial.println`, then flourish `Refuse` if current state is Mute else `Press`; Hold → send `HOLD`; RotCW/CCW → `ROT +1`/`ROT -1` + `Turn` flourish; BrightUp/Down → master ±5 clamp 5–100; AdjustEnd → `Preferences.putUChar`.
-  3. Render priority: adjusting → gauge; `holdProgress ≥ 0` (after 150 ms, so a tap doesn't flash) → progress in red if state ≠ Mute, else `lastAwake.c1`; active flourish; watchdog expired → `LOOK_DISCONNECTED`; else current look. Show at most every 16 ms via `physIndex` + `toPixel(..., master, HW_CAP)`.
+  2b. **Demo mode** (`Demo::active()`): send **nothing** over serial for any gesture (PING still answered). `Tap` → `next`; `Double` → `cycle`; `Seven` → `toggle` + `Demo` flourish; `Refuse` → `Refuse` flourish; `Hold`, `RotCW/CCW` → ignored; Bright/AdjustEnd as normal. In control mode `Seven` → `toggle` + `Demo` flourish (nothing sent), `Refuse` → flourish only. Demo is never persisted (boot = control mode).
+  3. Render priority: adjusting → gauge; demo active → active flourish, else `renderDemo` (no hold progress, ignores looks and watchdog); `holdProgress ≥ 0` (after 150 ms, so a tap doesn't flash) → progress in red if state ≠ Mute, else `lastAwake.c1`; active flourish; watchdog expired → `LOOK_DISCONNECTED`; else current look. Show at most every 16 ms via `physIndex` + `toPixel(..., master, HW_CAP)`.
 - [ ] **Step 2:** `bash firmware/knob/controller/test/run.sh` → PASS; compile + upload (commands as Task 1 Step 5, path `firmware/knob/controller`) → success.
 - [ ] **Step 3: Device checks over serial** (`stty -f <port> 115200 raw; cat <port>` in one shell, `printf 'LOOK command solid 18ff6a 109847 15 71\n' > <port>` in another):
   - Boot → red slow breathe (disconnected) and `HELLO` in the log.
@@ -194,11 +225,12 @@ Retires the spec's open risk before anything else is built.
   - Tap → `TAP` ~250 ms after release + green double-beat; double-tap → `DOUBLE`; hold → red fill then `HOLD` at 0.7 s; turn → `ROT ±1` + purple half-ring.
   - Send `LOOK mute solid ff1a1a b91818 40 70`; tap → `TAP` still sent + red double-blink; hold → fill in green (lastAwake c1).
   - Hold + turn → white gauge follows; release; unplug/replug → brightness kept.
+  - 7 quick presses → white double-flash, rainbow spin; log shows nothing sent. Wait 10 s → wash. Tap → next pattern, stays there 20 s+. Double → cycling resumes. Hold + turn still adjusts brightness; plain turn and hold send nothing. 7 presses → white flash, back to the current look. 3 presses → red blink, nothing sent. Replug while in demo → boots to control mode.
   - With nothing reading the port, spin the knob fast for 5 s → ring animation stays smooth (Review Focus 3).
-- [ ] **Step 4:** README: flash commands, wiring, protocol table, constants to tune (`HOLD_MS`, `DOUBLE_MS`, `RING_TOP`, `RING_CW`, `HW_CAP`), how to run host tests.
+- [ ] **Step 4:** README: flash commands, wiring, protocol table, constants to tune (`HOLD_MS`, `DOUBLE_MS`, `DEMO_CYCLE_MS`, `RING_TOP`, `RING_CW`, `HW_CAP`), how to run host tests.
 - [ ] **Step 5: Commit** `"Firmware: controller sketch wiring gestures, protocol, looks, persisted brightness"`, push.
 
-### Task 7: Add-on protocol + policy (pure Python)
+### Task 8: Add-on protocol + policy (pure Python)
 
 **Files:** Create `addon/protocol.py`, `addon/policy.py`; Test `tests/addon/test_protocol.py`, `tests/addon/test_policy.py`
 
@@ -219,12 +251,12 @@ Retires the spec's open risk before anything else is built.
 - [ ] **Step 2:** `python3 -m unittest discover -s tests -t .` → FAIL. **Step 3:** implement. **Step 4:** → PASS.
 - [ ] **Step 5: Commit** `"Add-on: protocol + gesture policy (pure, unit-tested)"`, push.
 
-### Task 8: Add-on link manager (discovery, handshake, reconnect)
+### Task 9: Add-on link manager (discovery, handshake, reconnect)
 
 **Files:** Create `addon/link.py`; Test `tests/addon/test_link.py`
 
 **Interfaces:**
-- Consumes: `SerialPort`, `candidates` (Task 1); `parse_device_line` (Task 7).
+- Consumes: `SerialPort`, `candidates` (Task 1); `parse_device_line` (Task 8).
 - Produces:
   ```python
   class Link:
@@ -248,12 +280,12 @@ Retires the spec's open risk before anything else is built.
 - [ ] **Step 2–4:** unittest FAIL → implement → PASS.
 - [ ] **Step 5: Commit** `"Add-on: non-blocking link manager with HELLO handshake and reconnect"`, push.
 
-### Task 9: Talon glue + live end-to-end
+### Task 10: Talon glue + live end-to-end
 
 **Files:** Replace `addon/talon_controller.py`; create `addon/talon_controller.talon`; modify `.gitignore` (add `addon/.last_mic`)
 
 **Interfaces:**
-- Consumes: `Link` (Task 8), `Look`, `DEFAULT_LOOKS`, `parse_look_setting`, `format_look` (Task 7), `derive_state`, `decide`, `Intent`, `choose_restore_mic` (Task 7).
+- Consumes: `Link` (Task 9), `Look`, `DEFAULT_LOOKS`, `parse_look_setting`, `format_look` (Task 8), `derive_state`, `decide`, `Intent`, `choose_restore_mic` (Task 8).
 - Produces (Talon):
   - Settings: `user.talon_controller_scroll_amount: int = 40`, `user.talon_controller_scroll_invert: bool = False`, `user.talon_controller_look_<state>: str` for each of the six states (defaults = `DEFAULT_LOOKS` formatted as setting strings).
   - Action: `user.talon_controller_status()` → `app.notify(link.status() + ", state " + state)`.
@@ -274,11 +306,11 @@ Retires the spec's open risk before anything else is built.
   - Unplug/replug → status disconnected then reconnects ≤ 3 s; quit Talon → ring red-breathes after ~8 s (Review Focus 2, 3).
 - [ ] **Step 4: Commit** `"Add-on: Talon glue (mode/mute mirroring, gestures, scroll, status)"` (add `addon/talon_controller.py addon/talon_controller.talon .gitignore`), push.
 
-### Task 10: Docs + status
+### Task 11: Docs + status
 
 **Files:** Create `addon/README.md`, `TESTING.md`; modify `CLAUDE.md` (Status + Layout: `addon/` exists, `firmware/knob/controller/`)
 
-- [ ] **Step 1:** `addon/README.md`: install (symlink command), settings with defaults, look-setting string format, `controller status`, how `.last_mic` works. `TESTING.md`: the Task 6 Step 3 and Task 9 Step 3 checks as a checklist table for Evan (row IDs T1…), plus "solid red vs red breathe readable across the room?" and "tap latency (~250 ms) acceptable?" rows.
+- [ ] **Step 1:** `addon/README.md`: install (symlink command), settings with defaults, look-setting string format, `controller status`, how `.last_mic` works. `TESTING.md`: the Task 7 Step 3 and Task 10 Step 3 checks as a checklist table for Evan (row IDs T1…), plus "solid red vs red breathe readable across the room?" and "tap latency (~250 ms) acceptable?" rows.
 - [ ] **Step 2:** Both test suites pass: `bash firmware/knob/controller/test/run.sh && python3 -m unittest discover -s tests -t .`.
 - [ ] **Step 3: Commit** `"Docs: add-on README, TESTING checklist, status"`, push.
 

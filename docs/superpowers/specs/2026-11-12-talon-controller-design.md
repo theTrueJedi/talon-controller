@@ -391,3 +391,18 @@ Meet tab, focus it, press ⌘D, and return.
   metal in the housing.
 - **Open:** count the GND holes. With one GND, the ring and knob grounds must
   share it (twisted together in the one hole). Measure the board for the housing.
+
+## Amendment 2026-11-18: demo mode (approved by Evan)
+
+**Intent:** lights only, for fun; Evan won't use it often. No control of the PC while in it.
+
+- **Press bursts replace the instant double-tap.** The device counts presses in a quick burst (each within 250 ms of the last release) and acts when the burst ends: 1 = tap, 2 = double, 7 = enter/leave demo, any other count = red "refused" blink. Cost (accepted by Evan): double-tap fires ~250 ms later. Only a burst's first press can hold or hold+turn.
+- **Demo mode:** handled entirely on the device; Talon is not told.
+  - Starts cycling the four rainbow effects from `firmware/knob/rainbow/` (spin, wash, comet, breathing rainbow), 10 s each.
+  - 1 press: next pattern, and stay on it. 2 presses: back to cycling. 7 presses: back to control mode.
+  - Sends nothing to the host for any gesture; ignores host looks and the 8 s disconnect watchdog.
+  - Hold + turn still sets brightness (my call). Plain turn and hold do nothing (my call).
+  - A quick white double-flash on entering and leaving (my call).
+  - Always boots into control mode, never demo (my call).
+- **Accepted by Evan:** demo deliberately breaks the "never stale" anti-goal (the ring no longer shows Talon's state), no mute on entering demo.
+- **Approaches:** device-side (chosen); Talon-driven demo (rejected: dies when Talon is down, and demo needs no PC).
