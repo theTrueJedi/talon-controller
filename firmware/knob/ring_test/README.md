@@ -19,6 +19,17 @@ Wiring: ring 5V to header pin 1 (5V), GND to pin 2, DIN to pin 4 (GPIO0).
    BOOT, and upload again.
 6. Open Serial Monitor at 115200 baud. Each step prints its name.
 
+## Or from the command line (arduino-cli)
+
+The `esp32:esp32` core and Adafruit NeoPixel are installed (core 4.0.0,
+NeoPixel 1.15.5). `CDCOnBoot=cdc` is the same as "USB CDC On Boot: Enabled".
+
+```
+arduino-cli compile --fqbn esp32:esp32:esp32c3:CDCOnBoot=cdc firmware/knob/ring_test
+arduino-cli upload  --fqbn esp32:esp32:esp32c3:CDCOnBoot=cdc -p /dev/cu.usbmodem* firmware/knob/ring_test
+arduino-cli monitor -p /dev/cu.usbmodem* -c baudrate=115200
+```
+
 ## What a pass looks like
 
 The test loops through four steps, and each one starts with a short white
