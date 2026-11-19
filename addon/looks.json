@@ -1,8 +1,8 @@
 {
-  "mute": "solid ff1a1a b91818 40 70",
-  "sleep": "solid ff8a0d c07414 12 55",
-  "command": "solid 18ff6a 109847 15 71",
-  "dictation": "gradspin 9a3bff 2f6bff 30 83",
-  "mixed": "gradspin 14e0ff 2f6bff 35 83",
+  "mute": "solid ff1a1a b91818 40 50",
+  "sleep": "solid ff9500 c07414 12 50",
+  "command": "gradspin 23a300 029400 11 80",
+  "dictation": "gradspin 830fff 2e46ff 90 80",
+  "mixed": "gradspin 14e0ff 1457ff 80 75",
   "other": "solid ffffff 202020 0 20"
 }
