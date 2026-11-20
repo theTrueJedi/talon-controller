@@ -35,10 +35,10 @@ def decide(event: str, state: str, last_awake: str) -> Intent:
         return Intent.NONE
     if event == "TRIPLE":
         return Intent.MIXED
+    if event == "DOUBLE":  # sleep/mixed: shortcut to dictation; else sleep
+        return Intent.DICTATION if state in ("sleep", "mixed") else Intent.SLEEP
     if state == "sleep":
         return wake
-    if event == "DOUBLE":
-        return Intent.SLEEP
     return Intent.DICTATION if state == "command" else Intent.COMMAND
 
 

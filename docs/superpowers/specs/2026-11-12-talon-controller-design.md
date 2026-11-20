@@ -440,3 +440,9 @@ Meet tab, focus it, press ⌘D, and return.
 - The mark persists in `addon/.auto_muted` (git-ignored) so it survives a Talon restart.
 - Setting `user.talon_controller_auto_mute` (bool, default on).
 - Unplug is detected immediately (the port read fails), so the grace is the only delay.
+
+## Amendment 2026-11-20: double-tap shortcut to dictation (Evan)
+
+- Double-tap from **sleep or mixed** goes straight to dictation (mirrors tap taking dictation/mixed to command), so dictation no longer needs a trip through command.
+- Double-tap from command or dictation still sleeps. Tap from sleep still wakes into the last awake mode.
+- Cost: sleeping from mixed is now two double-taps (mixed → dictation → sleep), or say it.
