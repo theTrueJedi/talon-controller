@@ -26,8 +26,9 @@ Talon loads it immediately. It finds the controller on its own
 
 | Gesture | Action |
 |---|---|
-| tap | command ⇄ dictation (mixed → command; asleep → wakes into the last of the two) |
+| tap | command ⇄ dictation (mixed → command; asleep → wakes into the last awake mode) |
 | double-tap | sleep ⇄ wake |
+| triple-tap | mixed (command + dictation); tap returns to command |
 | hold 0.7 s | hard mute: mic → None; hold again restores it |
 | turn | scroll the window under the pointer: clockwise = down the page (also while muted or asleep) |
 

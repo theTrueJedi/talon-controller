@@ -68,7 +68,7 @@ def refresh(force: bool = False) -> None:
     global state, last_awake, sent_line, current_looks
     try:
         state = derive_state(set(scope.get("mode") or ()), actions.sound.active_microphone())
-        if state in ("command", "dictation"):
+        if state in ("command", "dictation", "mixed"):
             last_awake = state
         current_looks = {s: _look_for(s) for s in DEFAULT_LOOKS}
         preview = tuner.preview()
@@ -90,12 +90,16 @@ def _read_mic() -> str | None:
 
 
 def _do(intent: Intent) -> None:
-    if intent == Intent.COMMAND or intent == Intent.DICTATION:
+    if intent in (Intent.COMMAND, Intent.DICTATION, Intent.MIXED):
         actions.speech.enable()
         if intent == Intent.COMMAND:
             actions.user.command_mode()
-        else:
+        elif intent == Intent.DICTATION:
             actions.user.dictation_mode()
+        else:  # mixed: inline, so the add-on needs nothing beyond community
+            actions.mode.disable("sleep")
+            actions.mode.enable("command")
+            actions.mode.enable("dictation")
     elif intent == Intent.SLEEP:
         actions.speech.disable()
     elif intent == Intent.MUTE:
@@ -162,7 +166,7 @@ def tick() -> None:
                 _do(decide(name, state, last_awake))
         except Exception as e:
             _log_once(name, e)
-        if name in ("TAP", "DOUBLE", "HOLD"):
+        if name in ("TAP", "DOUBLE", "TRIPLE", "HOLD"):
             refresh()  # always show what Talon really did, even after a failure
 
 

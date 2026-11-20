@@ -104,6 +104,7 @@ Flourish feedbackFor(Out out, bool muted, bool hostUp) {
   switch (out) {
     case Out::Tap:
     case Out::Double:
+    case Out::Triple:
       return (muted || !hostUp) ? Flourish::Refuse : Flourish::Fade;
     case Out::Hold:
       return hostUp ? Flourish::None : Flourish::Refuse;

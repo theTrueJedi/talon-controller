@@ -45,6 +45,7 @@ class ProtocolTest(unittest.TestCase):
     def test_parse_device_lines(self):
         self.assertEqual(parse_device_line("TAP"), ("TAP", 0))
         self.assertEqual(parse_device_line("DOUBLE"), ("DOUBLE", 0))
+        self.assertEqual(parse_device_line("TRIPLE"), ("TRIPLE", 0))
         self.assertEqual(parse_device_line("HOLD"), ("HOLD", 0))
         self.assertEqual(parse_device_line("ROT +1"), ("ROT", 1))
         self.assertEqual(parse_device_line("ROT -1"), ("ROT", -1))

@@ -7,6 +7,7 @@ class Intent(Enum):
     NONE = "none"
     COMMAND = "command"
     DICTATION = "dictation"
+    MIXED = "mixed"
     SLEEP = "sleep"
     MUTE = "mute"
     UNMUTE = "unmute"
@@ -26,12 +27,14 @@ def derive_state(modes: set[str], mic: str | None) -> str:
 
 
 def decide(event: str, state: str, last_awake: str) -> Intent:
-    """last_awake is the last of command/dictation, used to wake from sleep."""
-    wake = Intent.DICTATION if last_awake == "dictation" else Intent.COMMAND
+    """last_awake is the last of command/dictation/mixed, used to wake from sleep."""
+    wake = {"dictation": Intent.DICTATION, "mixed": Intent.MIXED}.get(last_awake, Intent.COMMAND)
     if event == "HOLD":
         return Intent.UNMUTE if state == "mute" else Intent.MUTE
-    if state == "mute" or event not in ("TAP", "DOUBLE"):
+    if state == "mute" or event not in ("TAP", "DOUBLE", "TRIPLE"):
         return Intent.NONE
+    if event == "TRIPLE":
+        return Intent.MIXED
     if state == "sleep":
         return wake
     if event == "DOUBLE":

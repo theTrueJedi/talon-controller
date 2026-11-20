@@ -1,4 +1,4 @@
-// Knob gestures: press bursts (tap/double/seven), hold, hold+turn adjust.
+// Knob gestures: press bursts (tap/double/triple/seven), hold, hold+turn adjust.
 // Pure C++; the sketch feeds debounced button edges, detents and ticks.
 #pragma once
 #include <stdint.h>
@@ -7,7 +7,7 @@ const uint32_t HOLD_MS = 700;    // hold threshold (fires while still held)
 const uint32_t DOUBLE_MS = 200;  // max gap between presses in one burst
 
 enum class Out : uint8_t {
-  None, Tap, Double, Seven, Refuse, Hold, RotCW, RotCCW, BrightUp, BrightDown, AdjustEnd
+  None, Tap, Double, Triple, Seven, Refuse, Hold, RotCW, RotCCW, BrightUp, BrightDown, AdjustEnd
 };
 
 class Gestures {

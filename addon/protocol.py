@@ -45,7 +45,7 @@ def format_look(state: str, look: Look) -> str:
     return f"LOOK {state} {look_to_setting(look)}"
 
 
-_EVENTS = {"TAP": ("TAP", 0), "DOUBLE": ("DOUBLE", 0), "HOLD": ("HOLD", 0),
+_EVENTS = {"TAP": ("TAP", 0), "DOUBLE": ("DOUBLE", 0), "TRIPLE": ("TRIPLE", 0), "HOLD": ("HOLD", 0),
            "ROT +1": ("ROT", 1), "ROT -1": ("ROT", -1),
            "HELLO talon-controller v1": ("HELLO", 0)}
 

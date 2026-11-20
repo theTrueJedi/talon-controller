@@ -29,7 +29,11 @@ muted is refused, double-tap sleeps and wakes.
 | T16 | In demo: double-tap | Back to cycling |
 | T17 | In demo: turn, hold | Nothing (no scroll, no mute); hold + turn still sets brightness |
 | T18 | Press 7 times again | Fade back to the mode look |
-| T19 | Press 3 times | Red blink, nothing happens |
+| T19 | Press 4 times | Red blink, nothing happens |
+| T24 | In command or dictation: triple-tap | Fade into the mixed look (cyan/blue gradient spin); you can say commands and dictate prose |
+| T25 | In mixed: tap | Back to command (green); also from dictation |
+| T26 | In mixed: double-tap, then double-tap | Asleep, then wakes back into mixed |
+| T27 | While muted: triple-tap | Two red blinks, nothing changes |
 
 | T20 | Say "controller tuner" | Browser opens the Ring tuner page |
 | T21 | Pick a tab, drag a slider or color | Ring follows within a blink |

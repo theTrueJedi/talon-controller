@@ -43,10 +43,17 @@ TEST(seven_presses) {
   CHECK(g.onTick(last + 500) == Out::None);
 }
 
-TEST(three_presses_refused) {
+TEST(three_presses_triple) {
   Gestures g;
   uint32_t last = 0;
-  pressBurst(g, 3, &last);
+  CHECK(pressBurst(g, 3, &last) == Out::None);
+  CHECK(g.onTick(last + DOUBLE_MS + 1) == Out::Triple);
+}
+
+TEST(four_presses_refused) {
+  Gestures g;
+  uint32_t last = 0;
+  pressBurst(g, 4, &last);
   CHECK(g.onTick(last + DOUBLE_MS + 1) == Out::Refuse);
 }
 

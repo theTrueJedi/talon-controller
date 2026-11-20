@@ -172,6 +172,8 @@ TEST(feedback_when_host_up) {
 TEST(feedback_refuses_when_muted) {
   CHECK(feedbackFor(Out::Tap, true, true) == Flourish::Refuse);
   CHECK(feedbackFor(Out::Double, true, true) == Flourish::Refuse);
+  CHECK(feedbackFor(Out::Triple, true, true) == Flourish::Refuse);
+  CHECK(feedbackFor(Out::Triple, false, true) == Flourish::Fade);
   CHECK(feedbackFor(Out::Hold, true, true) == Flourish::None);  // hold unmutes
 }
 

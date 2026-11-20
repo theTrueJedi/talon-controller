@@ -40,9 +40,18 @@ class DecideTest(unittest.TestCase):
         self.assertEqual(decide("DOUBLE", "sleep", "dictation"), Intent.DICTATION)
         self.assertEqual(decide("DOUBLE", "sleep", "command"), Intent.COMMAND)
 
-    def test_mute_refuses_tap_double(self):
+    def test_triple_enters_mixed(self):
+        for s in ("command", "dictation", "mixed", "sleep", "other"):
+            self.assertEqual(decide("TRIPLE", s, "command"), Intent.MIXED, s)
+
+    def test_sleep_wakes_into_mixed_if_last_awake(self):
+        self.assertEqual(decide("TAP", "sleep", "mixed"), Intent.MIXED)
+        self.assertEqual(decide("DOUBLE", "sleep", "mixed"), Intent.MIXED)
+
+    def test_mute_refuses_tap_double_triple(self):
         self.assertEqual(decide("TAP", "mute", "command"), Intent.NONE)
         self.assertEqual(decide("DOUBLE", "mute", "command"), Intent.NONE)
+        self.assertEqual(decide("TRIPLE", "mute", "command"), Intent.NONE)
 
     def test_hold_toggles(self):
         self.assertEqual(decide("HOLD", "mute", "command"), Intent.UNMUTE)

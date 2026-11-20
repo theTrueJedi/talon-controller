@@ -419,3 +419,10 @@ Meet tab, focus it, press ⌘D, and return.
 - Sleep is now **solid** orange at 60: the breathe visibly stepped (too few LED levels at that brightness).
 - Sleep orange deepened ff9a1a → ff7a00.
 - Sleep: split the difference, ff8a0d at brightness 55 (LED [6,2,0] at master 60).
+
+## Amendment 2026-11-19: triple-tap = mixed mode
+
+- A 3-press burst is now `TRIPLE` (was refused); 4-6 presses stay refused, 7 stays demo.
+- `TRIPLE` enters mixed mode (command + dictation together) from any awake state or sleep; refused while muted.
+- Tap from mixed or dictation returns to command (unchanged). Mixed now counts as an awake mode, so sleep wakes back into it.
+- The add-on enables mixed itself (`mode.enable` command + dictation) rather than calling `user.mixed_mode` from Evan's personal repo, so it stays self-contained for others.

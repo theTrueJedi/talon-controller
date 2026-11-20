@@ -95,6 +95,7 @@ void handle(Out out, uint32_t now, int8_t dir = 1) {
   switch (out) {
     case Out::Tap: Serial.println("TAP"); break;
     case Out::Double: Serial.println("DOUBLE"); break;
+    case Out::Triple: Serial.println("TRIPLE"); break;
     case Out::Hold: Serial.println("HOLD"); break;
     case Out::RotCW: Serial.println("ROT +1"); break;
     case Out::RotCCW: Serial.println("ROT -1"); break;

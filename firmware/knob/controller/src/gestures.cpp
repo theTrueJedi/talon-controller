@@ -5,6 +5,7 @@ Out Gestures::resolveBurst() {
   count_ = 0;
   if (n == 1) return Out::Tap;
   if (n == 2) return Out::Double;
+  if (n == 3) return Out::Triple;
   if (n == 7) return Out::Seven;
   return Out::Refuse;
 }
