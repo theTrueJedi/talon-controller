@@ -443,6 +443,6 @@ Meet tab, focus it, press ⌘D, and return.
 
 ## Amendment 2026-11-20: double-tap shortcut to dictation (Evan)
 
-- Double-tap from **sleep or mixed** goes straight to dictation (mirrors tap taking dictation/mixed to command), so dictation no longer needs a trip through command.
-- Double-tap from command or dictation still sleeps. Tap from sleep still wakes into the last awake mode.
+- Double-tap from **mixed** goes straight to dictation (mirrors tap taking mixed to command), so dictation no longer needs a trip through command.
+- Double-tap from command or dictation still sleeps. From sleep, tap or double-tap still wakes into the last awake mode (a same-day draft sent sleep to dictation; Evan reverted it).
 - Cost: sleeping from mixed is now two double-taps (mixed → dictation → sleep), or say it.
