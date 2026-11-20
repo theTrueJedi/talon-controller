@@ -36,6 +36,13 @@ Taps are refused while muted (the ring blinks red); only a hold unmutes.
 The mic you muted from is saved in `addon/.last_mic` (git-ignored), so it
 survives a Talon restart. If that mic is gone, unmute picks `System Default`.
 
+**Switching machines:** if the controller disappears for 3 s (e.g. a USB
+switch moved it to your other computer), this machine hard-mutes so it stops
+hearing you. When the controller comes back, the mic is restored, unless you
+picked a mic by hand meanwhile. A mute you made yourself is never undone.
+Without a controller at Talon start nothing happens. Turn it off with
+`settings(): user.talon_controller_auto_mute = false`.
+
 ## Voice commands
 
 - `controller status` shows the connection and the ring's current state.

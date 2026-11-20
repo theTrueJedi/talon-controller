@@ -34,6 +34,10 @@ muted is refused, double-tap sleeps and wakes.
 | T25 | In mixed: tap | Back to command (green); also from dictation |
 | T26 | In mixed: double-tap, then double-tap | Asleep, then wakes back into mixed |
 | T27 | While muted: triple-tap | Two red blinks, nothing changes |
+| T28 | Switch the controller to the other machine | After ~3 s this machine's mic is None (Talon menu); speech does nothing here |
+| T29 | Switch back | Mic restored to the headset, ring shows the mode you left |
+| T30 | Hold-mute, switch away, switch back | Stays muted (your mute isn't undone) |
+| T31 | Switch away, pick a mic in Talon's menu, switch back | Your picked mic stays |
 
 | T20 | Say "controller tuner" | Browser opens the Ring tuner page |
 | T21 | Pick a tab, drag a slider or color | Ring follows within a blink |

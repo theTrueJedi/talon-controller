@@ -8,18 +8,21 @@ this file only wires them to Talon. See addon/README.md.
 import os
 import subprocess
 import sys
+import time
 
 from talon import Module, actions, app, cron, registry, scope, settings
 
 from .link import Link
 from .looks_store import effective_look, load_saved, save_looks
-from .policy import Intent, choose_restore_mic, decide, derive_state, scroll_delta
+from .policy import AutoMute, Intent, choose_restore_mic, decide, derive_state, scroll_delta
 from .protocol import DEFAULT_LOOKS, format_look, look_to_setting
 from .tuner import Tuner
 
 mod = Module()
 mod.setting("talon_controller_scroll_amount", type=int, default=40,
             desc="How far one knob detent scrolls")
+mod.setting("talon_controller_auto_mute", type=bool, default=True,
+            desc="Hard-mute when the controller switches to another machine; restore when it returns")
 mod.setting("talon_controller_scroll_invert", type=bool, default=False,
             desc="Reverse the knob's scroll direction")
 for _state, _look in DEFAULT_LOOKS.items():
@@ -28,6 +31,7 @@ for _state, _look in DEFAULT_LOOKS.items():
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 MIC_FILE = os.path.join(HERE, ".last_mic")
+MARK_FILE = os.path.join(HERE, ".auto_muted")  # an auto-mute is in place
 LOOKS_FILE = os.path.join(HERE, "looks.json")  # written by the tuner's Save
 TUNER_PORT = 8737
 
@@ -47,6 +51,8 @@ current_looks = dict(DEFAULT_LOOKS)  # snapshot for the tuner page (read off-thr
 last_preview = None
 state = "other"
 last_awake = "command"
+mark_on_disk = os.path.exists(MARK_FILE)
+auto_mute = AutoMute(mark_on_disk)
 sent_line = None
 _logged: set[str] = set()
 
@@ -141,6 +147,27 @@ def _start_tuner() -> None:
 cron.after("100ms", _start_tuner)
 
 
+def _mic_is_none() -> bool:
+    return actions.sound.active_microphone() in (None, "None")
+
+
+def _auto(intent: Intent) -> None:
+    """Act on an AutoMute decision and keep its mark file in step."""
+    global mark_on_disk
+    if intent != Intent.NONE:
+        _do(intent)
+        refresh()
+    if auto_mute.marked != mark_on_disk:
+        try:
+            if auto_mute.marked:
+                open(MARK_FILE, "w").close()
+            else:
+                os.remove(MARK_FILE)
+            mark_on_disk = auto_mute.marked
+        except OSError as e:
+            _log_once("auto-mute mark", e)
+
+
 def tick() -> None:
     global sent_line, last_preview
     preview = tuner.preview()
@@ -152,12 +179,21 @@ def tick() -> None:
     except Exception as e:
         _log_once("link", e)
         return
+    try:
+        if auto_mute.waiting:
+            _auto(auto_mute.tick(time.monotonic(), _mic_is_none(),
+                                 settings.get("user.talon_controller_auto_mute")))
+    except Exception as e:
+        _log_once("auto-mute", e)
     for name, value in events:
         try:
+            if name == "CONNECTED":
+                _auto(auto_mute.connected(_mic_is_none()))
             if name in ("CONNECTED", "RESYNC"):
                 refresh(force=True)
             elif name == "DISCONNECTED":
                 sent_line = None
+                auto_mute.disconnected(time.monotonic())
             elif name == "ROT":
                 actions.mouse_scroll(y=scroll_delta(
                     value, settings.get("user.talon_controller_scroll_amount"),

@@ -3,3 +3,4 @@
 *.3mf
 __pycache__/
 addon/.last_mic
+addon/.auto_muted

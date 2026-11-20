@@ -426,3 +426,17 @@ Meet tab, focus it, press ⌘D, and return.
 - `TRIPLE` enters mixed mode (command + dictation together) from any awake state or sleep; refused while muted.
 - Tap from mixed or dictation returns to command (unchanged). Mixed now counts as an awake mode, so sleep wakes back into it.
 - The add-on enables mixed itself (`mode.enable` command + dictation) rather than calling `user.mixed_mode` from Evan's personal repo, so it stays self-contained for others.
+
+## Amendment 2026-11-19: auto-mute when the controller switches away
+
+**Why:** Evan moves the controller between two machines on a USB switch, usually with the headset (WT-6 buds or Yealink). The machine left behind falls back to its built-in mic and keeps acting on speech meant for the other one.
+
+**Approaches:** (1) hard mute on loss, (1b) the same but only after the controller was seen, with automatic restore on return, (2) sleep on loss, (3) watch the mic for a built-in fallback. Picked **1b**: (2) fails because "wake up" wakes both machines; (3) misses the times the headset doesn't switch; plain (1) blocks use without a controller.
+
+**Behavior:**
+- The controller connected, then gone for 3 s (`AUTO_MUTE_GRACE_S`; a hub blip shorter than that does nothing): mute exactly like a hold (save the mic, mic → None) and mark it automatic. Mode untouched. If the mic is already None (Evan muted by hand), nothing is marked.
+- On reconnect: if marked AND the mic is still None, restore the saved mic. The mark always clears on reconnect, so a manual unmute or mic pick while away is never overridden.
+- No controller at Talon start: nothing happens.
+- The mark persists in `addon/.auto_muted` (git-ignored) so it survives a Talon restart.
+- Setting `user.talon_controller_auto_mute` (bool, default on).
+- Unplug is detected immediately (the port read fails), so the grace is the only delay.

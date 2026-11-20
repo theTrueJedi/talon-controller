@@ -4,7 +4,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from addon.policy import Intent, choose_restore_mic, decide, derive_state, scroll_delta  # noqa: E402
+from addon.policy import AutoMute, Intent, choose_restore_mic, decide, derive_state, scroll_delta  # noqa: E402
 
 
 class DeriveStateTest(unittest.TestCase):
@@ -60,6 +60,55 @@ class DecideTest(unittest.TestCase):
 
     def test_unknown_event_is_none(self):
         self.assertEqual(decide("ROT", "command", "command"), Intent.NONE)
+
+
+class AutoMuteTest(unittest.TestCase):
+    def _muted(self):
+        a = AutoMute()
+        a.disconnected(0)
+        self.assertEqual(a.tick(3.0, False, True), Intent.MUTE)
+        return a
+
+    def test_mutes_after_grace(self):
+        a = AutoMute()
+        a.disconnected(0)
+        self.assertEqual(a.tick(2.9, False, True), Intent.NONE)
+        self.assertEqual(a.tick(3.0, False, True), Intent.MUTE)
+        self.assertTrue(a.marked)
+        self.assertEqual(a.tick(4.0, True, True), Intent.NONE)
+
+    def test_blip_shorter_than_grace_does_nothing(self):
+        a = AutoMute()
+        a.disconnected(0)
+        self.assertEqual(a.connected(False), Intent.NONE)
+        self.assertEqual(a.tick(5.0, False, True), Intent.NONE)
+        self.assertFalse(a.marked)
+
+    def test_restores_on_reconnect(self):
+        a = self._muted()
+        self.assertEqual(a.connected(True), Intent.UNMUTE)
+        self.assertFalse(a.marked)
+
+    def test_already_muted_is_not_marked(self):
+        a = AutoMute()
+        a.disconnected(0)
+        self.assertEqual(a.tick(3.0, True, True), Intent.NONE)
+        self.assertFalse(a.marked)
+        self.assertEqual(a.connected(True), Intent.NONE)
+
+    def test_reconnect_after_manual_unmute_does_not_restore(self):
+        a = self._muted()
+        self.assertEqual(a.connected(False), Intent.NONE)
+        self.assertFalse(a.marked)
+
+    def test_disabled_never_mutes(self):
+        a = AutoMute()
+        a.disconnected(0)
+        self.assertEqual(a.tick(10.0, False, False), Intent.NONE)
+        self.assertFalse(a.marked)
+
+    def test_mark_survives_restart(self):
+        self.assertEqual(AutoMute(marked=True).connected(True), Intent.UNMUTE)
 
 
 class ScrollTest(unittest.TestCase):
