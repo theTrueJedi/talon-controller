@@ -52,7 +52,7 @@ rest state read at boot (|accum| >= 3 tolerates bounce; a truly skipped edge los
 double-fired (2 LEDs per click, fixed 2026-11-18); button clean with INPUT_PULLUP + 25 ms debounce. Direction confirmed: knob clockwise =
 ring clockwise (pos++ with CLK=GPIO3, DT=GPIO4). The USB port name changes on replug (`ls /dev/cu.usbmodem*`).
 
-**Firmware + add-on built (2026-11-18):** plan `docs/superpowers/plans/2026-11-18-firmware-and-addon.md`.
+**Firmware + add-on built (2026-11-18):** plan `docs/superpowers/plans/2026-11-18-firmware-and-addon.md` (plans are local-only, git-ignored since 2026-11-20).
 Controller firmware flashed; add-on live and verified in Talon (tap/double/hold/mute restore).
 Includes demo mode (7 presses). **Next:** Evan runs `TESTING.md` (T1-T19, J1-J5).
 
