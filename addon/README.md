@@ -68,8 +68,10 @@ up on a machine (macOS scroll-direction setting), set `scroll_invert` to `True` 
 
 | Setting | Default |
 |---|---|
-| `user.talon_controller_scroll_amount` | `40` |
+| `user.talon_controller_scroll_amount` | `40` (pixels per detent) |
 | `user.talon_controller_scroll_invert` | `False` |
+| `user.talon_controller_scroll_by_lines` | `False` (pixels); `True` sends mouse-wheel notches, which snap carousels advance on |
+| `user.talon_controller_scroll_lines` | `3` (notches per detent, used when `scroll_by_lines` is on) |
 | `user.talon_controller_look_mute` | `solid ff1a1a b91818 40 70` |
 | `user.talon_controller_look_sleep` | `solid ff8a0d c07414 12 55` |
 | `user.talon_controller_look_command` | `solid 18ff6a 109847 15 71` |

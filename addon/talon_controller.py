@@ -20,7 +20,11 @@ from .tuner import Tuner
 
 mod = Module()
 mod.setting("talon_controller_scroll_amount", type=int, default=40,
-            desc="How far one knob detent scrolls")
+            desc="How far one knob detent scrolls, in pixels (smooth, trackpad-style)")
+mod.setting("talon_controller_scroll_by_lines", type=bool, default=False,
+            desc="Scroll in mouse-wheel notches instead of pixels (snap carousels advance)")
+mod.setting("talon_controller_scroll_lines", type=int, default=3,
+            desc="Wheel notches (lines) per knob detent when scroll_by_lines is on")
 mod.setting("talon_controller_auto_mute", type=bool, default=True,
             desc="Hard-mute when the controller switches to another machine; restore when it returns")
 mod.setting("talon_controller_scroll_invert", type=bool, default=False,
@@ -195,9 +199,12 @@ def tick() -> None:
                 sent_line = None
                 auto_mute.disconnected(time.monotonic())
             elif name == "ROT":
+                by_lines = settings.get("user.talon_controller_scroll_by_lines")
+                amount = settings.get("user.talon_controller_scroll_lines" if by_lines
+                                      else "user.talon_controller_scroll_amount")
                 actions.mouse_scroll(y=scroll_delta(
-                    value, settings.get("user.talon_controller_scroll_amount"),
-                    settings.get("user.talon_controller_scroll_invert")))
+                    value, amount, settings.get("user.talon_controller_scroll_invert")),
+                    by_lines=by_lines)
             else:
                 _do(decide(name, state, last_awake))
         except Exception as e:
