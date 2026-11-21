@@ -218,7 +218,7 @@ m3_head = [5.5, 3];                     // socket head [diameter, height]
 m3_cbore_clr = 0.6;                     // counterbore diametral clearance on the head
 m3_nut_t = 2.4;                         // M3 hex nut thickness
 m3_tip_over_nut = 0.6;                  // screw tip past the nut top
-pad = [15, 60, 1.4];                    // Evan's pre-printed TPU pads [x, y (front to back), thickness]; two, glued in
+pad = [15, 60, 2];                      // adhesive silicone strip (eBay 300x20x2), cut to 15 wide [x, y (front to back), thickness]; two
 pad_recess = 0.3;                       // recess depth on the plate's outside
 pad_edge = 1.5;                         // least plate rim outside a pad recess
 // Plate lip: rises from the plate top just inside the shell's walls, so the

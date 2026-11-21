@@ -424,6 +424,8 @@ by two of Evan's pre-printed 15 × 60 × 1.4 mm TPU pads, glued at the end.
 Recesses are 0.3 mm deep with 0.15 mm (`pad_fit`) round each edge, lengths
 front to back, centred, each just inboard of its side's screw holes (`clr`
 off the counterbores). The pads stand 1.1 mm proud. The `foot` part is gone.
+(Amended 2026-11-21: the TPU pads were too slippery; the feet are now 15 × 60 × 2 mm
+self-adhesive silicone, cut from a 20 mm strip, standing 1.7 mm proud.)
 
 **Port tab and hooks (Evan, 2026-11-18, after printing bottom_v6):** the
 board hinged up at its port end (only the shell slot held it, and only with

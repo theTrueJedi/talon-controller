@@ -150,9 +150,9 @@ the plug body, not the cable.
 - **One 9-pin 2.54 mm right-angle header** for the C3-Zero, and **female
   jumper wires** (F-F, some cut in half).
 - **Thin double-sided tape** (or a hot-glue gun) for the ring.
-- **2x TPU pads, 15 x 60 x 1.4 mm** (Evan's pre-printed ones) for the
-  feet, and glue for them (super glue or contact cement). They sit in
-  0.3 mm recesses on the plate's underside and stand 1.1 mm proud.
+- **2x silicone feet, 15 x 60 x 2 mm**, cut from a self-adhesive silicone
+  rubber strip (eBay 300 x 20 x 2 mm; TPU pads were too slippery). They sit
+  in 0.3 mm recesses on the plate's underside and stand 1.7 mm proud.
 
 ## Wiring (one header on the C3, jumpers plug in there)
 
@@ -249,8 +249,11 @@ the box never rests on it.
    and the header and its plugs into the recess beside them. Tuck the wires in so
    none is pinched under the plate's edge, then drive the four screws up
    from below. Snug, not tight.
-9. **Feet.** Glue a 15 x 60 TPU pad into each long recess on the
-   underside, its length running front to back.
+9. **Feet.** Cut two 60 mm pieces off the 20 mm silicone strip and trim
+   each to 15 mm wide (steel rule + fresh blade, one firm pass). Wipe the
+   recesses with isopropyl alcohol, peel, and press one into each long
+   recess, its length running front to back. Hold firmly for 30 s; if a
+   corner lifts later, add a dot of super glue under it.
 10. **Cap.** Turn the box onto its feet and push the cap onto the shaft
    (flat side matches).
 
@@ -365,7 +368,7 @@ the metal tip and set `usb_plug` to it.
 | `c3_fit`     | 0.2  | C3-Zero slot: board play to the front stop, width, height |
 | `m3_nut_fit` | 0.2  | M3 nut slots in the corner posts                   |
 | `plate_fit`  | 0.2  | bottom plate's gap inside the shell outline        |
-| `pad_fit`    | 0.15 | TPU pad recesses, each edge                        |
+| `pad_fit`    | 0.15 | foot pad recesses, each edge                       |
 | `socket_fit` | 0.2  | nut driver's hex socket                            |
 | `halo_fit`   | 0.2  | halo sleeve over the well wall (`halo_block` only) |
 

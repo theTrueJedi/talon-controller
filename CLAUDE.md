@@ -39,7 +39,7 @@ Wiring: one right-angle header on the C3; jumpers plug in only there.
 `hood_6mm_v2r` = v2 with a rounded top outer corner (3 mm arc to 50 deg from vertical, then a straight 50 deg run; support-free face down), opt-in via `hood_round_r=3`.
 Evan to judge v2r vs v2 (corner print quality, even glow); the winner becomes the default. Hood/cap STLs are named by glow gap (`run.sh export` does it).
 
-**Next (2026-11-18):** print `bottom_v9` and `c3_clip_v3` (shell stays v6), check (i)-(l) in `print/README.md`, glue the 15 x 60 TPU pads. Guide: `print/guide/talon-housing-guide.pdf`. Header legs still to measure (checkpoint h).
+**Next (2026-11-18):** print `bottom_v9` and `c3_clip_v3` (shell stays v6), check (i)-(l) in `print/README.md`, stick on the silicone feet (15 x 60 x 2, cut from the eBay 20 mm strip; TPU was too slippery, 2026-11-21). Guide: `print/guide/talon-housing-guide.pdf`. Header legs still to measure (checkpoint h).
 Amended 2026-11-18: plate lip, two-tooth clip, board 0.4 mm inward, port tab with hooks (pinches the board), 2x 15x60 TPU pads.
 
 **Ring wired and passing (2026-11-18):** `firmware/knob/ring_test/` flashed via arduino-cli
