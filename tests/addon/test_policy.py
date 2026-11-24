@@ -37,9 +37,9 @@ class DecideTest(unittest.TestCase):
         self.assertEqual(decide("DOUBLE", "command", "command"), Intent.DICTATION)
         self.assertEqual(decide("DOUBLE", "dictation", "dictation"), Intent.COMMAND)
         self.assertEqual(decide("DOUBLE", "other", "dictation"), Intent.COMMAND)
-        # From mixed, double-tap goes straight to dictation.
+        # From mixed, double-tap goes to command.
         for last in ("command", "dictation", "mixed"):
-            self.assertEqual(decide("DOUBLE", "mixed", last), Intent.DICTATION, last)
+            self.assertEqual(decide("DOUBLE", "mixed", last), Intent.COMMAND, last)
         # From sleep, double-tap wakes into the last awake mode, like tap.
         self.assertEqual(decide("DOUBLE", "sleep", "dictation"), Intent.DICTATION)
         self.assertEqual(decide("DOUBLE", "sleep", "command"), Intent.COMMAND)

@@ -452,5 +452,5 @@ Meet tab, focus it, press ⌘D, and return.
 Supersedes every earlier tap/double-tap description in this spec. Add-on only; the firmware is unchanged.
 
 - **Tap** = sleep from any awake mode (including mixed); from sleep, wake into the last awake mode.
-- **Double-tap** = command ⇄ dictation. Mixed → dictation (kept from 2026-11-20); asleep → wakes into the last awake mode (kept).
-- Cost: mixed → command is now two double-taps, or say it. Sleeping from mixed is now one tap.
+- **Double-tap** = command ⇄ dictation. Mixed → command (Evan, replaces the 2026-11-20 shortcut); asleep → wakes into the last awake mode (kept).
+- Cost: mixed → dictation is now two double-taps, or say it. Sleeping from mixed is now one tap.

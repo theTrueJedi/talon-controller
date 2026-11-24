@@ -33,7 +33,7 @@ muted is refused, double-tap sleeps and wakes. (Tap and double-tap were swapped
 | T19 | Press 4 times | Red blink, nothing happens |
 | T24 | In command or dictation: triple-tap | Fade into the mixed look (cyan/blue gradient spin); you can say commands and dictate prose |
 | T25 | In mixed: tap, tap | Asleep, then wakes back into mixed |
-| T26 | In mixed: double-tap, double-tap | Dictation, then command |
+| T26 | In mixed: double-tap, double-tap | Command, then dictation |
 | T27 | While muted: triple-tap | Two red blinks, nothing changes |
 | T28 | Switch the controller to the other machine | After ~3 s this machine's mic is None (Talon menu); speech does nothing here |
 | T29 | Switch back | Mic restored to the headset, ring shows the mode you left |

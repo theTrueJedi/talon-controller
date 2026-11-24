@@ -39,7 +39,7 @@ def decide(event: str, state: str, last_awake: str) -> Intent:
         return wake
     if event == "TAP":
         return Intent.SLEEP
-    return Intent.DICTATION if state in ("command", "mixed") else Intent.COMMAND
+    return Intent.DICTATION if state == "command" else Intent.COMMAND
 
 
 AUTO_MUTE_GRACE_S = 3.0  # a hub blip shorter than this does nothing
