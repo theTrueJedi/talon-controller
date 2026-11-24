@@ -54,7 +54,6 @@ saved = load_saved(LOOKS_FILE)
 current_looks = dict(DEFAULT_LOOKS)  # snapshot for the tuner page (read off-thread)
 last_preview = None
 state = "other"
-last_awake = "command"
 mark_on_disk = os.path.exists(MARK_FILE)
 auto_mute = AutoMute(mark_on_disk)
 sent_line = None
@@ -75,11 +74,9 @@ def _look_for(s: str):
 
 def refresh(force: bool = False) -> None:
     """Re-read Talon's real mode and mic, and push the look if it changed."""
-    global state, last_awake, sent_line, current_looks
+    global state, sent_line, current_looks
     try:
         state = derive_state(set(scope.get("mode") or ()), actions.sound.active_microphone())
-        if state in ("command", "dictation", "mixed"):
-            last_awake = state
         current_looks = {s: _look_for(s) for s in DEFAULT_LOOKS}
         preview = tuner.preview()
         # A tuner preview overrides the look but keeps the real state name, so
@@ -206,7 +203,7 @@ def tick() -> None:
                     value, amount, settings.get("user.talon_controller_scroll_invert")),
                     by_lines=by_lines)
             else:
-                _do(decide(name, state, last_awake))
+                _do(decide(name, state))
         except Exception as e:
             _log_once(name, e)
         if name in ("TAP", "DOUBLE", "TRIPLE", "HOLD"):

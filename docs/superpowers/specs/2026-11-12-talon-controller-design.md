@@ -454,3 +454,9 @@ Supersedes every earlier tap/double-tap description in this spec. Add-on only; t
 - **Tap** = sleep from any awake mode (including mixed); from sleep, wake into the last awake mode.
 - **Double-tap** = command ⇄ dictation. Mixed → command (Evan, replaces the 2026-11-20 shortcut); asleep → wakes into the last awake mode (kept).
 - Cost: mixed → dictation is now two double-taps, or say it. Sleeping from mixed is now one tap.
+
+## Amendment 2026-11-24: fixed wake modes (Evan)
+
+- From sleep, tap → command, double-tap → dictation, triple-tap → mixed. The add-on no longer tracks the last awake mode; this supersedes every earlier "wakes into the last awake mode".
+- Why: deterministic, and an accidental wake never lands in dictation.
+- Cost: resuming dictation after a sleep takes a double-tap, mixed a triple-tap.

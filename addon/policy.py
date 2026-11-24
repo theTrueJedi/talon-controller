@@ -26,20 +26,17 @@ def derive_state(modes: set[str], mic: str | None) -> str:
     return "other"
 
 
-def decide(event: str, state: str, last_awake: str) -> Intent:
-    """last_awake is the last of command/dictation/mixed, used to wake from sleep."""
-    wake = {"dictation": Intent.DICTATION, "mixed": Intent.MIXED}.get(last_awake, Intent.COMMAND)
+def decide(event: str, state: str) -> Intent:
+    """From sleep, tap/double/triple always wake into command/dictation/mixed."""
     if event == "HOLD":
         return Intent.UNMUTE if state == "mute" else Intent.MUTE
     if state == "mute" or event not in ("TAP", "DOUBLE", "TRIPLE"):
         return Intent.NONE
     if event == "TRIPLE":
         return Intent.MIXED
-    if state == "sleep":
-        return wake
     if event == "TAP":
-        return Intent.SLEEP
-    return Intent.DICTATION if state == "command" else Intent.COMMAND
+        return Intent.COMMAND if state == "sleep" else Intent.SLEEP
+    return Intent.DICTATION if state in ("command", "sleep") else Intent.COMMAND
 
 
 AUTO_MUTE_GRACE_S = 3.0  # a hub blip shorter than this does nothing

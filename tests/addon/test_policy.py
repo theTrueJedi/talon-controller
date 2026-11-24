@@ -26,41 +26,35 @@ class DeriveStateTest(unittest.TestCase):
 
 
 class DecideTest(unittest.TestCase):
-    def test_tap_sleeps_and_wakes(self):
+    def test_tap_sleeps_and_wakes_into_command(self):
         for awake in ("command", "dictation", "mixed", "other"):
-            self.assertEqual(decide("TAP", awake, "command"), Intent.SLEEP, awake)
-        self.assertEqual(decide("TAP", "sleep", "command"), Intent.COMMAND)
-        self.assertEqual(decide("TAP", "sleep", "dictation"), Intent.DICTATION)
-        self.assertEqual(decide("TAP", "sleep", "mixed"), Intent.MIXED)
+            self.assertEqual(decide("TAP", awake), Intent.SLEEP, awake)
+        self.assertEqual(decide("TAP", "sleep"), Intent.COMMAND)
 
     def test_double_flips_command_and_dictation(self):
-        self.assertEqual(decide("DOUBLE", "command", "command"), Intent.DICTATION)
-        self.assertEqual(decide("DOUBLE", "dictation", "dictation"), Intent.COMMAND)
-        self.assertEqual(decide("DOUBLE", "other", "dictation"), Intent.COMMAND)
-        # From mixed, double-tap goes to command.
-        for last in ("command", "dictation", "mixed"):
-            self.assertEqual(decide("DOUBLE", "mixed", last), Intent.COMMAND, last)
-        # From sleep, double-tap wakes into the last awake mode, like tap.
-        self.assertEqual(decide("DOUBLE", "sleep", "dictation"), Intent.DICTATION)
-        self.assertEqual(decide("DOUBLE", "sleep", "command"), Intent.COMMAND)
-        self.assertEqual(decide("DOUBLE", "sleep", "mixed"), Intent.MIXED)
+        self.assertEqual(decide("DOUBLE", "command"), Intent.DICTATION)
+        for s in ("dictation", "mixed", "other"):
+            self.assertEqual(decide("DOUBLE", s), Intent.COMMAND, s)
+
+    def test_double_wakes_into_dictation(self):
+        self.assertEqual(decide("DOUBLE", "sleep"), Intent.DICTATION)
 
     def test_triple_enters_mixed(self):
         for s in ("command", "dictation", "mixed", "sleep", "other"):
-            self.assertEqual(decide("TRIPLE", s, "command"), Intent.MIXED, s)
+            self.assertEqual(decide("TRIPLE", s), Intent.MIXED, s)
 
     def test_mute_refuses_tap_double_triple(self):
-        self.assertEqual(decide("TAP", "mute", "command"), Intent.NONE)
-        self.assertEqual(decide("DOUBLE", "mute", "command"), Intent.NONE)
-        self.assertEqual(decide("TRIPLE", "mute", "command"), Intent.NONE)
+        self.assertEqual(decide("TAP", "mute"), Intent.NONE)
+        self.assertEqual(decide("DOUBLE", "mute"), Intent.NONE)
+        self.assertEqual(decide("TRIPLE", "mute"), Intent.NONE)
 
     def test_hold_toggles(self):
-        self.assertEqual(decide("HOLD", "mute", "command"), Intent.UNMUTE)
+        self.assertEqual(decide("HOLD", "mute"), Intent.UNMUTE)
         for s in ("command", "dictation", "mixed", "sleep", "other"):
-            self.assertEqual(decide("HOLD", s, "command"), Intent.MUTE, s)
+            self.assertEqual(decide("HOLD", s), Intent.MUTE, s)
 
     def test_unknown_event_is_none(self):
-        self.assertEqual(decide("ROT", "command", "command"), Intent.NONE)
+        self.assertEqual(decide("ROT", "command"), Intent.NONE)
 
 
 class AutoMuteTest(unittest.TestCase):
