@@ -446,3 +446,11 @@ Meet tab, focus it, press ⌘D, and return.
 - Double-tap from **mixed** goes straight to dictation (mirrors tap taking mixed to command), so dictation no longer needs a trip through command.
 - Double-tap from command or dictation still sleeps. From sleep, tap or double-tap still wakes into the last awake mode (a same-day draft sent sleep to dictation; Evan reverted it).
 - Cost: sleeping from mixed is now two double-taps (mixed → dictation → sleep), or say it.
+
+## Amendment 2026-11-23: tap and double-tap swapped (Evan)
+
+Supersedes every earlier tap/double-tap description in this spec. Add-on only; the firmware is unchanged.
+
+- **Tap** = sleep from any awake mode (including mixed); from sleep, wake into the last awake mode.
+- **Double-tap** = command ⇄ dictation. Mixed → dictation (kept from 2026-11-20); asleep → wakes into the last awake mode (kept).
+- Cost: mixed → command is now two double-taps, or say it. Sleeping from mixed is now one tap.

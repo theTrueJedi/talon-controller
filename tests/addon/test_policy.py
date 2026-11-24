@@ -26,18 +26,18 @@ class DeriveStateTest(unittest.TestCase):
 
 
 class DecideTest(unittest.TestCase):
-    def test_tap_table(self):
-        self.assertEqual(decide("TAP", "command", "command"), Intent.DICTATION)
-        self.assertEqual(decide("TAP", "dictation", "dictation"), Intent.COMMAND)
-        self.assertEqual(decide("TAP", "mixed", "command"), Intent.COMMAND)
-        self.assertEqual(decide("TAP", "sleep", "dictation"), Intent.DICTATION)
+    def test_tap_sleeps_and_wakes(self):
+        for awake in ("command", "dictation", "mixed", "other"):
+            self.assertEqual(decide("TAP", awake, "command"), Intent.SLEEP, awake)
         self.assertEqual(decide("TAP", "sleep", "command"), Intent.COMMAND)
-        self.assertEqual(decide("TAP", "other", "dictation"), Intent.COMMAND)
+        self.assertEqual(decide("TAP", "sleep", "dictation"), Intent.DICTATION)
+        self.assertEqual(decide("TAP", "sleep", "mixed"), Intent.MIXED)
 
-    def test_double_table(self):
-        for awake in ("command", "dictation", "other"):
-            self.assertEqual(decide("DOUBLE", awake, "command"), Intent.SLEEP, awake)
-        # From mixed, double-tap is a shortcut straight to dictation.
+    def test_double_flips_command_and_dictation(self):
+        self.assertEqual(decide("DOUBLE", "command", "command"), Intent.DICTATION)
+        self.assertEqual(decide("DOUBLE", "dictation", "dictation"), Intent.COMMAND)
+        self.assertEqual(decide("DOUBLE", "other", "dictation"), Intent.COMMAND)
+        # From mixed, double-tap goes straight to dictation.
         for last in ("command", "dictation", "mixed"):
             self.assertEqual(decide("DOUBLE", "mixed", last), Intent.DICTATION, last)
         # From sleep, double-tap wakes into the last awake mode, like tap.
@@ -48,9 +48,6 @@ class DecideTest(unittest.TestCase):
     def test_triple_enters_mixed(self):
         for s in ("command", "dictation", "mixed", "sleep", "other"):
             self.assertEqual(decide("TRIPLE", s, "command"), Intent.MIXED, s)
-
-    def test_sleep_wakes_into_mixed_if_last_awake(self):
-        self.assertEqual(decide("TAP", "sleep", "mixed"), Intent.MIXED)
 
     def test_mute_refuses_tap_double_triple(self):
         self.assertEqual(decide("TAP", "mute", "command"), Intent.NONE)

@@ -35,8 +35,8 @@ bash firmware/knob/controller/test/run.sh
 
 | Gesture | Control mode | Demo mode |
 |---|---|---|
-| 1 press | `TAP` (command ⇄ dictation) | next pattern, stay on it |
-| 2 presses | `DOUBLE` (sleep ⇄ wake) | back to cycling |
+| 1 press | `TAP` (sleep ⇄ wake) | next pattern, stay on it |
+| 2 presses | `DOUBLE` (command ⇄ dictation) | back to cycling |
 | 7 presses | enter demo (quick fade out/in) | leave demo |
 | other counts | red blink, nothing sent | red blink |
 | hold 0.7 s | `HOLD` (hard mute toggle), ring fills first | nothing |

@@ -7,14 +7,15 @@ first**: it clears leftovers from the build's add-on reloads.
 **Already verified by Claude (serial + Talon REPL, 2026-11-18):** PING/HELLO,
 garbage lines ignored, knob events reach the Mac; in Talon: tap flips
 command⇄dictation, hold mutes (mic → None) and restores your mic, tap while
-muted is refused, double-tap sleeps and wakes.
+muted is refused, double-tap sleeps and wakes. (Tap and double-tap were swapped
+2026-11-23; T3, T4, T25, T26, T32 below are the new behavior.)
 
 | ID | Do this | Expect |
 |---|---|---|
 | T1 | Look at the ring with Talon running | Solid green (command), green not teal |
 | T2 | Say "dictation mode", then "command mode" | Mostly purple with a blue band, spinning clockwise, then green, within ~0.5 s |
-| T3 | Tap the knob | ~0.2 s after release the ring fades out and back in as the new mode (250 ms) |
-| T4 | Double-tap | Solid orange (asleep); double-tap again → back to the prior mode |
+| T3 | Tap the knob | ~0.2 s after release the ring fades out and back in (250 ms) as solid orange (asleep); tap again → back to the prior mode |
+| T4 | In command: double-tap, double-tap | Dictation, then command. Asleep: double-tap wakes into the prior mode |
 | T5 | Press and hold | Red fill sweeps clockwise; at 0.7 s solid red, mic is None |
 | T6 | While muted, tap | Two red blinks, nothing changes |
 | T7 | While muted, hold | Fill in green, then mic restored and ring back to the mode look |
@@ -31,14 +32,14 @@ muted is refused, double-tap sleeps and wakes.
 | T18 | Press 7 times again | Fade back to the mode look |
 | T19 | Press 4 times | Red blink, nothing happens |
 | T24 | In command or dictation: triple-tap | Fade into the mixed look (cyan/blue gradient spin); you can say commands and dictate prose |
-| T25 | In mixed: tap | Back to command (green); also from dictation |
-| T26 | In mixed: double-tap, double-tap, double-tap | Dictation, then asleep, then wakes into dictation |
+| T25 | In mixed: tap, tap | Asleep, then wakes back into mixed |
+| T26 | In mixed: double-tap, double-tap | Dictation, then command |
 | T27 | While muted: triple-tap | Two red blinks, nothing changes |
 | T28 | Switch the controller to the other machine | After ~3 s this machine's mic is None (Talon menu); speech does nothing here |
 | T29 | Switch back | Mic restored to the headset, ring shows the mode you left |
 | T30 | Hold-mute, switch away, switch back | Stays muted (your mute isn't undone) |
 | T31 | Switch away, pick a mic in Talon's menu, switch back | Your picked mic stays |
-| T32 | In mixed: say "go to sleep", then tap | Wakes back into mixed (tap still wakes into the last mode) |
+| T32 | In mixed: say "go to sleep", then tap | Wakes back into mixed (tap wakes into the last mode) |
 
 | T20 | Say "controller tuner" | Browser opens the Ring tuner page |
 | T21 | Pick a tab, drag a slider or color | Ring follows within a blink |
